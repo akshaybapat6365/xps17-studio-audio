@@ -37,9 +37,9 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             dsp-engine/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('dsp-engine/Cargo.toml', 'dsp-engine/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-v3-${{ hashFiles('dsp-engine/Cargo.toml', 'dsp-engine/Cargo.lock', 'dsp-engine/.cargo/config.toml') }}
           restore-keys: |
-            ${{ runner.os }}-cargo-
+            ${{ runner.os }}-cargo-v3-
 
       - name: Build DSP engine (AVX2 + FMA)
         working-directory: dsp-engine
