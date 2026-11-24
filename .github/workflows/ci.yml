@@ -205,7 +205,9 @@ jobs:
 
           if bool(desc.activate):
               desc.activate(handle)
-          desc.run(handle, n)
+          # Advance past 8 ms lookahead limiter + 256-sample FIR block latency (643 samples)
+          for _ in range(4):
+              desc.run(handle, n)
           if bool(desc.deactivate):
               desc.deactivate(handle)
           desc.cleanup(handle)

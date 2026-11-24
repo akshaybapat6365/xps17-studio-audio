@@ -19,7 +19,7 @@ IFS=$'\n\t'
 readonly SCRIPT_NAME="xps17-studio-audio-install"
 readonly EXPECTED_DMI_SKU="0AFF"
 readonly EXPECTED_PRODUCT_SUBSTR="XPS 17 9720"
-readonly DKMS_PKG_NAME="snd-soc-rt1316-sdw-xps17"
+readonly DKMS_PKG_NAME="snd-soc-rt1316-sdw"
 readonly DKMS_PKG_VER="7.2.15.2"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -35,7 +35,6 @@ else
 fi
 
 # CLI defaults
-DSP_ONLY=1
 WITH_KERNEL=0
 DRY_RUN=0
 NO_RESTART=0
@@ -100,12 +99,10 @@ parse_args() {
     while (($# > 0)); do
         case "$1" in
             --dsp-only)
-                DSP_ONLY=1
                 WITH_KERNEL=0
                 ;;
             --with-kernel)
                 WITH_KERNEL=1
-                DSP_ONLY=0
                 ;;
             --dry-run)
                 DRY_RUN=1
@@ -484,7 +481,8 @@ install_userspace_dsp() {
         local f
         while IFS= read -r -d '' f; do
             found_pw=1
-            local dst_pw="$pw_conf_dir/$(basename "$f")"
+            local dst_pw
+            dst_pw="$pw_conf_dir/$(basename "$f")"
             if ((DRY_RUN)); then
                 atomic_install_file "$f" "$dst_pw" 0644 "PipeWire config"
             else

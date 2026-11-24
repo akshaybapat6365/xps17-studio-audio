@@ -16,7 +16,7 @@ IFS=$'\n\t'
 
 readonly SCRIPT_NAME="xps17-studio-audio-uninstall"
 readonly EXPECTED_DMI_SKU="0AFF"
-readonly DKMS_PKG_NAME="snd-soc-rt1316-sdw-xps17"
+readonly DKMS_PKG_NAME="snd-soc-rt1316-sdw"
 readonly DKMS_PKG_VER="7.2.15.2"
 
 # CLI defaults
@@ -359,7 +359,7 @@ cleanup_known_artifacts() {
         "$PREFIX/share/xps17-studio-audio/kernels/xps17-studio-spatial.wav"
         "$PREFIX/share/xps17-studio-audio/kernels/xps17-studio-reference.wav"
         "$PREFIX/share/xps17-studio-audio/kernels/xps17-studio-voice.wav"
-        "$PREFIX/share/xps17-studio-audio/kernels/dsp_params.json"
+        "$PREFIX/share/xps17-studio-audio/dsp_params.json"
         "$LIVE_USER_HOME/.config/pipewire/omarchy-speaker-engine.conf.d/92-xps17-studio.conf"
         "$LIVE_USER_HOME/.config/systemd/user/omarchy-speaker-engine.service.d/xps17-studio-acoustics-dir.conf"
         "$STATE_DIR/active-profile"
