@@ -1,0 +1,389 @@
+{
+  "schema_version": 1,
+  "target_hardware": {
+    "vendor": "Dell Inc.",
+    "product": "XPS 17 9720",
+    "dmi_sku": "0AFF",
+    "topology": "/usr/lib/firmware/intel/sof-ipc4-tplg/sof-adl-rt711-l0-rt1316-l12-rt714-l3.tplg",
+    "kcontrol": "Post Mixer Speaker Playback IIR Eq bytes",
+    "widget": "eqiir.21.1",
+    "kcontrol_max_bytes": 1024
+  },
+  "blobs": {
+    "eqiir_subsonic_80hz_safety.bin": {
+      "filename": "eqiir_subsonic_80hz_safety.bin",
+      "description": "4th-order Butterworth 80 Hz subsonic safety HPF (2 cascaded DF2T biquads, lowest-Q first) \u2014 hardware woofer excursion floor",
+      "bypass": false,
+      "sample_rate_hz": 48000,
+      "total_size_bytes": 156,
+      "tlv_type": 3,
+      "tlv_length_bytes": 148,
+      "abi_magic": "0x34464f53",
+      "abi_version": "3.26.0",
+      "abi_version_hex": "0x0301a000",
+      "param_id": 0,
+      "payload_size_bytes": 116,
+      "channels_in_config": 2,
+      "number_of_responses": 1,
+      "assign_response": [
+        0,
+        0
+      ],
+      "num_sections": 2,
+      "max_pole_radius": 0.99600062,
+      "peak_gain_db": 0.0,
+      "intermediate_stage_peak_gain_db": 0.0,
+      "max_quantization_error_db_20hz_20khz": 0.002411,
+      "response_db": {
+        "20Hz": -48.1628,
+        "40Hz": -24.099,
+        "60Hz": -10.4093,
+        "80Hz": -3.0102,
+        "100Hz": -0.6735,
+        "200Hz": -0.0028,
+        "500Hz": 0.0,
+        "1000Hz": 0.0,
+        "1500Hz": 0.0,
+        "5000Hz": 0.0,
+        "10000Hz": 0.0,
+        "20000Hz": -0.0
+      },
+      "crc32": "0xeacfbd80",
+      "sha256": "7f81675241a604f58c472ac22d34382304fbc2d04eb332982f7a890f75a50cee",
+      "sections": [
+        {
+          "name": "butterworth_hpf_4th_80.0hz_sec0_Q0.5412",
+          "float_coeffs": {
+            "b0": 0.9903908826792551,
+            "b1": -1.9807817653585102,
+            "b2": 0.9903908826792551,
+            "a1": -1.9807274601092264,
+            "a2": 0.9808360706077943
+          },
+          "sof_df2t_int32": {
+            "a2": -1053164711,
+            "a1": 2126789916,
+            "b2": 532980748,
+            "b1": -1065961497,
+            "b0": 532980748,
+            "output_shift": 0,
+            "output_gain": 32690
+          },
+          "float_max_pole_radius": 0.99037168,
+          "quant_max_pole_radius": 0.99037168,
+          "quant_poles": [
+            [
+              0.99036373,
+              0.00396891
+            ],
+            [
+              0.99036373,
+              -0.00396891
+            ]
+          ],
+          "float_poles": [
+            [
+              0.99036373,
+              0.00396898
+            ],
+            [
+              0.99036373,
+              -0.00396898
+            ]
+          ]
+        },
+        {
+          "name": "butterworth_hpf_4th_80.0hz_sec1_Q1.3066",
+          "float_coeffs": {
+            "b0": 0.9959813108020054,
+            "b1": -1.9919626216040107,
+            "b2": 0.9959813108020054,
+            "a1": -1.991908009819602,
+            "a2": 0.9920172333884196
+          },
+          "sof_df2t_int32": {
+            "a2": -1065170394,
+            "a1": 2138794940,
+            "b2": 535989248,
+            "b1": -1071978496,
+            "b0": 535989248,
+            "output_shift": 0,
+            "output_gain": 32690
+          },
+          "float_max_pole_radius": 0.99600062,
+          "quant_max_pole_radius": 0.99600062,
+          "quant_poles": [
+            [
+              0.99595401,
+              0.00963606
+            ],
+            [
+              0.99595401,
+              -0.00963606
+            ]
+          ],
+          "float_poles": [
+            [
+              0.995954,
+              0.00963605
+            ],
+            [
+              0.995954,
+              -0.00963605
+            ]
+          ]
+        }
+      ]
+    },
+    "eqiir_subsonic_plus_preshape.bin": {
+      "filename": "eqiir_subsonic_plus_preshape.bin",
+      "description": "4th-order Butterworth 80 Hz safety HPF + gentle -2.5 dB Q=1.4 cut at 1.5 kHz (tames measured +4.2 dB shouty resonance; <= +0.5 dB peak everywhere)",
+      "bypass": false,
+      "sample_rate_hz": 48000,
+      "total_size_bytes": 184,
+      "tlv_type": 3,
+      "tlv_length_bytes": 176,
+      "abi_magic": "0x34464f53",
+      "abi_version": "3.26.0",
+      "abi_version_hex": "0x0301a000",
+      "param_id": 0,
+      "payload_size_bytes": 144,
+      "channels_in_config": 2,
+      "number_of_responses": 1,
+      "assign_response": [
+        0,
+        0
+      ],
+      "num_sections": 3,
+      "max_pole_radius": 0.99600062,
+      "peak_gain_db": -0.0009,
+      "intermediate_stage_peak_gain_db": 0.0,
+      "max_quantization_error_db_20hz_20khz": 0.002411,
+      "response_db": {
+        "20Hz": -48.163,
+        "40Hz": -24.0999,
+        "60Hz": -10.4114,
+        "80Hz": -3.0138,
+        "100Hz": -0.6792,
+        "200Hz": -0.0263,
+        "500Hz": -0.1681,
+        "1000Hz": -1.0545,
+        "1500Hz": -2.5,
+        "5000Hz": -0.1232,
+        "10000Hz": -0.0218,
+        "20000Hz": -0.0009
+      },
+      "crc32": "0x3d8e9b8c",
+      "sha256": "d52d49821711bb520fb105685d86ee2f095a8aeb6ab0b48a6ffa3025acb1b4b5",
+      "sections": [
+        {
+          "name": "butterworth_hpf_4th_80.0hz_sec0_Q0.5412",
+          "float_coeffs": {
+            "b0": 0.9903908826792551,
+            "b1": -1.9807817653585102,
+            "b2": 0.9903908826792551,
+            "a1": -1.9807274601092264,
+            "a2": 0.9808360706077943
+          },
+          "sof_df2t_int32": {
+            "a2": -1053164711,
+            "a1": 2126789916,
+            "b2": 532980748,
+            "b1": -1065961497,
+            "b0": 532980748,
+            "output_shift": 0,
+            "output_gain": 32690
+          },
+          "float_max_pole_radius": 0.99037168,
+          "quant_max_pole_radius": 0.99037168,
+          "quant_poles": [
+            [
+              0.99036373,
+              0.00396891
+            ],
+            [
+              0.99036373,
+              -0.00396891
+            ]
+          ],
+          "float_poles": [
+            [
+              0.99036373,
+              0.00396898
+            ],
+            [
+              0.99036373,
+              -0.00396898
+            ]
+          ]
+        },
+        {
+          "name": "butterworth_hpf_4th_80.0hz_sec1_Q1.3066",
+          "float_coeffs": {
+            "b0": 0.9959813108020054,
+            "b1": -1.9919626216040107,
+            "b2": 0.9959813108020054,
+            "a1": -1.991908009819602,
+            "a2": 0.9920172333884196
+          },
+          "sof_df2t_int32": {
+            "a2": -1065170394,
+            "a1": 2138794940,
+            "b2": 535989248,
+            "b1": -1071978496,
+            "b0": 535989248,
+            "output_shift": 0,
+            "output_gain": 32690
+          },
+          "float_max_pole_radius": 0.99600062,
+          "quant_max_pole_radius": 0.99600062,
+          "quant_poles": [
+            [
+              0.99595401,
+              0.00963606
+            ],
+            [
+              0.99595401,
+              -0.00963606
+            ]
+          ],
+          "float_poles": [
+            [
+              0.995954,
+              0.00963605
+            ],
+            [
+              0.995954,
+              -0.00963605
+            ]
+          ]
+        },
+        {
+          "name": "peaking_eq_1500.0hz_-2.50db_Q1.40",
+          "float_coeffs": {
+            "b0": 0.981375144084559,
+            "b1": -1.8154964976451067,
+            "b2": 0.8696890326725609,
+            "a1": -1.8154964976451067,
+            "a2": 0.85106417675712
+          },
+          "sof_df2t_int32": {
+            "a2": -913823201,
+            "a1": 1949374521,
+            "b2": 468024817,
+            "b1": -977012914,
+            "b0": 528128911,
+            "output_shift": 0,
+            "output_gain": 32690
+          },
+          "float_max_pole_radius": 0.9225314,
+          "quant_max_pole_radius": 0.9225314,
+          "quant_poles": [
+            [
+              0.90774825,
+              0.16449101
+            ],
+            [
+              0.90774825,
+              -0.16449101
+            ]
+          ],
+          "float_poles": [
+            [
+              0.90774825,
+              0.16449101
+            ],
+            [
+              0.90774825,
+              -0.16449101
+            ]
+          ]
+        }
+      ]
+    },
+    "eqiir_passthrough_flat.bin": {
+      "filename": "eqiir_passthrough_flat.bin",
+      "description": "Hardware unity bypass (assign_response=[-1, -1] + unity DF2T section) for A/B testing & clean rollback",
+      "bypass": true,
+      "sample_rate_hz": 48000,
+      "total_size_bytes": 128,
+      "tlv_type": 3,
+      "tlv_length_bytes": 120,
+      "abi_magic": "0x34464f53",
+      "abi_version": "3.26.0",
+      "abi_version_hex": "0x0301a000",
+      "param_id": 0,
+      "payload_size_bytes": 88,
+      "channels_in_config": 2,
+      "number_of_responses": 1,
+      "assign_response": [
+        -1,
+        -1
+      ],
+      "num_sections": 1,
+      "max_pole_radius": 0.0,
+      "peak_gain_db": 0.0,
+      "intermediate_stage_peak_gain_db": 0.0,
+      "max_quantization_error_db_20hz_20khz": 0.0,
+      "response_db": {
+        "20Hz": 0.0,
+        "40Hz": 0.0,
+        "60Hz": 0.0,
+        "80Hz": 0.0,
+        "100Hz": 0.0,
+        "200Hz": 0.0,
+        "500Hz": 0.0,
+        "1000Hz": 0.0,
+        "1500Hz": 0.0,
+        "5000Hz": 0.0,
+        "10000Hz": 0.0,
+        "20000Hz": 0.0
+      },
+      "crc32": "0x9c5df834",
+      "sha256": "e1f22053a639517d58aa108be79a9bfad9ab6ff6045f318b9c3113c01bae53e2",
+      "sections": [
+        {
+          "name": "unity_passthrough",
+          "float_coeffs": {
+            "b0": 1.0,
+            "b1": 0.0,
+            "b2": 0.0,
+            "a1": 0.0,
+            "a2": 0.0
+          },
+          "sof_df2t_int32": {
+            "a2": 0,
+            "a1": 0,
+            "b2": 0,
+            "b1": 0,
+            "b0": 538151913,
+            "output_shift": 0,
+            "output_gain": 32690
+          },
+          "float_max_pole_radius": 0.0,
+          "quant_max_pole_radius": 0.0,
+          "quant_poles": [
+            [
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0
+            ]
+          ],
+          "float_poles": [
+            [
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0
+            ]
+          ]
+        }
+      ]
+    }
+  }
+}

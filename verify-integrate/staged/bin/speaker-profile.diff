@@ -1,0 +1,188 @@
+--- a/speaker-profile
++++ b/speaker-profile
+@@ -2,7 +2,7 @@
+ # speaker-profile — switch measured speaker-tuning presets (built 2026-08-12
+ # from the overnight Yeti-X measurement session; see ~/project/omarchy-audio-tune).
+ #
+-# Usage: speaker-profile <warm|warm-rich|warm-deep|warm-deep-subtle|warm-clear|warm-classic|balanced|voice|flat|off|baseline|revert|status|current|list|engine>
++# Usage: speaker-profile <studio-deep|studio-spatial|studio-ref|studio-voice|warm|warm-rich|warm-deep|warm-deep-subtle|warm-clear|warm-classic|balanced|voice|flat|off|baseline|revert|status|current|list|engine>
+ #
+ # Profiles are EasyEffects output presets. "baseline"/"revert" = the canonical
+ # XPS17-Adaptive-Premium-v2 chain, untouched. The chosen profile is remembered
+@@ -47,11 +47,24 @@
+ CONTROLLER="$HOME/.local/bin/omarchy-speaker-dsp-controller"
+ ENGINE_SINK="omarchy_speaker_engine"
+ EE_SINK="easyeffects_sink"
+-declare -A ENGINE_PROFILE=([warm-deep]=1 [warm-deep-subtle]=1)
++declare -A ENGINE_PROFILE=(
++  [warm-deep]=1 [warm-deep-subtle]=1
++  [studio-deep]=1 [studio-spatial]=1 [studio-ref]=1 [studio-voice]=1
++)
++declare -A ENGINE_SINK_FOR=(
++  [warm-deep]="omarchy_speaker_engine"
++  [warm-deep-subtle]="omarchy_speaker_engine"
++  [studio-deep]="omarchy_speaker_studio"
++  [studio-spatial]="omarchy_speaker_studio_spatial"
++  [studio-ref]="omarchy_speaker_studio_ref"
++  [studio-voice]="omarchy_speaker_studio_voice"
++)
+ 
+ # What he hears, never how it was made: shown in the switch notification and
+ # kept word-for-word identical to the Setup > Speakers menu descriptions.
+ declare -A LABEL=(
++  [studio-deep]="Studio Deep" [studio-spatial]="Studio Spatial"
++  [studio-ref]="Studio Reference" [studio-voice]="Studio Voice"
+   [warm]="Warm" [warm-clear]="Warm · Clear" [warm-classic]="Warm · Classic"
+   [warm-rich]="Warm · Rich"
+   [warm-deep]="Warm · Deep" [warm-deep-subtle]="Warm · Deep · Subtle"
+@@ -59,6 +72,10 @@
+   [voice]="Voice" [flat]="Flat" [off]="Off" [baseline]="Previous tuning"
+ )
+ declare -A DESC=(
++  [studio-deep]="Deep, warm flagship studio sound with full physical bass"
++  [studio-spatial]="Wide 3D cinema soundstage with deep, anchored bass"
++  [studio-ref]="Balanced studio reference tuning with tight, accurate bass"
++  [studio-voice]="Clear, intimate voices for calls, podcasts and videos"
+   [warm]="Fuller and bassier, your everyday sound"
+   [warm-rich]="Fuller body, full even when quiet, clean when loud"
+   [warm-deep]="Warm · Rich plus deep bass notes you can follow"
+@@ -109,7 +126,21 @@
+   [[ $state == active || $state == activating || $state == reloading ]]
+ }
+ sink_present() { pactl list short sinks 2>/dev/null | awk '{print $2}' | grep -qx "$1"; }
+-engine_sink_present() { sink_present "$ENGINE_SINK"; }
++engine_sink_for() { printf '%s' "${ENGINE_SINK_FOR[$1]:-$ENGINE_SINK}"; }
++engine_sink_present() { sink_present "${1:-$ENGINE_SINK}"; }
++is_engine_sink() {
++  case "$1" in
++    omarchy_speaker_engine|omarchy_speaker_studio|omarchy_speaker_studio_spatial|omarchy_speaker_studio_ref|omarchy_speaker_studio_voice|omarchy_speaker_spatial|omarchy_speaker_spatial_71)
++      return 0
++      ;;
++    *)
++      return 1
++      ;;
++  esac
++}
++is_speaker_or_engine_sink() {
++  [[ "$1" == *HiFi__Speaker__sink ]] || is_engine_sink "$1"
++}
+ remember() { mkdir -p "$STATE_DIR"; printf '%s' "$1" > "$STATE"; }
+ controller_apply() { "$CONTROLLER" apply >/dev/null 2>&1; }
+ speaker_sink() { pactl list short sinks 2>/dev/null | awk '$2 ~ /^alsa_output\..*HiFi__Speaker__sink$/ {print $2; exit}'; }
+@@ -164,8 +195,9 @@
+ # stream starts in it, and his players are not paused for it. The saved choice is written
+ # first because both units read it (ExecCondition).
+ enter_engine() {
+-  local profile="$1" previous
++  local profile="$1" previous target_sink cur_default
+   previous="$(saved_profile)"
++  target_sink="$(engine_sink_for "$profile")"
+   remember "$profile"
+   # A unit that gave up after repeated crashes (start limit, fallback to Warm · Rich)
+   # must be allowed to start again when he picks it again.
+@@ -175,9 +207,10 @@
+     return 1
+   fi
+   local _
+-  for _ in {1..40}; do engine_sink_present && break; sleep 0.1; done
+-  if ! engine_sink_present; then
+-    systemctl --user stop "$ENGINE_UNIT" 2>/dev/null
++  for _ in {1..40}; do engine_sink_present "$target_sink" && break; sleep 0.1; done
++  if ! engine_sink_present "$target_sink"; then
++    # Only stop the engine if we were not already on another working filter-chain profile.
++    [[ $(engine_of "$previous") == filter-chain ]] || systemctl --user stop "$ENGINE_UNIT" 2>/dev/null
+     remember "$previous"
+     return 1
+   fi
+@@ -186,8 +219,17 @@
+     hold_pause_rule "$EE_SINK"
+     systemctl --user stop --job-mode=ignore-dependencies "$EE_UNIT" 2>/dev/null
+   fi
++  # When internal speakers (or another filter-chain sink) are currently default, switch
++  # directly to the chosen profile's sink at unity 100% unmuted; never steal Bluetooth/HDMI.
++  cur_default="$(pactl get-default-sink 2>/dev/null || true)"
++  if [[ -n $cur_default && $cur_default != "$target_sink" ]] && is_speaker_or_engine_sink "$cur_default"; then
++    pactl set-sink-mute "$target_sink" 0 2>/dev/null || true
++    pactl set-sink-volume "$target_sink" 100% 2>/dev/null || true
++    pactl set-default-sink "$target_sink" 2>/dev/null || true
++  fi
+   # From here the controller runs on its own (its Wants= on EasyEffects is skipped by
+-  # EasyEffects' condition). If it was not running, this apply takes the speakers.
++  # EasyEffects' condition). If it was not running, this apply takes the speakers and
++  # pushes live volume tracking (`studio:Volume (dB)` or Warm · Deep contour/ceiling).
+   systemctl --user start "$CONTROLLER_UNIT" 2>/dev/null
+   controller_apply
+   release_pause_rule
+@@ -203,12 +245,14 @@
+ # names it, so it is saved here too, even if the controller could not run. On failure the
+ # old choice returns.
+ leave_engine() {
+-  local profile="$1" previous speaker
++  local profile="$1" previous prev_sink cur_default speaker
+   engine_engaged || return 0
+   previous="$(saved_profile)"
++  prev_sink="$(engine_sink_for "$previous")"
+   if ! "$CONTROLLER" hand-back "$profile" >/dev/null 2>&1; then
+     speaker="$(speaker_sink)"
+-    [[ -n $speaker && "$(pactl get-default-sink 2>/dev/null)" == "$ENGINE_SINK" ]] \
++    cur_default="$(pactl get-default-sink 2>/dev/null || true)"
++    [[ -n $speaker ]] && is_engine_sink "$cur_default" \
+       && pactl set-default-sink "$speaker" 2>/dev/null
+   fi
+   remember "$profile"
+@@ -218,7 +262,11 @@
+     controller_apply
+     return 1
+   fi
+-  hold_pause_rule "$ENGINE_SINK"
++  if sink_present "$prev_sink"; then
++    hold_pause_rule "$prev_sink"
++  else
++    hold_pause_rule "$ENGINE_SINK"
++  fi
+   systemctl --user stop "$ENGINE_UNIT" 2>/dev/null
+   systemctl --user reset-failed "$ENGINE_UNIT" 2>/dev/null
+   release_pause_rule
+@@ -232,7 +280,11 @@
+     if [[ $cur == off ]]; then
+       echo "active profile: off (correction bypassed)"
+     elif [[ -n ${ENGINE_PROFILE[$cur]:-} ]]; then
+-      echo "active profile: $cur (speaker engine ${ENGINE_UNIT%.service})"
++      if [[ $cur == studio-* ]]; then
++        echo "active profile: $cur (speaker engine ${ENGINE_UNIT%.service}, sink $(engine_sink_for "$cur"))"
++      else
++        echo "active profile: $cur (speaker engine ${ENGINE_UNIT%.service})"
++      fi
+     else
+       echo "active profile: $cur (preset ${MAP[$cur]:-$CANONICAL})"
+     fi
+@@ -246,14 +298,18 @@
+   engine)
+     engine_of "$(saved_profile)"
+     ;;
+-  warm-deep|warm-deep-subtle)
++  studio-deep|studio-spatial|studio-ref|studio-voice|warm-deep|warm-deep-subtle)
+     take_switch_lock "$cmd"
+     if ! enter_engine "$cmd"; then
+       echo "failed to start the speaker engine ($ENGINE_UNIT); sound unchanged" >&2
+       say "Couldn't switch the speakers to ${LABEL[$cmd]}" "The sound is unchanged."
+       exit 1
+     fi
+-    echo "loaded: $cmd (speaker engine ${ENGINE_UNIT%.service})"
++    if [[ $cmd == studio-* ]]; then
++      echo "loaded: $cmd (speaker engine ${ENGINE_UNIT%.service}, sink $(engine_sink_for "$cmd"))"
++    else
++      echo "loaded: $cmd (speaker engine ${ENGINE_UNIT%.service})"
++    fi
+     say_status "Speakers: ${LABEL[$cmd]}" "${DESC[$cmd]}"
+     ;;
+   revert)
+@@ -321,7 +377,7 @@
+     say_status "Speakers: ${LABEL[$cmd]:-$cmd}" "${DESC[$cmd]:-}"
+     ;;
+   *)
+-    echo "usage: speaker-profile <warm|warm-rich|warm-deep|warm-deep-subtle|warm-clear|warm-classic|balanced|voice|flat|off|baseline|revert|status|current|list|engine>" >&2
++    echo "usage: speaker-profile <studio-deep|studio-spatial|studio-ref|studio-voice|warm|warm-rich|warm-deep|warm-deep-subtle|warm-clear|warm-classic|balanced|voice|flat|off|baseline|revert|status|current|list|engine>" >&2
+     echo "       (append -eq for the biquad fallback versions, e.g. balanced-eq)" >&2
+     exit 1
+     ;;

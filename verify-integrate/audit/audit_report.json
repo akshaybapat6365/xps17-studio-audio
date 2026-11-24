@@ -1,0 +1,937 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at_utc": "2026-11-24T16:33:48Z",
+  "workspace": "/home/akshaybapat/project/xps17-studio-audio",
+  "target_home": "/home/akshaybapat",
+  "summary": {
+    "overall_status": "PASS",
+    "counts": {
+      "PASS": 27,
+      "WARN": 0,
+      "FAIL": 0,
+      "PENDING": 0
+    },
+    "total_checks": 27
+  },
+  "groups": {
+    "group1_pipewire_graph": {
+      "title": "Check Group 1 \u2014 PipeWire Graph & Config Validator",
+      "status": "PASS",
+      "counts": {
+        "PASS": 7,
+        "WARN": 0,
+        "FAIL": 0,
+        "PENDING": 0
+      },
+      "checks": [
+        {
+          "id": "G1.1_spa_json_syntax",
+          "name": "SPA-JSON Balanced Braces/Brackets/Quotes & Parse",
+          "status": "PASS",
+          "message": "92-xps17-studio.conf parsed cleanly with balanced braces, brackets, and quotes.",
+          "evidence": {
+            "path": "/home/akshaybapat/project/xps17-studio-audio/verify-integrate/staged/pipewire/92-xps17-studio.conf",
+            "bytes": 12418
+          }
+        },
+        {
+          "id": "G1.2_context_modules",
+          "name": "context.modules Structure",
+          "status": "PASS",
+          "message": "Found 4 libpipewire-module-filter-chain module(s) in context.modules.",
+          "evidence": {
+            "total_modules": 4,
+            "filter_chain_count": 4
+          }
+        },
+        {
+          "id": "G1.3_expected_sinks",
+          "name": "All 4 Studio Sink Nodes Declared",
+          "status": "PASS",
+          "message": "All 4 expected Studio sink nodes present.",
+          "evidence": {
+            "expected": [
+              "omarchy_speaker_studio",
+              "omarchy_speaker_studio_spatial",
+              "omarchy_speaker_studio_ref",
+              "omarchy_speaker_studio_voice"
+            ],
+            "found": [
+              "omarchy_speaker_studio",
+              "omarchy_speaker_studio_ref",
+              "omarchy_speaker_studio_spatial",
+              "omarchy_speaker_studio_voice"
+            ],
+            "missing": []
+          }
+        },
+        {
+          "id": "G1.4_passive_playback",
+          "name": "Zero Idle CPU (playback.props.node.passive = true)",
+          "status": "PASS",
+          "message": "All filter-chain playback streams set node.passive = true (zero idle CPU).",
+          "evidence": {
+            "failures": []
+          }
+        },
+        {
+          "id": "G1.5_no_mic_capture",
+          "name": "No Unintended Microphone / Capture Source Capture",
+          "status": "PASS",
+          "message": "All modules strictly Audio/Sink playback graphs with zero capture/mic references.",
+          "evidence": {
+            "violations": []
+          }
+        },
+        {
+          "id": "G1.6_dag_acyclicity",
+          "name": "Filter Graph DAG Acyclicity (Topological Sort)",
+          "status": "PASS",
+          "message": "All filter-chain graphs verified acyclic (strict DAGs).",
+          "evidence": {
+            "failures": [],
+            "graphs": {
+              "omarchy_speaker_studio": {
+                "node_count": 3,
+                "link_count": 2,
+                "inputs": [
+                  "in_l:In",
+                  "in_r:In"
+                ],
+                "outputs": [
+                  "studio:Out L",
+                  "studio:Out R"
+                ],
+                "topological_order": [
+                  "in_l",
+                  "in_r",
+                  "studio"
+                ]
+              },
+              "omarchy_speaker_studio_spatial": {
+                "node_count": 3,
+                "link_count": 2,
+                "inputs": [
+                  "in_l:In",
+                  "in_r:In"
+                ],
+                "outputs": [
+                  "studio:Out L",
+                  "studio:Out R"
+                ],
+                "topological_order": [
+                  "in_l",
+                  "in_r",
+                  "studio"
+                ]
+              },
+              "omarchy_speaker_studio_ref": {
+                "node_count": 3,
+                "link_count": 2,
+                "inputs": [
+                  "in_l:In",
+                  "in_r:In"
+                ],
+                "outputs": [
+                  "studio:Out L",
+                  "studio:Out R"
+                ],
+                "topological_order": [
+                  "in_l",
+                  "in_r",
+                  "studio"
+                ]
+              },
+              "omarchy_speaker_studio_voice": {
+                "node_count": 3,
+                "link_count": 2,
+                "inputs": [
+                  "in_l:In",
+                  "in_r:In"
+                ],
+                "outputs": [
+                  "studio:Out L",
+                  "studio:Out R"
+                ],
+                "topological_order": [
+                  "in_l",
+                  "in_r",
+                  "studio"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "G1.7_port_references",
+          "name": "Valid Node Input/Output Port References",
+          "status": "PASS",
+          "message": "All link, input, and output port references resolve cleanly to declared nodes and valid ports.",
+          "evidence": {
+            "failures": []
+          }
+        }
+      ]
+    },
+    "group2_ladspa_abi_and_kernels": {
+      "title": "Check Group 2 \u2014 LADSPA ABI, 10-Port Contract & FIR Kernels",
+      "status": "PASS",
+      "counts": {
+        "PASS": 5,
+        "WARN": 0,
+        "FAIL": 0,
+        "PENDING": 0
+      },
+      "checks": [
+        {
+          "id": "G2.1_ladspa_abi",
+          "name": "LADSPA dlopen & Descriptor ABI (Label, UniqueID, Hard-RT)",
+          "status": "PASS",
+          "message": "dlopen OK: Label='xps17_studio_dsp', UniqueID=597201, Hard-RT=True, PortCount=14.",
+          "evidence": {
+            "path": "/home/akshaybapat/project/xps17-studio-audio/dsp-engine/lib/libxps17_studio_dsp.so",
+            "sha256": "4b252b652a6c467674dd00866c62245b0c7d71d3eece11895ba845f11cefa73b",
+            "label": "xps17_studio_dsp",
+            "unique_id": 597201,
+            "properties_hex": "0x4",
+            "hard_rt_capable": true,
+            "port_count": 14,
+            "name": "XPS 17 9720 Studio Audio Engine",
+            "maker": "XPS17 Studio Audio Engineering Stack"
+          }
+        },
+        {
+          "id": "G2.2_ladspa_10port_contract",
+          "name": "LADSPA 4 Audio + Exact 10 Control Ports Contract",
+          "status": "PASS",
+          "message": "Exact 4 audio ports + 10 control ports verified (optional control outputs: []).",
+          "evidence": {
+            "audio_in": [
+              "In L",
+              "In R"
+            ],
+            "audio_out": [
+              "Out L",
+              "Out R"
+            ],
+            "control_in": [
+              "Mode",
+              "Volume (dB)",
+              "Bass Depth",
+              "Physical Bass Hz",
+              "Warmth Body",
+              "Stage Depth",
+              "Spatial XTC",
+              "Drive (dB)",
+              "Ceiling (dBFS)",
+              "Excursion Guard"
+            ],
+            "control_out": [],
+            "errors": [],
+            "port_table": [
+              {
+                "index": 0,
+                "name": "In L",
+                "descriptor_hex": "0x9",
+                "hint_hex": "0x0",
+                "lower_bound": 0.0,
+                "upper_bound": 0.0
+              },
+              {
+                "index": 1,
+                "name": "In R",
+                "descriptor_hex": "0x9",
+                "hint_hex": "0x0",
+                "lower_bound": 0.0,
+                "upper_bound": 0.0
+              },
+              {
+                "index": 2,
+                "name": "Out L",
+                "descriptor_hex": "0xa",
+                "hint_hex": "0x0",
+                "lower_bound": 0.0,
+                "upper_bound": 0.0
+              },
+              {
+                "index": 3,
+                "name": "Out R",
+                "descriptor_hex": "0xa",
+                "hint_hex": "0x0",
+                "lower_bound": 0.0,
+                "upper_bound": 0.0
+              },
+              {
+                "index": 4,
+                "name": "Mode",
+                "descriptor_hex": "0x5",
+                "hint_hex": "0x223",
+                "lower_bound": 0.0,
+                "upper_bound": 3.0
+              },
+              {
+                "index": 5,
+                "name": "Volume (dB)",
+                "descriptor_hex": "0x5",
+                "hint_hex": "0x103",
+                "lower_bound": -45.0,
+                "upper_bound": 0.0
+              },
+              {
+                "index": 6,
+                "name": "Bass Depth",
+                "descriptor_hex": "0x5",
+                "hint_hex": "0x243",
+                "lower_bound": 0.0,
+                "upper_bound": 1.5
+              },
+              {
+                "index": 7,
+                "name": "Physical Bass Hz",
+                "descriptor_hex": "0x5",
+                "hint_hex": "0x93",
+                "lower_bound": 65.0,
+                "upper_bound": 180.0
+              },
+              {
+                "index": 8,
+                "name": "Warmth Body",
+                "descriptor_hex": "0x5",
+                "hint_hex": "0x243",
+                "lower_bound": 0.0,
+                "upper_bound": 1.5
+              },
+              {
+                "index": 9,
+                "name": "Stage Depth",
+                "descriptor_hex": "0x5",
+                "hint_hex": "0xc3",
+                "lower_bound": 0.0,
+                "upper_bound": 1.5
+              },
+              {
+                "index": 10,
+                "name": "Spatial XTC",
+                "descriptor_hex": "0x5",
+                "hint_hex": "0x203",
+                "lower_bound": 0.0,
+                "upper_bound": 1.0
+              },
+              {
+                "index": 11,
+                "name": "Drive (dB)",
+                "descriptor_hex": "0x5",
+                "hint_hex": "0xc3",
+                "lower_bound": 0.0,
+                "upper_bound": 12.0
+              },
+              {
+                "index": 12,
+                "name": "Ceiling (dBFS)",
+                "descriptor_hex": "0x5",
+                "hint_hex": "0x103",
+                "lower_bound": -9.0,
+                "upper_bound": -0.3
+              },
+              {
+                "index": 13,
+                "name": "Excursion Guard",
+                "descriptor_hex": "0x5",
+                "hint_hex": "0x243",
+                "lower_bound": 0.0,
+                "upper_bound": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "id": "G2.3_cross_contract_parity",
+          "name": "10-Port Control Parity (LADSPA <-> 92-xps17-studio.conf <-> controller)",
+          "status": "PASS",
+          "message": "Every control port name in 92-xps17-studio.conf and staged controller matches the exact 10-port LADSPA contract.",
+          "evidence": {
+            "pipewire_conf_controls": {
+              "omarchy_speaker_studio": [
+                "Mode",
+                "Volume (dB)",
+                "Bass Depth",
+                "Physical Bass Hz",
+                "Warmth Body",
+                "Stage Depth",
+                "Spatial XTC",
+                "Drive (dB)",
+                "Ceiling (dBFS)",
+                "Excursion Guard"
+              ],
+              "omarchy_speaker_studio_spatial": [
+                "Mode",
+                "Volume (dB)",
+                "Bass Depth",
+                "Physical Bass Hz",
+                "Warmth Body",
+                "Stage Depth",
+                "Spatial XTC",
+                "Drive (dB)",
+                "Ceiling (dBFS)",
+                "Excursion Guard"
+              ],
+              "omarchy_speaker_studio_ref": [
+                "Mode",
+                "Volume (dB)",
+                "Bass Depth",
+                "Physical Bass Hz",
+                "Warmth Body",
+                "Stage Depth",
+                "Spatial XTC",
+                "Drive (dB)",
+                "Ceiling (dBFS)",
+                "Excursion Guard"
+              ],
+              "omarchy_speaker_studio_voice": [
+                "Mode",
+                "Volume (dB)",
+                "Bass Depth",
+                "Physical Bass Hz",
+                "Warmth Body",
+                "Stage Depth",
+                "Spatial XTC",
+                "Drive (dB)",
+                "Ceiling (dBFS)",
+                "Excursion Guard"
+              ]
+            },
+            "runtime.py": {
+              "file": "/home/akshaybapat/project/xps17-studio-audio/verify-integrate/staged/controller/runtime.py",
+              "referenced_controls": [],
+              "suspicious_controls": [],
+              "referenced_sinks": [
+                "omarchy_speaker_studio",
+                "omarchy_speaker_studio_ref",
+                "omarchy_speaker_studio_spatial",
+                "omarchy_speaker_studio_voice"
+              ]
+            },
+            "model.py": {
+              "file": "/home/akshaybapat/project/xps17-studio-audio/verify-integrate/staged/controller/model.py",
+              "referenced_controls": [
+                "Physical Bass Hz",
+                "Volume (dB)"
+              ],
+              "suspicious_controls": [],
+              "referenced_sinks": []
+            }
+          }
+        },
+        {
+          "id": "G2.4_fir_kernels",
+          "name": "4x 4096-Tap Stereo 48 kHz Float32 FIR Kernels",
+          "status": "PASS",
+          "message": "All 4 FIR kernels verified: 48 kHz, 2-ch, 4096-tap IEEE float32, finite taps, bounded FFT gain.",
+          "evidence": {
+            "kernels_dir": "/home/akshaybapat/project/xps17-studio-audio/acoustics-research/kernels",
+            "missing": [],
+            "results": {
+              "xps17-studio-deep.wav": {
+                "sha256": "1d19d9683c2f67430dd5b248da74c482d6eb89e54fc6a2fb89ebe3d14a467655",
+                "sample_rate": 48000,
+                "channels": 2,
+                "num_frames": 4096,
+                "stats": [
+                  {
+                    "channel": 0,
+                    "peak_tap": 0.971516,
+                    "l1_norm": 5.589622,
+                    "l2_norm": 1.370986,
+                    "dc_gain": 0.194048,
+                    "max_fft_db": 6.057
+                  },
+                  {
+                    "channel": 1,
+                    "peak_tap": 0.971516,
+                    "l1_norm": 5.589622,
+                    "l2_norm": 1.370986,
+                    "dc_gain": 0.194048,
+                    "max_fft_db": 6.057
+                  }
+                ],
+                "errors": []
+              },
+              "xps17-studio-spatial.wav": {
+                "sha256": "61e09be643cd0cb7b63b9f54eaa6d20efa84cda6405a7acd95a0ae9d2e58582f",
+                "sample_rate": 48000,
+                "channels": 2,
+                "num_frames": 4096,
+                "stats": [
+                  {
+                    "channel": 0,
+                    "peak_tap": 0.979479,
+                    "l1_norm": 5.608907,
+                    "l2_norm": 1.396781,
+                    "dc_gain": 0.190681,
+                    "max_fft_db": 5.882
+                  },
+                  {
+                    "channel": 1,
+                    "peak_tap": 0.979479,
+                    "l1_norm": 5.608907,
+                    "l2_norm": 1.396781,
+                    "dc_gain": 0.190681,
+                    "max_fft_db": 5.882
+                  }
+                ],
+                "errors": []
+              },
+              "xps17-studio-reference.wav": {
+                "sha256": "09827622d93c4d2be756121b31497c294669ed096360e0b448c216b05986080c",
+                "sample_rate": 48000,
+                "channels": 2,
+                "num_frames": 4096,
+                "stats": [
+                  {
+                    "channel": 0,
+                    "peak_tap": 0.987079,
+                    "l1_norm": 5.669658,
+                    "l2_norm": 1.41369,
+                    "dc_gain": 0.191734,
+                    "max_fft_db": 6.04
+                  },
+                  {
+                    "channel": 1,
+                    "peak_tap": 0.987079,
+                    "l1_norm": 5.669658,
+                    "l2_norm": 1.41369,
+                    "dc_gain": 0.191734,
+                    "max_fft_db": 6.04
+                  }
+                ],
+                "errors": []
+              },
+              "xps17-studio-voice.wav": {
+                "sha256": "d9bcf22f7afff51bd2943dec0ce5ecabc9534c2c846f84f2bdc7053935b82e22",
+                "sample_rate": 48000,
+                "channels": 2,
+                "num_frames": 4096,
+                "stats": [
+                  {
+                    "channel": 0,
+                    "peak_tap": 0.844109,
+                    "l1_norm": 5.074792,
+                    "l2_norm": 1.237536,
+                    "dc_gain": 0.141397,
+                    "max_fft_db": 4.772
+                  },
+                  {
+                    "channel": 1,
+                    "peak_tap": 0.844109,
+                    "l1_norm": 5.074792,
+                    "l2_norm": 1.237536,
+                    "dc_gain": 0.141397,
+                    "max_fft_db": 4.772
+                  }
+                ],
+                "errors": []
+              }
+            }
+          }
+        },
+        {
+          "id": "G2.5_dsp_params_json",
+          "name": "acoustics-research/dsp_params.json Contract",
+          "status": "PASS",
+          "message": "dsp_params.json parsed cleanly (15 top-level keys).",
+          "evidence": {
+            "path": "/home/akshaybapat/project/xps17-studio-audio/acoustics-research/dsp_params.json",
+            "sha256": "f0d82dc48c1e3aac3f8910de9ae952b0da988f738889d84eaf262c43880e12c8",
+            "keys": [
+              "bass",
+              "device",
+              "excursion",
+              "fir_kernels",
+              "generated_by",
+              "iso226_2023_loudness",
+              "klippel_physics",
+              "ladspa_contract",
+              "multiband_dynamics",
+              "pipeline_stage_order",
+              "psychoacoustic_bass_and_gate",
+              "schema_version",
+              "sliding_hpf",
+              "spatial_depth_and_xtc",
+              "true_peak_limiter"
+            ]
+          }
+        }
+      ]
+    },
+    "group3_privacy_bt_loudness": {
+      "title": "Check Group 3 \u2014 Live Mic-Privacy, Bluetooth & Loudness Authority Guards",
+      "status": "PASS",
+      "counts": {
+        "PASS": 7,
+        "WARN": 0,
+        "FAIL": 0,
+        "PENDING": 0
+      },
+      "checks": [
+        {
+          "id": "G3.1_no_mic_monitor_dropin",
+          "name": "Live EasyEffects no-mic-monitor.conf Drop-in Guard",
+          "status": "PASS",
+          "message": "no-mic-monitor.conf exists and enforces listenToMic=false via ExecStartPre.",
+          "evidence": {
+            "path": "/home/akshaybapat/.config/systemd/user/easyeffects-speaker-dsp.service.d/no-mic-monitor.conf",
+            "sha256": "6fff75c913f4cdff8f920e42cc3fb52e6bf7dfeb283e466d11b0eb542d26a1a8"
+          }
+        },
+        {
+          "id": "G3.2_bt_no_phone_audio",
+          "name": "Live WirePlumber 51-bluetooth-no-phone-audio.conf Guard",
+          "status": "PASS",
+          "message": "51-bluetooth-no-phone-audio.conf verified: excludes a2dp_sink and hfp_hf (roles=['a2dp_source', 'hfp_ag', 'bap_sink', 'bap_source', 'bap_bcast_sink', 'bap_bcast_source', 'asha_sink']).",
+          "evidence": {
+            "path": "/home/akshaybapat/.config/wireplumber/wireplumber.conf.d/51-bluetooth-no-phone-audio.conf",
+            "sha256": "86b9d38a0d8e271ce7d498b10fb52f381835e0ab5db6da731005eeff70201dd0",
+            "roles": [
+              "a2dp_source",
+              "hfp_ag",
+              "bap_sink",
+              "bap_source",
+              "bap_bcast_sink",
+              "bap_bcast_source",
+              "asha_sink"
+            ]
+          }
+        },
+        {
+          "id": "G3.3_soundwire_mic_default_conf",
+          "name": "Live WirePlumber 60-soundwire-input-default-volume.conf Guard",
+          "status": "PASS",
+          "message": "60-soundwire-input-default-volume.conf pins device.routes.default-source-volume = 1.0.",
+          "evidence": {
+            "path": "/home/akshaybapat/.config/wireplumber/wireplumber.conf.d/60-soundwire-input-default-volume.conf",
+            "sha256": "76253e2cb767cef70acccece013278a5b13b004517178e267511c418b5402db4"
+          }
+        },
+        {
+          "id": "G3.4_live_mic_volume",
+          "name": "Live Default Audio Source Volume == 1.00 (100%)",
+          "status": "PASS",
+          "message": "Read-only wpctl query reports @DEFAULT_AUDIO_SOURCE@ Volume: 1.00 (100% unity).",
+          "evidence": {
+            "raw_output": "Volume: 1.00",
+            "volume": 1.0
+          }
+        },
+        {
+          "id": "G3.5_easyeffects_listen_to_mic",
+          "name": "Live EasyEffects listenToMic == false",
+          "status": "PASS",
+          "message": "easyeffectsrc sets listenToMic=false (mic loopback disabled).",
+          "evidence": {
+            "path": "/home/akshaybapat/.config/easyeffects/db/easyeffectsrc",
+            "listenToMic": "false"
+          }
+        },
+        {
+          "id": "G3.6_staged_guard_non_interference",
+          "name": "Staged Files Do Not Touch Mic-Privacy or Bluetooth Guards",
+          "status": "PASS",
+          "message": "Scanned 14 staged file(s): zero modifications to mic-privacy or Bluetooth guards.",
+          "evidence": {
+            "staged_file_count": 14,
+            "violations": []
+          }
+        },
+        {
+          "id": "G3.7_loudness_authority",
+          "name": "Loudness Authority (LOUDNESS_DRIVE_DB & In-Chain Drive/Ceiling)",
+          "status": "PASS",
+          "message": "Loudness authority preserved: LOUDNESS_DRIVE_DB intact in controller/runtime.py and Drive (dB) + brickwall Ceiling active in 92-xps17-studio.conf.",
+          "evidence": {
+            "staged_runtime_LOUDNESS_DRIVE_DB": 7.0,
+            "pipewire_drive_db": {
+              "omarchy_speaker_studio": 7.0,
+              "omarchy_speaker_studio_spatial": 7.0,
+              "omarchy_speaker_studio_ref": 6.0,
+              "omarchy_speaker_studio_voice": 7.5
+            },
+            "pipewire_ceiling_db": {
+              "omarchy_speaker_studio": -1.0,
+              "omarchy_speaker_studio_spatial": -1.0,
+              "omarchy_speaker_studio_ref": -1.0,
+              "omarchy_speaker_studio_voice": -1.0
+            }
+          }
+        }
+      ]
+    },
+    "group4_kernel_driver_safety": {
+      "title": "Check Group 4 \u2014 Kernel Driver Forbidden-Register & IPC4 Static Audit",
+      "status": "PASS",
+      "counts": {
+        "PASS": 4,
+        "WARN": 0,
+        "FAIL": 0,
+        "PENDING": 0
+      },
+      "checks": [
+        {
+          "id": "G4.1_forbidden_alc1316_regs",
+          "name": "Forbidden ALC1316 Protection Registers Static Audit",
+          "status": "PASS",
+          "message": "Scanned 10 kernel C/H/patch file(s): ZERO writes to forbidden ALC1316 protection registers.",
+          "evidence": {
+            "scanned_files": [
+              "kernel-driver/rt1316-xps17/patches/0001-p1-bq-in-io-init.patch",
+              "kernel-driver/rt1316-xps17/patches/0002-p2-xu24-truthful.patch",
+              "kernel-driver/rt1316-xps17/patches/0003-p3-crossover-enable-and-iv-slot-decollision.patch",
+              "kernel-driver/rt1316-xps17/patches/0004-p4-deadman-guard-drive-gate.patch",
+              "kernel-driver/rt1316-xps17/rt1316-sdw.c",
+              "kernel-driver/rt1316-xps17/rt1316-sdw.h",
+              "kernel-driver/rt1316-xps17/rt1316-xps17-bq-tables.h",
+              "kernel-driver/rt1316-xps17/rt1316-xps17-policy.h",
+              "kernel-driver/rt1316-xps17/snd-soc-rt1316-sdw.mod.c",
+              "kernel-driver/verify/test_rt1316_policy.c"
+            ],
+            "forbidden_regs": [
+              "0xc000",
+              "0xc050",
+              "0xc082",
+              "0xc093",
+              "0xc09c",
+              "0xc09d",
+              "0xc0a3",
+              "0xc102",
+              "0xc60e"
+            ],
+            "violations": [],
+            "upstream_stock_entries_verified_unchanged": [
+              {
+                "file": "kernel-driver/rt1316-xps17/rt1316-sdw.c",
+                "line": 550,
+                "register": "0xc000",
+                "value": "0x2",
+                "note": "Unchanged upstream v7.2.15 rt1316_io_init SW reset"
+              },
+              {
+                "file": "kernel-driver/rt1316-xps17/rt1316-sdw.c",
+                "line": 106,
+                "register": "0xc60e",
+                "value": "0x5",
+                "note": "Unchanged upstream v7.2.15 rt1316_blind_write stock entry"
+              },
+              {
+                "file": "kernel-driver/rt1316-xps17/rt1316-sdw.c",
+                "line": 107,
+                "register": "0xc102",
+                "value": "0x0",
+                "note": "Unchanged upstream v7.2.15 rt1316_blind_write stock entry"
+              },
+              {
+                "file": "kernel-driver/rt1316-xps17/rt1316-sdw.c",
+                "line": 110,
+                "register": "0xc09c",
+                "value": "0x7b",
+                "note": "Unchanged upstream v7.2.15 rt1316_blind_write stock entry"
+              },
+              {
+                "file": "kernel-driver/rt1316-xps17/rt1316-sdw.c",
+                "line": 114,
+                "register": "0xc0a3",
+                "value": "0x71",
+                "note": "Unchanged upstream v7.2.15 rt1316_blind_write stock entry"
+              },
+              {
+                "file": "kernel-driver/rt1316-xps17/rt1316-sdw.c",
+                "line": 116,
+                "register": "0xc093",
+                "value": "0x80",
+                "note": "Unchanged upstream v7.2.15 rt1316_blind_write stock entry"
+              },
+              {
+                "file": "kernel-driver/rt1316-xps17/rt1316-sdw.c",
+                "line": 117,
+                "register": "0xc09d",
+                "value": "0x80",
+                "note": "Unchanged upstream v7.2.15 rt1316_blind_write stock entry"
+              },
+              {
+                "file": "kernel-driver/rt1316-xps17/rt1316-sdw.c",
+                "line": 120,
+                "register": "0xc050",
+                "value": "0x83",
+                "note": "Unchanged upstream v7.2.15 rt1316_blind_write stock entry"
+              }
+            ]
+          }
+        },
+        {
+          "id": "G4.2_high_gain_deadman_gate",
+          "name": "High-Gain (0xC60F=0x05, 0xD002/0xD004=0xA9) Deadman Protection Gate",
+          "status": "PASS",
+          "message": "Conservative safe posture: no 0xC60F=0x05 or 0xD002/0xD004=0xA9 high-gain writes present.",
+          "evidence": {
+            "high_gain_hits": [],
+            "ungated_violations": []
+          }
+        },
+        {
+          "id": "G4.3_ipc4_drc_switch_fence",
+          "name": "IPC4 'Post Mixer Speaker Playback DRC switch' Fenced OFF",
+          "status": "PASS",
+          "message": "IPC4 configs explicitly fence 'Post Mixer Speaker Playback DRC switch' OFF (2 fence layer(s) verified).",
+          "evidence": {
+            "ipc4_files": [
+              "kernel-driver/rt1316-xps17/dkms.conf",
+              "kernel-driver/sof-ipc4/gen_sof_eqiir_blob.py",
+              "kernel-driver/sof-ipc4/guard-bridge/omarchy-speaker-guard-p4.conf",
+              "kernel-driver/sof-ipc4/guard-bridge/p4_deadman_bridge.py",
+              "kernel-driver/sof-ipc4/guard-bridge/test_p4_deadman_bridge.py",
+              "kernel-driver/sof-ipc4/ipc4-stage/90-sof-ipc4-xps17.conf",
+              "kernel-driver/sof-ipc4/ipc4-stage/stage-ipc4-check.sh",
+              "kernel-driver/sof-ipc4/ipc4-stage/ucm2-drc-fence.conf",
+              "kernel-driver/sof-ipc4/ipc4-stage/xps17-sof-ipc4-verify.sh",
+              "kernel-driver/sof-ipc4/test_sof_eqiir_blob.py"
+            ],
+            "fence_mechanisms": [
+              "UCM2 Define override (kernel-driver/sof-ipc4/ipc4-stage/ucm2-drc-fence.conf:19: Define.PostMixerSpeakerPlaybackDrcSwitch \"N/A\")",
+              "Runtime amixer fence (kernel-driver/sof-ipc4/ipc4-stage/xps17-sof-ipc4-verify.sh:137: amixer_cset \"$CTL_DRC\" \"off\" || true)"
+            ],
+            "matches": [
+              "kernel-driver/sof-ipc4/ipc4-stage/90-sof-ipc4-xps17.conf:18: #   +13.7 dB makeup-gain IPC4 DRC (`Post Mixer Speaker Playback DRC switch`).",
+              "kernel-driver/sof-ipc4/ipc4-stage/stage-ipc4-check.sh:101: \"Post Mixer Speaker Playback DRC switch\",",
+              "kernel-driver/sof-ipc4/ipc4-stage/stage-ipc4-check.sh:150: assert re.search(r'^\\s*Define\\.PostMixerSpeakerPlaybackDrcSwitch\\s+\"N/A\"\\s*$', fence, re.M), \"Missing DRC switch fence\"",
+              "kernel-driver/sof-ipc4/ipc4-stage/stage-ipc4-check.sh:201: \"cget:Post Mixer Speaker Playback DRC switch\")",
+              "kernel-driver/sof-ipc4/ipc4-stage/stage-ipc4-check.sh:205: \"cset:Post Mixer Speaker Playback DRC switch\")",
+              "kernel-driver/sof-ipc4/ipc4-stage/ucm2-drc-fence.conf:12: #      `ControlExists \"name='${var:PostMixerSpeakerPlaybackDrcSwitch}'\"` and turns it ON",
+              "kernel-driver/sof-ipc4/ipc4-stage/ucm2-drc-fence.conf:14: #   4. By overriding PostMixerSpeakerPlaybackDrcSwitch to \"N/A\" (a nonexistent kcontrol),",
+              "kernel-driver/sof-ipc4/ipc4-stage/ucm2-drc-fence.conf:19: Define.PostMixerSpeakerPlaybackDrcSwitch \"N/A\"",
+              "kernel-driver/sof-ipc4/ipc4-stage/xps17-sof-ipc4-verify.sh:12: #   5. `Post Mixer Speaker Playback DRC switch` is OFF (and stays OFF); if found ON,",
+              "kernel-driver/sof-ipc4/ipc4-stage/xps17-sof-ipc4-verify.sh:34: CTL_DRC=\"Post Mixer Speaker Playback DRC switch\""
+            ],
+            "enabled_violations": []
+          }
+        },
+        {
+          "id": "G4.4_no_regmap_hang_reads",
+          "name": "No Reads of /sys/kernel/debug/regmap/*/{access,range}",
+          "status": "PASS",
+          "message": "Scanned 36 file(s) under kernel-driver/: zero unsafe regmap access/range reads.",
+          "evidence": {
+            "violations": [],
+            "excluded_mutation_test_fixtures": [
+              "kernel-driver/verify/test_mutants.sh"
+            ]
+          }
+        }
+      ]
+    },
+    "group5_thermal_rt_cpu": {
+      "title": "Check Group 5 \u2014 Thermal & Real-Time CPU Budget Verification",
+      "status": "PASS",
+      "counts": {
+        "PASS": 4,
+        "WARN": 0,
+        "FAIL": 0,
+        "PENDING": 0
+      },
+      "checks": [
+        {
+          "id": "G5.1_package_temperature",
+          "name": "CPU Package Thermal Envelope (< 82\u00b0C)",
+          "status": "PASS",
+          "message": "Package temperature 65.0\u00b0C is cool and well under the 82\u00b0C safety ceiling.",
+          "evidence": {
+            "source": "/sys/class/thermal/thermal_zone9/temp",
+            "package_temp_c": 65.0
+          }
+        },
+        {
+          "id": "G5.2_cli_bench",
+          "name": "xps17-studio-cli bench (E-core Pinned)",
+          "status": "PASS",
+          "message": "xps17-studio-cli bench succeeded cleanly (parsed CPU=0.97%).",
+          "evidence": {
+            "path": "/home/akshaybapat/project/xps17-studio-audio/dsp-engine/bin/xps17-studio-cli",
+            "parsed_cpu_pct": 0.97,
+            "output": "=== Dell XPS 17 9720 Studio Audio DSP Engine \u2014 SIMD & Hard-RT Benchmark ===\nCPU AVX2 + FMA detected : true\n\nKernel                       |    AVX2 (ns) |  Scalar (ns) |   Speedup |  Max Abs Err\n-------------------------------------------------------------------------------------\nfir_dot_f32 (n=1024)         |         69.8 |        802.8 |    11.50x |     5.722e-6\ncmul_acc_f32 (n=129)         |         29.6 |        149.9 |     5.07x |     5.960e-8\nchebyshev_bass_f32 (n=256)   |        412.1 |       1211.2 |     2.94x |     2.980e-7\ntrue_peak_4x_f32 (n=256)     |        183.7 |       1659.0 |     9.03x |     1.192e-7\nsvf_bank8_f32 (256x8)        |       1508.6 |       9082.6 |     6.02x |     2.384e-7\n\n=== Full 7-Stage StudioDspEngine RT Benchmark (Spatial Mode, 4096-tap FIR + XTC) ===\nBlocks processed        : 2000 x 256 stereo frames (10.67 s audio @ 48 kHz)\nBlock RT budget         : 5333.33 us\nMean block latency      : 51.99 us\np50 / p95 / p99 / max   : 51.73 / 53.29 / 54.91 / 146.71 us\nTotal wall time         : 104.40 ms\nCPU usage (1 E-core)    : 0.97%\nRealtime speedup        : 102.6x realtime\nAlgorithmic latency     : 640 samples (13.33 ms)\nConvolver partitions    : 16\nAcoustics loaded        : kernels_from_disk=[true, true, true, true] | dsp_params_json=true\nRT heap allocations     : 0 (HARD-RT PROOF: PASS)\nStage breakdown (us)    : bass=10.83 | loud=1.85 | conv=5.89 | dyn=8.64 | spat=8.85 | exc=7.00 | lim=9.44"
+          }
+        },
+        {
+          "id": "G5.3_ctypes_rt_cpu_and_nan",
+          "name": "Independent E-Core dlopen RT CPU (< 1.5%) & Zero NaN/Inf Audit",
+          "status": "PASS",
+          "message": "All 4 modes verified on E-cores: worst CPU 0.967% (< 1.0%), zero NaN/Inf samples.",
+          "evidence": {
+            "pinned_ecores": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19
+            ],
+            "sample_rate": 48000,
+            "block_size": 256,
+            "worst_cpu_percent": 0.9671,
+            "total_non_finite_samples": 0,
+            "modes": {
+              "deep": {
+                "cpu_percent_1_ecore": 0.9247,
+                "p50_us": 48.58,
+                "p99_us": 56.04,
+                "max_us": 125.46,
+                "quantum_budget_us": 5333.33,
+                "peak_sample_abs": 0.871644,
+                "non_finite_samples": 0,
+                "wall_with_checks_sec": 0.085
+              },
+              "spatial": {
+                "cpu_percent_1_ecore": 0.9671,
+                "p50_us": 51.37,
+                "p99_us": 54.46,
+                "max_us": 79.4,
+                "quantum_budget_us": 5333.33,
+                "peak_sample_abs": 0.871643,
+                "non_finite_samples": 0,
+                "wall_with_checks_sec": 0.086
+              },
+              "reference": {
+                "cpu_percent_1_ecore": 0.92,
+                "p50_us": 48.84,
+                "p99_us": 52.05,
+                "max_us": 76.64,
+                "quantum_budget_us": 5333.33,
+                "peak_sample_abs": 0.871643,
+                "non_finite_samples": 0,
+                "wall_with_checks_sec": 0.084
+              },
+              "voice": {
+                "cpu_percent_1_ecore": 0.9183,
+                "p50_us": 48.64,
+                "p99_us": 54.1,
+                "max_us": 85.3,
+                "quantum_budget_us": 5333.33,
+                "peak_sample_abs": 0.871437,
+                "non_finite_samples": 0,
+                "wall_with_checks_sec": 0.085
+              }
+            }
+          }
+        },
+        {
+          "id": "G5.4_post_bench_thermal",
+          "name": "Post-Audit Package Temperature (< 82\u00b0C)",
+          "status": "PASS",
+          "message": "Post-audit package temperature remained at 66.0\u00b0C (< 82\u00b0C).",
+          "evidence": {
+            "source": "/sys/class/thermal/thermal_zone9/temp",
+            "package_temp_c": 66.0
+          }
+        }
+      ]
+    }
+  }
+}

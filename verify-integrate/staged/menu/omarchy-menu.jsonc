@@ -1,0 +1,89 @@
+{
+  // Extend the Quickshell Omarchy menu with JSONC.
+  //
+  // IDs are object keys. The parent is inferred from the dotted id, so
+  // "personal.notes" appears under "personal", and "personal" appears on the
+  // root menu. Reuse an existing id to override/extend it.
+  //
+  // Fields:
+  //   icon        Nerd Font glyph shown in the icon column.
+  //   label       Visible row title.
+  //   action      Shell command to run. If omitted, the row is a submenu.
+  //   target      Existing submenu id to open. Use for links/aliases.
+  //   provider    Runtime provider function/command returning JSON rows.
+  //   aliases     alternate `omarchy menu summon <name>` routes; also searchable.
+  //   description Optional subtitle and extra search text.
+  //   when        Shell condition; hide row when it fails.
+  //   checked     Shell condition; append ✓ when it succeeds.
+  //
+  // Examples:
+  // "personal": {"icon":"","label":"Personal"},
+  // "personal.notes": {"icon":"󰎞","label":"Notes","action":"omarchy-launch-editor ~/notes"},
+  // "personal.files": {"icon":"","label":"Files","action":"uwsm-app -- nautilus ~/Documents"},
+  //
+  // Only use provider when a provider_name function or command named "name"
+  // returns JSON rows. Static submenus only need dotted ids.
+  //
+  // Example: replace the default About action by reusing the same id. Existing
+  // fields are kept unless overridden.
+  // "about": {"icon":"","label":"About","action":"omarchy-launch-or-focus-tui \"zsh -c 'fastfetch; read -k 1'\""},
+  //
+  // Super+Space searches apps inside this menu. Omarchy 4.5's own "apps" row
+  // adds an action that opens its app grid instead; this row keeps the search
+  // by leaving that action out. Delete the row to get the 4.5 grid.
+  "apps": {"icon":"󰀻","label":"Apps","aliases":["app","applications"],"provider":"apps"},
+
+  // Shortcuts, trackpad gestures, custom tools & quick guide (Liquid Glass overlay).
+  "help": {"icon":"󰌌","label":"Shortcuts & Help","aliases":["help","shortcuts","gestures","cheatsheet","guide"],"description":"Interactive Liquid Glass shortcuts, gestures, custom tools and quick guide","when":"command -v omarchy-help >/dev/null","action":"omarchy-help toggle"},
+  "learn.keybindings": {"icon":"","label":"Shortcuts & Gestures","description":"Interactive Liquid Glass shortcuts, gestures and quick guide","action":"command -v omarchy-help >/dev/null && omarchy-help toggle || omarchy-menu-keybindings"},
+  "learn.keybindings-raw": {"icon":"󰌌","label":"Keybindings (Raw List)","description":"Classic searchable list of raw Hyprland keybindings","action":"omarchy-menu-keybindings"},
+
+  // Custom quick triggers in the Trigger submenu.
+  "trigger.overview": {"icon":"󱂬","label":"Workspace Overview","aliases":["overview","spaces","mission-control"],"description":"Live finger-tracking desktop overview with drag-and-drop","action":"hyprctl dispatch global omarchy-overview:toggle"},
+  "trigger.switcher": {"icon":"󱂬","label":"Window Switcher","aliases":["switcher","alt-tab","windows"],"description":"Liquid Glass visual MRU window and same-app switcher (Alt+Tab / Alt+`)","when":"command -v omarchy-switcher >/dev/null","action":"omarchy-switcher toggle"},
+  "trigger.everything": {"icon":"","label":"Search Everything","aliases":["everything","spotlight"],"description":"Instant search across windows, apps, tabs, agents and files","action":"omarchy-shell shell toggle akshaybapat.everything"},
+
+  // Battery Care: Dell XPS 17 9720 charge thresholds (Desk 55-80% vs Travel 100%).
+  "setup.battery": {"icon":"󰁹","label":"Battery Care","aliases":["battery","charge-cap"],"description":"Switch between 55-80% desk longevity cap and 100% travel charge","when":"command -v omarchy-battery-cap >/dev/null && [[ -d /sys/class/power_supply/BAT0 ]]"},
+  "setup.battery.desk": {"icon":"󰂄","label":"Desk Cap (55–80%)","description":"Preserve battery longevity while plugged in","checked":"[[ ! -e /run/omarchy-battery-cap.travel && \"$(cat /sys/class/power_supply/BAT0/charge_control_end_threshold 2>/dev/null)\" == \"80\" ]]","action":"out=$(omarchy-battery-cap desk 2>&1) && notify-send -a 'Battery Care' -i battery 'Desk Cap Active (55–80%)' 'Battery charging is capped at 80% to protect battery longevity.'"},
+  "setup.battery.travel": {"icon":"󰁹","label":"Travel Mode (100%)","description":"Allow a full 100% charge until reboot or switching back to Desk Cap","checked":"[[ -e /run/omarchy-battery-cap.travel || \"$(cat /sys/class/power_supply/BAT0/charge_control_end_threshold 2>/dev/null)\" == \"100\" ]]","action":"out=$(omarchy-battery-cap travel 2>&1) && notify-send -a 'Battery Care' -i battery 'Travel Mode Active (100%)' 'Battery will charge to 100% for travel.'"},
+  "setup.battery.status": {"icon":"󰋽","label":"Battery Health & Status","description":"Show current health, voltage, level and active threshold","action":"out=$(omarchy-battery-cap status 2>&1); notify-send -a 'Battery Care' -i battery 'Battery Status' \"$out\""},
+
+  // ChatGPT Desktop + Codex CLI update trigger under Update.
+  "update.chatgpt": {"icon":"","iconFont":"omarchy","label":"ChatGPT & Codex","aliases":["chatgpt","codex"],"description":"Check and safely update ChatGPT Desktop and Codex CLI","when":"command -v chatgpt-idle-update >/dev/null","action":"chatgpt-idle-update --now"},
+
+  // System Health Doctor: instant check & 1-click safe self-heal for gestures, shell, audio & daemons.
+  "setup.doctor": {"icon":"󰗶","label":"System Health Doctor","aliases":["doctor","health","diagnose"],"description":"Verify swipe gestures, overview, spatial audio, daemons, thermals & battery","when":"command -v omarchy-doctor >/dev/null","action":"omarchy-doctor --notify"},
+  "setup.doctor-heal": {"icon":"󰁪","label":"Auto-Heal Gestures & Services","aliases":["heal","fix-gestures"],"description":"Safely restore stopped overview gestures, stale locks & refresh menu","when":"command -v omarchy-doctor >/dev/null","action":"omarchy-doctor --heal --notify"},
+
+  // Trackpad: the tuner as an app window, the two scroll feels (Mac-like is the
+  // default, Flat is the feel from before it), the two lift-off modes and the
+  // read-only health check. Ticks read the live Hyprland input file.
+  "setup.trackpad": {"icon":"󰟸","label":"Trackpad","aliases":["trackpad","touchpad"],"description":"Scroll feel, lift-off and health of the built-in trackpad"},
+  "setup.trackpad.feel": {"icon":"󰓅","label":"Feel Controls","description":"Steady speed, flick boost and coast, live as you drag","action":"trackpad-tune --window"},
+  "setup.trackpad.scroll-mac": {"icon":"󰫀","label":"Scroll · Mac-like","description":"Slow strokes follow your fingers; fast sweeps go further","checked":"grep -qx 'local trackpad_steady = 1' ~/.config/hypr/input.lua && grep -qx 'local trackpad_flick_boost = 2.3' ~/.config/hypr/input.lua","action":"trackpad-tune --preset balanced && notify-send -a Trackpad -i input-touchpad \"Mac-like scrolling\" \"Slow strokes follow your fingers; fast sweeps go further. Scroll · Flat brings back the old feel.\" || notify-send -a Trackpad -i input-touchpad -u critical \"Trackpad\" \"That did not work. Open Setup › Trackpad › Health Check.\""},
+  "setup.trackpad.scroll-flat": {"icon":"󰮾","label":"Scroll · Flat (as before)","description":"The old feel: 1.6× your fingers at every speed; stops dead on lift","checked":"! grep -q '^local trackpad_steady' ~/.config/hypr/input.lua","action":"trackpad-tune --flat && notify-send -a Trackpad -i input-touchpad \"Scrolling as before\" \"The page moves 1.6× your fingers at every speed and stops dead on lift.\" || notify-send -a Trackpad -i input-touchpad -u critical \"Trackpad\" \"That did not work. Open Setup › Trackpad › Health Check.\""},
+  "setup.trackpad.stop-dead": {"icon":"󰓛","label":"Stop Dead After Lift","description":"The page stops the moment your fingers leave the pad","checked":"grep -Eq '^enabled[[:space:]]*=[[:space:]]*false' ~/.config/rinertia/config.toml","action":"trackpad-tune --stop-dead && notify-send -a Trackpad -i input-touchpad \"Scrolling stops dead\" \"The page now stops the moment you lift your fingers.\" || notify-send -a Trackpad -i input-touchpad -u critical \"Trackpad\" \"That did not work. Open Setup › Trackpad › Health Check.\""},
+  "setup.trackpad.glide": {"icon":"󰜿","label":"Glide After A Flick","description":"Only real flicks glide; any touch stops the glide","when":"grep -q '^local trackpad_steady' ~/.config/hypr/input.lua","checked":"grep -Eq '^enabled[[:space:]]*=[[:space:]]*true' ~/.config/rinertia/config.toml","action":"trackpad-tune --coast-on && notify-send -a Trackpad -i input-touchpad \"Flicks now glide\" \"Touch the pad to stop a glide. Stop Dead switches it off again.\" || notify-send -a Trackpad -i input-touchpad -u critical \"Trackpad\" \"That did not work. Open Setup › Trackpad › Health Check.\""},
+  "setup.trackpad.health": {"icon":"󰗶","label":"Health Check","description":"Check that every part of the trackpad setup is working","action":"out=$(trackpad-verify 2>&1); rc=$?; msg=$(printf '%s\\n' \"$out\" | sed 's/\\x1b\\[[0-9;]*m//g' | grep -v '^$' | tail -n 1); notify-send -a Trackpad -i input-touchpad -u $([ $rc -eq 0 ] && echo normal || echo critical) \"Trackpad health\" \"$msg\""},
+
+  // Speakers: pick how the built-in speakers sound (speaker-profile + 3D spatial). The tick
+  // follows the live default sink / saved choice; descriptions match the switch notification.
+  "setup.speakers": {"icon":"󰓃","label":"Speakers","title":"Laptop Speakers","aliases":["speakers","studio","spatial"],"description":"How the built-in speakers sound (Studio, 3D Spatial & Warm profiles)","when":"command -v speaker-profile >/dev/null || command -v omarchy-audio-spatial >/dev/null"},
+  "setup.speakers.studio-deep": {"icon":"󰝚","label":"Studio Deep","description":"Deep, warm flagship studio sound with full physical bass","when":"[[ -f ~/.config/pipewire/omarchy-speaker-engine.conf.d/92-xps17-studio.conf && -f ~/.local/share/xps17-studio-audio/lib/libxps17_studio_dsp.so ]]","checked":"[[ \"$(speaker-profile current)\" == \"studio-deep\" ]]","action":"OMARCHY_NOTIFY=1 speaker-profile studio-deep"},
+  "setup.speakers.studio-spatial": {"icon":"󰕾","label":"Studio Spatial","description":"Wide 3D cinema soundstage with deep, anchored bass","when":"[[ -f ~/.config/pipewire/omarchy-speaker-engine.conf.d/92-xps17-studio.conf && -f ~/.local/share/xps17-studio-audio/lib/libxps17_studio_dsp.so ]]","checked":"[[ \"$(speaker-profile current)\" == \"studio-spatial\" ]]","action":"OMARCHY_NOTIFY=1 speaker-profile studio-spatial"},
+  "setup.speakers.studio-ref": {"icon":"󰗑","label":"Studio Reference","description":"Balanced studio reference tuning with tight, accurate bass","when":"[[ -f ~/.config/pipewire/omarchy-speaker-engine.conf.d/92-xps17-studio.conf && -f ~/.local/share/xps17-studio-audio/lib/libxps17_studio_dsp.so ]]","checked":"[[ \"$(speaker-profile current)\" == \"studio-ref\" ]]","action":"OMARCHY_NOTIFY=1 speaker-profile studio-ref"},
+  "setup.speakers.studio-voice": {"icon":"󰗋","label":"Studio Voice","description":"Clear, intimate voices for calls, podcasts and videos","when":"[[ -f ~/.config/pipewire/omarchy-speaker-engine.conf.d/92-xps17-studio.conf && -f ~/.local/share/xps17-studio-audio/lib/libxps17_studio_dsp.so ]]","checked":"[[ \"$(speaker-profile current)\" == \"studio-voice\" ]]","action":"OMARCHY_NOTIFY=1 speaker-profile studio-voice"},
+  "setup.speakers.spatial": {"icon":"󰕾","label":"3D Spatial (FDTR-XTC)","description":"Choueiri crosstalk-cancelled 3D stereo soundstage for built-in speakers","when":"command -v omarchy-audio-spatial >/dev/null","checked":"[[ \"$(pactl get-default-sink 2>/dev/null)\" == \"omarchy_speaker_spatial\" ]]","action":"omarchy-audio-spatial spatial && notify-send -a Speakers -i audio-speakers '3D Spatial Audio Active' 'Choueiri FDTR-XTC stereo soundstage is active on laptop speakers.'"},
+  "setup.speakers.spatial-71": {"icon":"󰋋","label":"7.1 Spatial SOFA","description":"7.1 virtual surround HRTF (MIT KEMAR) with FDTR-XTC","when":"command -v omarchy-audio-spatial >/dev/null","checked":"[[ \"$(pactl get-default-sink 2>/dev/null)\" == \"omarchy_speaker_spatial_71\" ]]","action":"omarchy-audio-spatial spatial-71 && notify-send -a Speakers -i audio-speakers '7.1 Spatial SOFA Active' '7.1 virtual surround + FDTR-XTC is active on laptop speakers.'"},
+  "setup.speakers.warm": {"icon":"󰈸","label":"Warm","description":"Fuller and bassier, your everyday sound","checked":"[[ \"$(speaker-profile current)\" == \"warm\" ]]","action":"OMARCHY_NOTIFY=1 speaker-profile warm"},
+  "setup.speakers.warm-rich": {"icon":"󰎈","label":"Warm · Rich","description":"Fuller body, full even when quiet, clean when loud","when":"[[ -f ~/.local/share/easyeffects/irs/xps17-warm-rich.irs ]]","checked":"[[ \"$(speaker-profile current)\" == \"warm-rich\" ]]","action":"OMARCHY_NOTIFY=1 speaker-profile warm-rich"},
+  "setup.speakers.warm-deep": {"icon":"󰝚","label":"Warm · Deep","description":"Warm · Rich plus deep bass notes you can follow","when":"[[ -f ~/.config/pipewire/omarchy-speaker-engine.conf.d/90-warm-deep.conf ]]","checked":"[[ \"$(speaker-profile current)\" == \"warm-deep\" ]]","action":"OMARCHY_NOTIFY=1 speaker-profile warm-deep"},
+  "setup.speakers.warm-deep-subtle": {"icon":"󰝚","label":"Warm · Deep · Subtle","description":"Warm · Deep with a lighter touch of bass","when":"[[ -f ~/.config/pipewire/omarchy-speaker-engine.conf.d/90-warm-deep.conf ]]","checked":"[[ \"$(speaker-profile current)\" == \"warm-deep-subtle\" ]]","action":"OMARCHY_NOTIFY=1 speaker-profile warm-deep-subtle"},
+  "setup.speakers.warm-clear": {"icon":"󱕂","label":"Warm · Clear","description":"Warm with clearer voices and smoother treble","when":"[[ -f ~/.local/share/easyeffects/irs/xps17-warm-clear.irs ]]","checked":"[[ \"$(speaker-profile current)\" == \"warm-clear\" ]]","action":"OMARCHY_NOTIFY=1 speaker-profile warm-clear"},
+  "setup.speakers.warm-classic": {"icon":"󰕾","label":"Warm · Classic","description":"Warm as it sounded before, with thinner bass","when":"[[ -f ~/.local/share/easyeffects/output/XPS17-FIR-Warm-Classic.json ]]","checked":"[[ \"$(speaker-profile current)\" == \"warm-classic\" ]]","action":"OMARCHY_NOTIFY=1 speaker-profile warm-classic"},
+  "setup.speakers.balanced": {"icon":"󰗑","label":"Balanced","description":"A little brighter than Warm","checked":"[[ \"$(speaker-profile current)\" == \"balanced\" ]]","action":"OMARCHY_NOTIFY=1 speaker-profile balanced"},
+  "setup.speakers.voice": {"icon":"󰗋","label":"Voice","description":"Clearest for calls, podcasts and speech","checked":"[[ \"$(speaker-profile current)\" == \"voice\" ]]","action":"OMARCHY_NOTIFY=1 speaker-profile voice"},
+  "setup.speakers.flat": {"icon":"󰑭","label":"Flat","description":"Neutral, nothing added","checked":"[[ \"$(speaker-profile current)\" == \"flat\" ]]","action":"OMARCHY_NOTIFY=1 speaker-profile flat"},
+  "setup.speakers.off": {"icon":"󰓄","label":"Off","description":"Your speakers with no correction","checked":"[[ \"$(speaker-profile current)\" == \"off\" ]]","action":"OMARCHY_NOTIFY=1 speaker-profile off"}
+}

@@ -1,0 +1,27 @@
+# Dell XPS 17 9720 (SKU 0AFF) — Boot-time SOF IPC4 & Emergency DRC Fence Verifier.
+#
+# Target deployment path (staged only; install with xps17-sof-ipc4-verify.sh):
+#   /etc/systemd/system/xps17-sof-ipc4-verify.service
+#
+# Runs AFTER udev, alsa-restore, UCM2 BootSequence, and sound.target, and BEFORE
+# display-manager.service so the IPC4 DRC switch is verified OFF before any user
+# audio session (PipeWire / WirePlumber) opens the speakers.
+[Unit]
+Description=XPS 17 9720 SOF IPC4 Topology Verifier & Emergency DRC Fence
+After=systemd-udev-trigger.service systemd-modules-load.service alsa-restore.service sound.target
+Before=display-manager.service
+ConditionPathExists=/etc/modprobe.d/90-sof-ipc4-xps17.conf
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/libexec/xps17-studio-audio/xps17-sof-ipc4-verify.sh --wait-sec 30
+TimeoutStartSec=90
+StandardOutput=journal
+StandardError=journal
+NoNewPrivileges=true
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

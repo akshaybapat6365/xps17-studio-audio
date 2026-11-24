@@ -1,0 +1,10 @@
+# Build & runtime artifacts
+dsp-engine/target/
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/.venv/
+**/.runs/
+*.tmp
+*.xps17tmp.*
+.DS_Store

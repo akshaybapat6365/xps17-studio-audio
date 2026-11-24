@@ -1,0 +1,984 @@
+{
+  "schema_version": "1.0.0",
+  "device": "Dell XPS 17 9720 (Stradale)",
+  "sample_rate_hz": 48000,
+  "plugin_contract": {
+    "ladspa_label": "xps17_studio_dsp",
+    "ladspa_unique_id": 597201,
+    "control_ports": {
+      "Mode": {
+        "index": 0,
+        "range": [
+          0,
+          3
+        ],
+        "default": 0,
+        "labels": [
+          "Studio Deep",
+          "Studio Spatial",
+          "Studio Reference",
+          "Studio Voice"
+        ]
+      },
+      "Stage Depth": {
+        "index": 5,
+        "range": [
+          0.0,
+          1.5
+        ],
+        "default": 0.85
+      },
+      "Spatial XTC": {
+        "index": 6,
+        "range": [
+          0.0,
+          1.0
+        ],
+        "default_studio_deep": 0.0,
+        "default_studio_spatial": 0.75
+      },
+      "Drive (dB)": {
+        "index": 7,
+        "range": [
+          0.0,
+          12.0
+        ],
+        "default": 7.0
+      },
+      "Ceiling (dBFS)": {
+        "index": 8,
+        "range": [
+          -9.0,
+          -0.3
+        ],
+        "default": -1.0
+      }
+    }
+  },
+  "geometry": {
+    "speaker_span_m": 0.34,
+    "listening_dist_m": 0.55,
+    "head_radius_m": 0.0875,
+    "speed_of_sound_mps": 343.0,
+    "half_angle_deg": 17.1759,
+    "full_span_deg": 34.3518,
+    "geometric_models": {
+      "d_ear_17.0cm": {
+        "r_ipsi_m": 0.55653,
+        "r_contra_m": 0.60624,
+        "delta_r_cm": 4.971,
+        "itd_us": 144.92,
+        "f_mid_comb_hz": 3450.1,
+        "f_side_singularity_hz": 6900.2,
+        "f_optimal_osd_hz": 1725.0
+      },
+      "d_ear_17.5cm": {
+        "r_ipsi_m": 0.55615,
+        "r_contra_m": 0.60729,
+        "delta_r_cm": 5.114,
+        "itd_us": 149.1,
+        "f_mid_comb_hz": 3353.5,
+        "f_side_singularity_hz": 6706.9,
+        "f_optimal_osd_hz": 1676.7
+      },
+      "d_ear_18.0cm": {
+        "r_ipsi_m": 0.55579,
+        "r_contra_m": 0.60836,
+        "delta_r_cm": 5.257,
+        "itd_us": 153.27,
+        "f_mid_comb_hz": 3262.3,
+        "f_side_singularity_hz": 6524.5,
+        "f_optimal_osd_hz": 1631.1
+      }
+    },
+    "woodworth_hf": {
+      "itd_us": 151.81,
+      "f_mid_comb_hz": 3293.66,
+      "f_side_singularity_hz": 6587.32,
+      "f_optimal_osd_hz": 1646.83
+    },
+    "kuhn_lf_itd_us": 226.0,
+    "geometric_gain_ratio": 0.91579,
+    "mutual_coupling": {
+      "65": {
+        "wavelength_m": 5.277,
+        "kS_rad": 0.4048,
+        "sinc_kS": 0.9729,
+        "mono_vs_single_woofer_db": 5.96,
+        "mono_vs_uncorrelated_db": 2.95,
+        "dipole_vs_uncorrelated_db": -15.67,
+        "mono_advantage_over_dipole_db": 18.62
+      },
+      "82": {
+        "wavelength_m": 4.183,
+        "kS_rad": 0.5107,
+        "sinc_kS": 0.9571,
+        "mono_vs_single_woofer_db": 5.93,
+        "mono_vs_uncorrelated_db": 2.92,
+        "dipole_vs_uncorrelated_db": -13.67,
+        "mono_advantage_over_dipole_db": 16.59
+      },
+      "100": {
+        "wavelength_m": 3.43,
+        "kS_rad": 0.6228,
+        "sinc_kS": 0.9366,
+        "mono_vs_single_woofer_db": 5.88,
+        "mono_vs_uncorrelated_db": 2.87,
+        "dipole_vs_uncorrelated_db": -11.98,
+        "mono_advantage_over_dipole_db": 14.85
+      },
+      "120": {
+        "wavelength_m": 2.858,
+        "kS_rad": 0.7474,
+        "sinc_kS": 0.9095,
+        "mono_vs_single_woofer_db": 5.82,
+        "mono_vs_uncorrelated_db": 2.81,
+        "dipole_vs_uncorrelated_db": -10.43,
+        "mono_advantage_over_dipole_db": 13.24
+      },
+      "150": {
+        "wavelength_m": 2.287,
+        "kS_rad": 0.9342,
+        "sinc_kS": 0.8608,
+        "mono_vs_single_woofer_db": 5.71,
+        "mono_vs_uncorrelated_db": 2.7,
+        "dipole_vs_uncorrelated_db": -8.56,
+        "mono_advantage_over_dipole_db": 11.26
+      },
+      "180": {
+        "wavelength_m": 1.906,
+        "kS_rad": 1.1211,
+        "sinc_kS": 0.8033,
+        "mono_vs_single_woofer_db": 5.57,
+        "mono_vs_uncorrelated_db": 2.56,
+        "dipole_vs_uncorrelated_db": -7.06,
+        "mono_advantage_over_dipole_db": 9.62
+      },
+      "220": {
+        "wavelength_m": 1.559,
+        "kS_rad": 1.3702,
+        "sinc_kS": 0.7152,
+        "mono_vs_single_woofer_db": 5.35,
+        "mono_vs_uncorrelated_db": 2.34,
+        "dipole_vs_uncorrelated_db": -5.45,
+        "mono_advantage_over_dipole_db": 7.8
+      },
+      "260": {
+        "wavelength_m": 1.319,
+        "kS_rad": 1.6193,
+        "sinc_kS": 0.6168,
+        "mono_vs_single_woofer_db": 5.1,
+        "mono_vs_uncorrelated_db": 2.09,
+        "dipole_vs_uncorrelated_db": -4.17,
+        "mono_advantage_over_dipole_db": 6.25
+      }
+    }
+  },
+  "pipeline_order": [
+    {
+      "stage": 1,
+      "name": "input_sanitize_and_klippel_sliding_hpf",
+      "notes": "65-180 Hz dynamic HPF (resting 82 Hz) driven by excursion observer + Volume (dB)"
+    },
+    {
+      "stage": 2,
+      "name": "hybrid_3band_psychoacoustic_bass_and_iso226",
+      "notes": "Phase-clean missing-fundamental bass + Warmth Body + live Volume-linked ISO 226:2023 shelves"
+    },
+    {
+      "stage": 3,
+      "name": "bass_mono_anchor_lr4",
+      "notes": "Exact 3-biquad M/S LR4 24 dB/oct (<180 Hz; 150 Hz in Reference) for coherent +5.6..+5.9 dB acoustic woofer coupling"
+    },
+    {
+      "stage": 4,
+      "name": "minphase_room_harman_fir_4096",
+      "notes": "4096-tap @ 48 kHz per-mode speaker correction before multiband dynamics"
+    },
+    {
+      "stage": 5,
+      "name": "multiband_4band_lr4_dynamics",
+      "notes": "Phase-aligned 4-band LR4 (160, 750, 3500 Hz) delivering primary loudness lift into -2.2 dBFS pre-spatial headroom bus"
+    },
+    {
+      "stage": 6,
+      "name": "post_dynamics_spatial_depth_and_shuffler_xtc",
+      "notes": "6A: Colorless Schroeder AP + 4.4-13.7 ms comb-free ER; 6B: Optional 256-tap (0.917 ms) Cooper-Bauck M/S Shuffler XTC"
+    },
+    {
+      "stage": 7,
+      "name": "final_4x_true_peak_safety_limiter",
+      "notes": "+0.8 dB gentle trim into -1.0 dBTP ceiling (10 ms lookahead, 80 ms release) -> hardware ALC1316 2-way crossover"
+    }
+  ],
+  "bass_mono_anchor": {
+    "default_crossover_hz": 180.0,
+    "reference_mode_crossover_hz": 150.0,
+    "topology": "LR4_24dB_oct_MS_3biquad",
+    "biquads_180hz": {
+      "mid_ap2": {
+        "b": [
+          0.9672274281518606,
+          -1.9666813852634852,
+          1.0
+        ],
+        "a": [
+          1.0,
+          -1.9666813852634852,
+          0.9672274281518606
+        ]
+      },
+      "side_bw2_hp_cascaded_x2": {
+        "b": [
+          0.9834772033538365,
+          -1.966954406707673,
+          0.9834772033538365
+        ],
+        "a": [
+          1.0,
+          -1.9666813852634852,
+          0.9672274281518606
+        ]
+      }
+    },
+    "biquads_150hz": {
+      "mid_ap2": {
+        "b": [
+          0.9726139693130631,
+          -1.9722337291952659,
+          1.0
+        ],
+        "a": [
+          1.0,
+          -1.9722337291952659,
+          0.9726139693130631
+        ]
+      },
+      "side_bw2_hp_cascaded_x2": {
+        "b": [
+          0.9862119246270822,
+          -1.9724238492541644,
+          0.9862119246270822
+        ],
+        "a": [
+          1.0,
+          -1.9722337291952659,
+          0.9726139693130631
+        ]
+      }
+    },
+    "verified_metrics": {
+      "identity_error": 9.236655902634342e-13,
+      "mid_ripple_db": 9.699205658587547e-12,
+      "ms_phase_error_deg": 1.1679095034098011e-11,
+      "side_attenuation_db": {
+        "60": -38.28,
+        "82": -27.68,
+        "90": -24.61,
+        "120": -15.65,
+        "150": -9.75,
+        "180": -6.02,
+        "220": -3.22,
+        "260": -1.8,
+        "360": -0.53
+      }
+    }
+  },
+  "studio_depth_engine": {
+    "control_port": "Stage Depth",
+    "wet_gain_formula": "wet_lin = clamp(stage_depth, 0.0, 1.5) * 0.1975  # 0.85 -> -15.50 dB, 0.65 -> -17.83 dB, 1.0 -> -14.09 dB",
+    "wet_scale_per_depth": 0.1975,
+    "feed_weights": {
+      "mid_alpha": 0.6,
+      "side_alpha": 1.2,
+      "cross_couple": "D_L fed from F_R = BPF*(mid_alpha*M - side_alpha*S); D_R fed from F_L = BPF*(mid_alpha*M + side_alpha*S)"
+    },
+    "band_limit_filters": {
+      "hp_bw2_hz": 300.0,
+      "hp_bw2_biquad": {
+        "b": [
+          0.9726138984998437,
+          -1.9452277969996874,
+          0.9726138984998437
+        ],
+        "a": [
+          1.0,
+          -1.9444776577670932,
+          0.9459779362322812
+        ]
+      },
+      "lp_bw2_hz": 6500.0,
+      "lp_bw2_biquad": {
+        "b": [
+          0.1112063476989802,
+          0.2224126953979604,
+          0.1112063476989802
+        ],
+        "a": [
+          1.0,
+          -0.8609721320690645,
+          0.3057975228649854
+        ]
+      }
+    },
+    "schroeder_allpass_diffuser": {
+      "difference_equation": "y[n] = -g*x[n] + x[n - m] + g*y[n - m]",
+      "left_stages": [
+        {
+          "delay_samples": 43,
+          "delay_ms": 0.8958,
+          "g": 0.52
+        },
+        {
+          "delay_samples": 107,
+          "delay_ms": 2.2292,
+          "g": -0.48
+        }
+      ],
+      "right_stages": [
+        {
+          "delay_samples": 59,
+          "delay_ms": 1.2292,
+          "g": -0.52
+        },
+        {
+          "delay_samples": 131,
+          "delay_ms": 2.7292,
+          "g": 0.48
+        }
+      ]
+    },
+    "early_reflection_taps": {
+      "left_taps": [
+        {
+          "delay_samples": 211,
+          "delay_ms": 4.3958,
+          "raw_gain": 0.58,
+          "norm_gain": 0.667063
+        },
+        {
+          "delay_samples": 331,
+          "delay_ms": 6.8958,
+          "raw_gain": -0.46,
+          "norm_gain": -0.52905
+        },
+        {
+          "delay_samples": 487,
+          "delay_ms": 10.1458,
+          "raw_gain": 0.36,
+          "norm_gain": 0.414039
+        },
+        {
+          "delay_samples": 641,
+          "delay_ms": 13.3542,
+          "raw_gain": -0.28,
+          "norm_gain": -0.322031
+        }
+      ],
+      "right_taps": [
+        {
+          "delay_samples": 229,
+          "delay_ms": 4.7708,
+          "raw_gain": -0.58,
+          "norm_gain": -0.667063
+        },
+        {
+          "delay_samples": 359,
+          "delay_ms": 7.4792,
+          "raw_gain": 0.46,
+          "norm_gain": 0.52905
+        },
+        {
+          "delay_samples": 521,
+          "delay_ms": 10.8542,
+          "raw_gain": -0.36,
+          "norm_gain": -0.414039
+        },
+        {
+          "delay_samples": 659,
+          "delay_ms": 13.7292,
+          "raw_gain": 0.28,
+          "norm_gain": 0.322031
+        }
+      ]
+    },
+    "output_scattering_matrix": {
+      "formula": "W_L = wet_lin*(scatter_same*D_L + scatter_cross*D_R); W_R = wet_lin*(scatter_cross*D_L + scatter_same*D_R)",
+      "scatter_same": 0.848528,
+      "scatter_cross": -0.52915,
+      "mono_sum_comb_suppression_db": -9.91
+    },
+    "side_air_polish": {
+      "active_when": "mode == Studio Deep (0) and spatial_xtc < 0.05",
+      "high_shelf_hz": 600.0,
+      "gain_db_at_default_depth": 0.8,
+      "slope": 0.70710678,
+      "biquad": {
+        "b": [
+          1.0932110786238918,
+          -2.0479175848949858,
+          0.9607536406308737
+        ],
+        "a": [
+          1.0,
+          -1.8674569943934936,
+          0.8735041287532737
+        ]
+      }
+    },
+    "verified_metrics": {
+      "allpass_left_max_err_db": 5.785964799319724e-15,
+      "allpass_right_max_err_db": 5.785964799319724e-15,
+      "mono_sum_ripple_mono_raw_db": 0.375,
+      "mono_sum_ripple_mono_third_oct_db": 0.046,
+      "mono_sum_ripple_hard_left_raw_db": 0.839,
+      "mono_sum_ripple_hard_left_third_oct_db": 0.163,
+      "iacc_e3": {
+        "pure_mono_vocal": {
+          "input_corr": 1.0,
+          "dry_ear_iacc_e3": 1.0,
+          "studio_deep_ear_iacc_e3": 0.9855,
+          "studio_spatial_ear_iacc_e3": 0.9914
+        },
+        "intimate_acoustic": {
+          "input_corr": 0.9,
+          "dry_ear_iacc_e3": 0.9478,
+          "studio_deep_ear_iacc_e3": 0.9246,
+          "studio_spatial_ear_iacc_e3": 0.9548
+        },
+        "typical_studio_mix": {
+          "input_corr": 0.72,
+          "dry_ear_iacc_e3": 0.8548,
+          "studio_deep_ear_iacc_e3": 0.8195,
+          "studio_spatial_ear_iacc_e3": 0.8851
+        },
+        "wide_stereo_mix": {
+          "input_corr": 0.45,
+          "dry_ear_iacc_e3": 0.7203,
+          "studio_deep_ear_iacc_e3": 0.6898,
+          "studio_spatial_ear_iacc_e3": 0.769
+        },
+        "diffuse_stereo": {
+          "input_corr": 0.0,
+          "dry_ear_iacc_e3": 0.5908,
+          "studio_deep_ear_iacc_e3": 0.5723,
+          "studio_spatial_ear_iacc_e3": 0.5565
+        }
+      }
+    }
+  },
+  "shuffler_xtc_engine": {
+    "control_port": "Spatial XTC",
+    "topology": "Cooper-Bauck_1D_MS_Shuffler_FDTR",
+    "mid_path": "integer_delay_line(44 samples = 0.9167 ms, 0 MACs, bit-exact unity)",
+    "side_path": "1D_FIR(256 taps float32, peak_tap=44, AVX2 32 FMAs/sample)",
+    "blend_formula": "S_out[n] = (1 - xtc) * S[n - D] + xtc * sum_{k=0..255} h_s[k] * S[n - k]",
+    "taps": 256,
+    "causal_delay_samples": 44,
+    "causal_delay_ms": 0.9167,
+    "kaiser_beta": 6.5,
+    "active_band_hz": [
+      230.0,
+      6500.0
+    ],
+    "beta_params": {
+      "beta_mid": 0.58,
+      "beta_lo_shelf": 0.56,
+      "beta_lo_range_hz": [
+        230.0,
+        840.0
+      ],
+      "beta_hi_singularity": 1.5,
+      "beta_hi_range_hz": [
+        2350.0,
+        3300.0
+      ]
+    },
+    "window_transition_hz": {
+      "lo_start": 230.0,
+      "lo_end": 370.0,
+      "hi_start": 5300.0,
+      "hi_end": 6500.0
+    },
+    "metrics": {
+      "cooper_bauck_equiv_err": 2.220446049250313e-16,
+      "max_side_gain_db": 2.278,
+      "max_side_gain_freq_hz": 632.8,
+      "max_combined_side_gain_db": 2.225,
+      "mean_xtc_300_2600_db": 12.55,
+      "mean_xtc_2600_5500_db": 11.22,
+      "offaxis_3cm_xtc_db": 11.14,
+      "offaxis_5cm_xtc_db": 8.74,
+      "max_hlr_le150hz_db": -27.36,
+      "max_hs_dev_ge6800hz_db": 0.0229,
+      "max_hlr_ge6800hz_db": -53.92,
+      "pink_noise_side_delta_db": 0.219,
+      "pink_noise_total_delta_db": 0.111,
+      "mid_ripple_db": 0.0
+    },
+    "h_s_taps_f32": [
+      2.74e-05,
+      3.86e-05,
+      4.95e-05,
+      6.11e-05,
+      7.6e-05,
+      9.84e-05,
+      0.0001311,
+      0.0001718,
+      0.000212,
+      0.0002393,
+      0.0002457,
+      0.0002347,
+      0.0002213,
+      0.0002193,
+      0.0002194,
+      0.0001728,
+      -1.4e-06,
+      -0.0003792,
+      -0.0009777,
+      -0.0017191,
+      -0.0024464,
+      -0.0030029,
+      -0.0033391,
+      -0.0035797,
+      -0.0039887,
+      -0.0048239,
+      -0.0061534,
+      -0.0077566,
+      -0.009211,
+      -0.0101618,
+      -0.0106365,
+      -0.0111923,
+      -0.0127343,
+      -0.0160267,
+      -0.0211369,
+      -0.0271635,
+      -0.0325095,
+      -0.0356671,
+      -0.0361401,
+      -0.0349491,
+      -0.0342934,
+      -0.0363717,
+      -0.0418761,
+      -0.0489803,
+      0.9464819,
+      -0.050578,
+      -0.036642,
+      -0.0114131,
+      0.0213496,
+      0.0547305,
+      0.0809666,
+      0.0942453,
+      0.0928103,
+      0.0794668,
+      0.0602857,
+      0.0420976,
+      0.0298863,
+      0.0251877,
+      0.0260898,
+      0.0286782,
+      0.0291373,
+      0.0254949,
+      0.0182639,
+      0.0098295,
+      0.0030326,
+      -0.0002705,
+      2.36e-05,
+      0.0024524,
+      0.0049101,
+      0.0057501,
+      0.0044965,
+      0.0018636,
+      -0.0008267,
+      -0.0024448,
+      -0.0026273,
+      -0.0018582,
+      -0.0010843,
+      -0.0011338,
+      -0.0022729,
+      -0.004121,
+      -0.005922,
+      -0.006982,
+      -0.0070198,
+      -0.0062545,
+      -0.0052225,
+      -0.0044575,
+      -0.0042235,
+      -0.0044338,
+      -0.0047698,
+      -0.004903,
+      -0.0046831,
+      -0.0041958,
+      -0.0036785,
+      -0.0033653,
+      -0.0033561,
+      -0.0035797,
+      -0.0038559,
+      -0.0040058,
+      -0.0039419,
+      -0.0036929,
+      -0.0033629,
+      -0.003059,
+      -0.0028356,
+      -0.0026814,
+      -0.0025472,
+      -0.0023885,
+      -0.0021937,
+      -0.001985,
+      -0.0017962,
+      -0.0016487,
+      -0.0015407,
+      -0.0014539,
+      -0.0013712,
+      -0.0012887,
+      -0.0012157,
+      -0.0011634,
+      -0.0011323,
+      -0.0011085,
+      -0.0010713,
+      -0.0010073,
+      -0.0009199,
+      -0.0008284,
+      -0.0007559,
+      -0.0007149,
+      -0.0006994,
+      -0.0006886,
+      -0.0006602,
+      -0.0006039,
+      -0.0005275,
+      -0.0004524,
+      -0.0004003,
+      -0.0003815,
+      -0.0003899,
+      -0.0004078,
+      -0.0004168,
+      -0.0004075,
+      -0.0003834,
+      -0.0003561,
+      -0.0003372,
+      -0.0003308,
+      -0.0003322,
+      -0.000331,
+      -0.0003184,
+      -0.0002916,
+      -0.0002547,
+      -0.0002153,
+      -0.0001801,
+      -0.000152,
+      -0.0001298,
+      -0.0001107,
+      -9.26e-05,
+      -7.54e-05,
+      -6.02e-05,
+      -4.74e-05,
+      -3.61e-05,
+      -2.39e-05,
+      -9e-06,
+      8.7e-06,
+      2.75e-05,
+      4.51e-05,
+      6.01e-05,
+      7.33e-05,
+      8.7e-05,
+      0.0001033,
+      0.0001229,
+      0.0001439,
+      0.0001628,
+      0.0001769,
+      0.0001851,
+      0.0001893,
+      0.0001926,
+      0.0001975,
+      0.000205,
+      0.0002136,
+      0.0002206,
+      0.0002241,
+      0.0002236,
+      0.0002202,
+      0.0002163,
+      0.0002137,
+      0.0002128,
+      0.0002129,
+      0.0002125,
+      0.0002107,
+      0.0002072,
+      0.0002027,
+      0.000198,
+      0.0001937,
+      0.0001897,
+      0.0001855,
+      0.0001806,
+      0.0001748,
+      0.0001683,
+      0.0001612,
+      0.0001539,
+      0.0001463,
+      0.0001385,
+      0.0001305,
+      0.0001225,
+      0.0001151,
+      0.0001085,
+      0.0001028,
+      9.77e-05,
+      9.27e-05,
+      8.74e-05,
+      8.18e-05,
+      7.61e-05,
+      7.08e-05,
+      6.6e-05,
+      6.19e-05,
+      5.8e-05,
+      5.4e-05,
+      4.96e-05,
+      4.49e-05,
+      4.03e-05,
+      3.6e-05,
+      3.23e-05,
+      2.93e-05,
+      2.67e-05,
+      2.42e-05,
+      2.16e-05,
+      1.9e-05,
+      1.65e-05,
+      1.42e-05,
+      1.22e-05,
+      1.06e-05,
+      9.2e-06,
+      7.8e-06,
+      6.5e-06,
+      5.2e-06,
+      4e-06,
+      2.8e-06,
+      1.9e-06,
+      9e-07,
+      1e-07,
+      -7e-07,
+      -1.5e-06,
+      -2.1e-06,
+      -2.6e-06,
+      -3e-06,
+      -3.4e-06,
+      -3.8e-06,
+      -4.1e-06,
+      -4.3e-06,
+      -4.5e-06,
+      -4.5e-06,
+      -4.4e-06,
+      -4.3e-06,
+      -4.2e-06,
+      -4.1e-06,
+      -4e-06,
+      -3.9e-06,
+      -3.8e-06,
+      -3.6e-06,
+      -3.4e-06,
+      -3.2e-06
+    ]
+  },
+  "multiband_dynamics_and_limiter": {
+    "crossover_type": "Phase-aligned 4-band LR4 tree (24 dB/oct, exact AP unity sum)",
+    "split_frequencies_hz": [
+      160.0,
+      750.0,
+      3500.0
+    ],
+    "bands": [
+      {
+        "index": 0,
+        "range_hz": [
+          0.0,
+          160.0
+        ],
+        "name": "sub_bass",
+        "threshold_dbfs": -13.0,
+        "ratio": 2.8,
+        "knee_db": 4.0,
+        "attack_ms": 18.0,
+        "release_ms": 120.0,
+        "makeup_db": 1.5,
+        "band_ceiling_dbfs": -5.0
+      },
+      {
+        "index": 1,
+        "range_hz": [
+          160.0,
+          750.0
+        ],
+        "name": "warmth_vocal_body",
+        "threshold_dbfs": -12.0,
+        "ratio": 2.5,
+        "knee_db": 4.0,
+        "attack_ms": 15.0,
+        "release_ms": 100.0,
+        "makeup_db": 1.5,
+        "band_ceiling_dbfs": -4.6
+      },
+      {
+        "index": 2,
+        "range_hz": [
+          750.0,
+          3500.0
+        ],
+        "name": "presence_stereo_inst",
+        "threshold_dbfs": -12.5,
+        "ratio": 3.0,
+        "knee_db": 4.0,
+        "attack_ms": 10.0,
+        "release_ms": 75.0,
+        "makeup_db": 1.2,
+        "band_ceiling_dbfs": -5.2
+      },
+      {
+        "index": 3,
+        "range_hz": [
+          3500.0,
+          24000.0
+        ],
+        "name": "air_treble",
+        "threshold_dbfs": -14.0,
+        "ratio": 2.5,
+        "knee_db": 4.0,
+        "attack_ms": 8.0,
+        "release_ms": 60.0,
+        "makeup_db": 1.0,
+        "band_ceiling_dbfs": -6.8
+      }
+    ],
+    "pre_spatial_headroom_bus_dbfs": -2.2,
+    "final_true_peak_limiter": {
+      "oversampling": "4x_Catmull_Rom_or_polyphase_FIR",
+      "post_spatial_trim_db": 0.8,
+      "default_ceiling_dbfs": -1.0,
+      "lookahead_ms": 10.0,
+      "attack_ms": 2.5,
+      "release_ms": 80.0,
+      "stereo_link_pct": 100.0
+    }
+  },
+  "modes": {
+    "0_studio_deep": {
+      "mode_id": 0,
+      "label": "Studio Deep",
+      "flagship": true,
+      "bass_mono_anchor_hz": 180.0,
+      "stage_depth_default": 0.85,
+      "wet_er_db": -15.5,
+      "side_air_shelf_db": 0.8,
+      "spatial_xtc_default": 0.0,
+      "drive_db_default": 7.0,
+      "ceiling_dbfs_default": -1.0,
+      "pre_spatial_ceiling_dbfs": -2.2,
+      "total_spatial_plus_limiter_latency_ms": 10.0
+    },
+    "1_studio_spatial": {
+      "mode_id": 1,
+      "label": "Studio Spatial",
+      "flagship": false,
+      "bass_mono_anchor_hz": 180.0,
+      "stage_depth_default": 0.65,
+      "wet_er_db": -17.83,
+      "side_air_shelf_db": 0.0,
+      "spatial_xtc_default": 0.75,
+      "drive_db_default": 7.0,
+      "ceiling_dbfs_default": -1.0,
+      "pre_spatial_ceiling_dbfs": -2.2,
+      "total_spatial_plus_limiter_latency_ms": 10.9167
+    },
+    "2_studio_reference": {
+      "mode_id": 2,
+      "label": "Studio Reference",
+      "flagship": false,
+      "bass_mono_anchor_hz": 150.0,
+      "stage_depth_default": 0.2,
+      "wet_er_db": -28.07,
+      "side_air_shelf_db": 0.0,
+      "spatial_xtc_default": 0.0,
+      "drive_db_default": 5.0,
+      "ceiling_dbfs_default": -1.0,
+      "pre_spatial_ceiling_dbfs": -2.0,
+      "total_spatial_plus_limiter_latency_ms": 10.0
+    },
+    "3_studio_voice": {
+      "mode_id": 3,
+      "label": "Studio Voice",
+      "flagship": false,
+      "bass_mono_anchor_hz": 180.0,
+      "stage_depth_default": 0.0,
+      "wet_er_db": null,
+      "side_air_shelf_db": 0.0,
+      "spatial_xtc_default": 0.0,
+      "drive_db_default": 6.0,
+      "ceiling_dbfs_default": -1.0,
+      "pre_spatial_ceiling_dbfs": -2.0,
+      "total_spatial_plus_limiter_latency_ms": 10.0
+    }
+  },
+  "forensic_ducking_comparison": {
+    "baseline_no_xtc": {
+      "chorus_rms_dbfs": -10.19,
+      "peak_dbfs": -1.0,
+      "limiter_gr_verse_db": -1.54,
+      "limiter_gr_chorus_db": -6.18,
+      "chorus_vocal_duck_db": -4.59,
+      "chorus_bass_duck_db": -4.6,
+      "spatial_extra_vocal_loss_db": 0.0,
+      "spatial_extra_bass_loss_db": 0.0,
+      "bass_retention_vs_in_db": 0.84
+    },
+    "old_xtc_pre_limiter": {
+      "chorus_rms_dbfs": -9.67,
+      "peak_dbfs": -1.0,
+      "limiter_gr_verse_db": -1.54,
+      "limiter_gr_chorus_db": -7.4,
+      "chorus_vocal_duck_db": -5.8,
+      "chorus_bass_duck_db": -5.81,
+      "spatial_extra_vocal_loss_db": -1.21,
+      "spatial_extra_bass_loss_db": -1.21,
+      "bass_retention_vs_in_db": -0.37
+    },
+    "old_full_91_conf": {
+      "chorus_rms_dbfs": -9.97,
+      "peak_dbfs": -1.01,
+      "limiter_gr_verse_db": 0.0,
+      "limiter_gr_chorus_db": -6.69,
+      "chorus_vocal_duck_db": -6.69,
+      "chorus_bass_duck_db": -6.61,
+      "spatial_extra_vocal_loss_db": -0.58,
+      "spatial_extra_bass_loss_db": -18.51,
+      "bass_retention_vs_in_db": -17.67
+    },
+    "new_mbc_spatial_off": {
+      "chorus_rms_dbfs": -11.18,
+      "peak_dbfs": -1.4,
+      "limiter_gr_verse_db": 0.0,
+      "limiter_gr_chorus_db": 0.0,
+      "chorus_vocal_duck_db": -5.14,
+      "chorus_bass_duck_db": -1.76,
+      "spatial_extra_vocal_loss_db": 0.0,
+      "spatial_extra_bass_loss_db": 0.0,
+      "bass_retention_vs_in_db": 0.05
+    },
+    "new_studio_deep": {
+      "chorus_rms_dbfs": -11.02,
+      "peak_dbfs": -1.21,
+      "limiter_gr_verse_db": 0.0,
+      "limiter_gr_chorus_db": 0.0,
+      "chorus_vocal_duck_db": -5.15,
+      "chorus_bass_duck_db": -1.76,
+      "spatial_extra_vocal_loss_db": 0.03,
+      "spatial_extra_bass_loss_db": -0.0,
+      "bass_retention_vs_in_db": 0.05
+    },
+    "new_studio_spatial": {
+      "chorus_rms_dbfs": -10.83,
+      "peak_dbfs": -1.0,
+      "limiter_gr_verse_db": 0.0,
+      "limiter_gr_chorus_db": -0.07,
+      "chorus_vocal_duck_db": -5.22,
+      "chorus_bass_duck_db": -1.83,
+      "spatial_extra_vocal_loss_db": -0.04,
+      "spatial_extra_bass_loss_db": -0.07,
+      "bass_retention_vs_in_db": -0.02
+    }
+  }
+}

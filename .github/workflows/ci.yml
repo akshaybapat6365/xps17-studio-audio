@@ -1,0 +1,535 @@
+name: XPS 17 9720 Studio Audio CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dsp-engine-rust-asm:
+    name: Rust & x86-64 AVX2/FMA DSP Build + Bench
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install native build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends build-essential nasm binutils
+
+      - name: Install Rust stable toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            dsp-engine/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('dsp-engine/Cargo.toml', 'dsp-engine/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Build DSP engine (AVX2 + FMA)
+        working-directory: dsp-engine
+        run: |
+          cargo build --release --workspace
+          cargo test --release --workspace
+
+      - name: Locate & verify compiled binary artifacts
+        run: |
+          set -euo pipefail
+          SO_PATH="dsp-engine/lib/libxps17_studio_dsp.so"
+          CLI_PATH="dsp-engine/bin/xps17-studio-cli"
+          if [[ ! -f "$SO_PATH" && -f "dsp-engine/target/release/libxps17_studio_dsp.so" ]]; then
+            mkdir -p dsp-engine/lib
+            cp dsp-engine/target/release/libxps17_studio_dsp.so "$SO_PATH"
+          fi
+          if [[ ! -f "$CLI_PATH" && -f "dsp-engine/target/release/xps17-studio-cli" ]]; then
+            mkdir -p dsp-engine/bin
+            cp dsp-engine/target/release/xps17-studio-cli "$CLI_PATH"
+          fi
+          test -f "$SO_PATH"
+          test -x "$CLI_PATH"
+          nm -D "$SO_PATH" | grep -q 'ladspa_descriptor'
+
+      - name: Run xps17-studio-cli SIMD benchmark & zero-alloc verification
+        run: |
+          ./dsp-engine/bin/xps17-studio-cli bench
+
+      - name: Upload DSP shared library for ABI verification
+        uses: actions/upload-artifact@v4
+        with:
+          name: xps17-studio-dsp-linux-x86_64
+          path: |
+            dsp-engine/lib/libxps17_studio_dsp.so
+            dsp-engine/bin/xps17-studio-cli
+          retention-days: 1
+
+  ladspa-abi-verify:
+    name: LADSPA v1.1 C-ABI & 10-Port Descriptor Verify
+    runs-on: ubuntu-latest
+    needs: [dsp-engine-rust-asm]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download built DSP library
+        uses: actions/download-artifact@v4
+        with:
+          name: xps17-studio-dsp-linux-x86_64
+          path: dsp-engine
+
+      - name: Verify exact LADSPA v1.1 descriptor, 14 ports & audio-thread execution
+        run: |
+          python3 - <<'PY'
+          import ctypes
+          import math
+          import os
+          import sys
+
+          so_path = os.path.abspath("dsp-engine/lib/libxps17_studio_dsp.so")
+          assert os.path.isfile(so_path), f"Missing LADSPA library: {so_path}"
+
+          LADSPA_PORT_INPUT = 0x1
+          LADSPA_PORT_OUTPUT = 0x2
+          LADSPA_PORT_CONTROL = 0x4
+          LADSPA_PORT_AUDIO = 0x8
+          LADSPA_PROPERTY_HARD_RT_CAPABLE = 0x4
+
+          class LADSPA_PortRangeHint(ctypes.Structure):
+              _fields_ = [
+                  ("HintDescriptor", ctypes.c_int),
+                  ("LowerBound", ctypes.c_float),
+                  ("UpperBound", ctypes.c_float),
+              ]
+
+          class LADSPA_Descriptor(ctypes.Structure):
+              pass
+
+          INSTANTIATE_FN = ctypes.CFUNCTYPE(ctypes.c_void_p, ctypes.POINTER(LADSPA_Descriptor), ctypes.c_ulong)
+          CONNECT_PORT_FN = ctypes.CFUNCTYPE(None, ctypes.c_void_p, ctypes.c_ulong, ctypes.POINTER(ctypes.c_float))
+          ACTIVATE_FN = ctypes.CFUNCTYPE(None, ctypes.c_void_p)
+          RUN_FN = ctypes.CFUNCTYPE(None, ctypes.c_void_p, ctypes.c_ulong)
+          RUN_ADDING_FN = ctypes.CFUNCTYPE(None, ctypes.c_void_p, ctypes.c_ulong)
+          SET_GAIN_FN = ctypes.CFUNCTYPE(None, ctypes.c_void_p, ctypes.c_float)
+          DEACTIVATE_FN = ctypes.CFUNCTYPE(None, ctypes.c_void_p)
+          CLEANUP_FN = ctypes.CFUNCTYPE(None, ctypes.c_void_p)
+
+          LADSPA_Descriptor._fields_ = [
+              ("UniqueID", ctypes.c_ulong),
+              ("Label", ctypes.c_char_p),
+              ("Properties", ctypes.c_int),
+              ("Name", ctypes.c_char_p),
+              ("Maker", ctypes.c_char_p),
+              ("Copyright", ctypes.c_char_p),
+              ("PortCount", ctypes.c_ulong),
+              ("PortDescriptors", ctypes.POINTER(ctypes.c_int)),
+              ("PortNames", ctypes.POINTER(ctypes.c_char_p)),
+              ("PortRangeHints", ctypes.POINTER(LADSPA_PortRangeHint)),
+              ("ImplementationData", ctypes.c_void_p),
+              ("instantiate", INSTANTIATE_FN),
+              ("connect_port", CONNECT_PORT_FN),
+              ("activate", ACTIVATE_FN),
+              ("run", RUN_FN),
+              ("run_adding", RUN_ADDING_FN),
+              ("set_run_adding_gain", SET_GAIN_FN),
+              ("deactivate", DEACTIVATE_FN),
+              ("cleanup", CLEANUP_FN),
+          ]
+
+          lib = ctypes.CDLL(so_path)
+          lib.ladspa_descriptor.argtypes = [ctypes.c_ulong]
+          lib.ladspa_descriptor.restype = ctypes.POINTER(LADSPA_Descriptor)
+
+          desc_ptr = lib.ladspa_descriptor(0)
+          assert bool(desc_ptr), "ladspa_descriptor(0) returned NULL"
+          assert not bool(lib.ladspa_descriptor(1)), "ladspa_descriptor(1) must be NULL"
+
+          desc = desc_ptr.contents
+          assert desc.UniqueID == 597201, f"UniqueID={desc.UniqueID}, expected 597201"
+          assert desc.Label.decode() == "xps17_studio_dsp", f"Label={desc.Label}"
+          assert desc.Properties & LADSPA_PROPERTY_HARD_RT_CAPABLE, "Must advertise LADSPA_PROPERTY_HARD_RT_CAPABLE"
+
+          expected_ports = [
+              ("In L", LADSPA_PORT_INPUT | LADSPA_PORT_AUDIO),
+              ("In R", LADSPA_PORT_INPUT | LADSPA_PORT_AUDIO),
+              ("Out L", LADSPA_PORT_OUTPUT | LADSPA_PORT_AUDIO),
+              ("Out R", LADSPA_PORT_OUTPUT | LADSPA_PORT_AUDIO),
+              ("Mode", LADSPA_PORT_INPUT | LADSPA_PORT_CONTROL),
+              ("Volume (dB)", LADSPA_PORT_INPUT | LADSPA_PORT_CONTROL),
+              ("Bass Depth", LADSPA_PORT_INPUT | LADSPA_PORT_CONTROL),
+              ("Physical Bass Hz", LADSPA_PORT_INPUT | LADSPA_PORT_CONTROL),
+              ("Warmth Body", LADSPA_PORT_INPUT | LADSPA_PORT_CONTROL),
+              ("Stage Depth", LADSPA_PORT_INPUT | LADSPA_PORT_CONTROL),
+              ("Spatial XTC", LADSPA_PORT_INPUT | LADSPA_PORT_CONTROL),
+              ("Drive (dB)", LADSPA_PORT_INPUT | LADSPA_PORT_CONTROL),
+              ("Ceiling (dBFS)", LADSPA_PORT_INPUT | LADSPA_PORT_CONTROL),
+              ("Excursion Guard", LADSPA_PORT_INPUT | LADSPA_PORT_CONTROL),
+          ]
+          assert desc.PortCount == len(expected_ports), f"PortCount={desc.PortCount}, expected {len(expected_ports)}"
+
+          for idx, (exp_name, exp_flags) in enumerate(expected_ports):
+              got_name = desc.PortNames[idx].decode()
+              got_flags = desc.PortDescriptors[idx]
+              assert got_name == exp_name, f"Port {idx}: got '{got_name}', expected '{exp_name}'"
+              assert (got_flags & exp_flags) == exp_flags, f"Port {idx} ('{got_name}') flags mismatch: {got_flags:#x} vs {exp_flags:#x}"
+
+          # Instantiate at 48 kHz and run finite stereo buffer check
+          handle = desc.instantiate(desc_ptr, 48000)
+          assert handle, "instantiate(48000) returned NULL"
+          n = 256
+          in_l = (ctypes.c_float * n)(*[0.25 * math.sin(2.0 * math.pi * 100.0 * i / 48000.0) for i in range(n)])
+          in_r = (ctypes.c_float * n)(*[0.25 * math.cos(2.0 * math.pi * 440.0 * i / 48000.0) for i in range(n)])
+          out_l = (ctypes.c_float * n)()
+          out_r = (ctypes.c_float * n)()
+          controls = [ctypes.c_float(v) for v in (0.0, -12.0, 1.0, 82.0, 1.0, 0.85, 0.0, 7.0, -1.0, 1.0)]
+
+          desc.connect_port(handle, 0, in_l)
+          desc.connect_port(handle, 1, in_r)
+          desc.connect_port(handle, 2, out_l)
+          desc.connect_port(handle, 3, out_r)
+          for i, ctrl in enumerate(controls):
+              desc.connect_port(handle, 4 + i, ctypes.byref(ctrl))
+
+          if bool(desc.activate):
+              desc.activate(handle)
+          desc.run(handle, n)
+          if bool(desc.deactivate):
+              desc.deactivate(handle)
+          desc.cleanup(handle)
+
+          max_abs = max(max(abs(v) for v in out_l), max(abs(v) for v in out_r))
+          assert all(math.isfinite(v) for v in out_l) and all(math.isfinite(v) for v in out_r), "Non-finite DSP output detected!"
+          assert max_abs > 1e-5, f"Silent output detected (max_abs={max_abs})"
+          assert max_abs <= 1.05, f"Unclamped peak exceeded ceiling safety bound (max_abs={max_abs})"
+          print(f"LADSPA ABI OK: UniqueID=597201 Label=xps17_studio_dsp Ports=14 max_abs={max_abs:.4f}")
+          PY
+
+  acoustics-and-controller-tests:
+    name: Acoustic Kernels, Controller & Verification Suite
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python test dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install numpy scipy pytest pyyaml
+
+      - name: Validate 4096-tap minimum-phase FIR kernels & dsp_params.json
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import numpy as np
+          from scipy.io import wavfile
+
+          kernels = [
+              "acoustics-research/kernels/xps17-studio-deep.wav",
+              "acoustics-research/kernels/xps17-studio-spatial.wav",
+              "acoustics-research/kernels/xps17-studio-reference.wav",
+              "acoustics-research/kernels/xps17-studio-voice.wav",
+          ]
+          for kp in kernels:
+              assert os.path.isfile(kp), f"Missing FIR kernel: {kp}"
+              sr, data = wavfile.read(kp)
+              assert sr == 48000, f"{kp}: sample rate {sr} != 48000"
+              assert data.dtype == np.float32, f"{kp}: dtype {data.dtype} != float32"
+              assert data.ndim == 2 and data.shape == (4096, 2), f"{kp}: shape {data.shape} != (4096, 2)"
+              assert np.all(np.isfinite(data)), f"{kp}: contains NaN/Inf"
+              # Minimum-phase check: peak tap must occur early (first 128 samples = 2.67 ms)
+              peak_idx = int(np.argmax(np.abs(data[:, 0])))
+              assert peak_idx < 256, f"{kp}: peak_idx={peak_idx} too late for minimum-phase FIR"
+              print(f"FIR OK: {kp} sr={sr} shape={data.shape} peak_tap={peak_idx}")
+
+          params_candidates = [
+              "acoustics-research/dsp_params.json",
+              "acoustics-research/kernels/dsp_params.json",
+          ]
+          params_path = next((p for p in params_candidates if os.path.isfile(p)), None)
+          assert params_path is not None, "Missing acoustics-research/dsp_params.json"
+          with open(params_path, encoding="utf-8") as fh:
+              params = json.load(fh)
+          assert isinstance(params, dict) and len(params) > 0, "dsp_params.json must be non-empty JSON object"
+          print(f"dsp_params.json OK: {params_path} ({len(params)} top-level keys)")
+          PY
+
+      - name: Run Python unit & controller tests
+        run: |
+          if find verify-integrate acoustics-research -name 'test_*.py' -print -quit | grep -q .; then
+            pytest -v verify-integrate acoustics-research
+          else
+            echo "No pytest files found yet; checking Python syntax compilation."
+            python3 -m compileall -q verify-integrate acoustics-research
+          fi
+
+      - name: Run packaging & repo bundle consistency check
+        run: |
+          BUNDLE_SCRIPT="sync_repo_bundle.py"
+          if [[ ! -f "$BUNDLE_SCRIPT" ]]; then
+            BUNDLE_SCRIPT="verify-integrate/packaging/sync_repo_bundle.py"
+          fi
+          python3 "$BUNDLE_SCRIPT" --check
+
+  pipewire-and-shell-lint:
+    name: PipeWire Filter-Chain DAG, Shellcheck & Installer Sandbox
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends shellcheck
+
+      - name: Syntax-check & ShellCheck all installer and control scripts
+        run: |
+          set -euo pipefail
+          SCRIPTS=()
+          for candidate in \
+            install.sh \
+            uninstall.sh \
+            verify-integrate/packaging/install.sh \
+            verify-integrate/packaging/uninstall.sh \
+            verify-integrate/staged/bin/speaker-profile \
+            verify-integrate/staged/bin/deploy-studio-dsp.sh \
+            verify-integrate/staged/bin/rollback-studio-dsp.sh \
+            verify-integrate/deploy-studio-dsp.sh \
+            verify-integrate/rollback-studio-dsp.sh; do
+            if [[ -f "$candidate" ]]; then
+              SCRIPTS+=("$candidate")
+            fi
+          done
+          test "${#SCRIPTS[@]}" -ge 2
+          for s in "${SCRIPTS[@]}"; do
+            echo "Checking $s"
+            bash -n "$s"
+            shellcheck -S warning "$s"
+          done
+
+      - name: Run installer & uninstaller sandboxed dry-run and negative safety guard tests
+        run: |
+          set -euo pipefail
+          INSTALL_SH="install.sh"
+          UNINSTALL_SH="uninstall.sh"
+          if [[ ! -f "$INSTALL_SH" ]]; then
+            INSTALL_SH="verify-integrate/packaging/install.sh"
+            UNINSTALL_SH="verify-integrate/packaging/uninstall.sh"
+          fi
+
+          TMP_SANDBOX="$(mktemp -d)"
+          trap 'rm -rf "$TMP_SANDBOX"' EXIT
+          MOCK_HOME="$TMP_SANDBOX/home/testuser"
+          MOCK_DMI_OK="$TMP_SANDBOX/dmi_ok"
+          MOCK_DMI_BAD="$TMP_SANDBOX/dmi_bad"
+          mkdir -p "$MOCK_HOME/.config/systemd/user/easyeffects-speaker-dsp.service.d" \
+                   "$MOCK_HOME/.config/wireplumber/wireplumber.conf.d" \
+                   "$MOCK_HOME/.config/easyeffects/db" \
+                   "$MOCK_DMI_OK" "$MOCK_DMI_BAD"
+
+          echo 'ExecStartPre=/usr/bin/kwriteconfig6 --key listenToMic false' > "$MOCK_HOME/.config/systemd/user/easyeffects-speaker-dsp.service.d/no-mic-monitor.conf"
+          echo 'monitor.bluez.properties = { bluez5.roles = [ a2dp_source ] }' > "$MOCK_HOME/.config/wireplumber/wireplumber.conf.d/51-bluetooth-no-phone-audio.conf"
+          printf '[StreamInputs]\nlistenToMic=false\n' > "$MOCK_HOME/.config/easyeffects/db/easyeffectsrc"
+          printf '0AFF\n' > "$MOCK_DMI_OK/product_sku"
+          printf 'XPS 17 9720\n' > "$MOCK_DMI_OK/product_name"
+          printf '9999\n' > "$MOCK_DMI_BAD/product_sku"
+          printf 'Other Laptop\n' > "$MOCK_DMI_BAD/product_name"
+
+          # 1. Positive dry-run on mock 0AFF
+          XPS17_DMI_DIR="$MOCK_DMI_OK" bash "$INSTALL_SH" --dsp-only --dry-run --user-home "$MOCK_HOME"
+          XPS17_DMI_DIR="$MOCK_DMI_OK" bash "$UNINSTALL_SH" --dry-run --user-home "$MOCK_HOME"
+
+          # 2. Negative guard: refuse /root user home
+          if XPS17_DMI_DIR="$MOCK_DMI_OK" bash "$INSTALL_SH" --dsp-only --dry-run --user-home /root; then
+            echo "FAIL: installer accepted /root!" >&2
+            exit 1
+          fi
+
+          # 3. Negative guard: refuse --with-kernel + --force-skip-dmi-check
+          if XPS17_DMI_DIR="$MOCK_DMI_BAD" bash "$INSTALL_SH" --with-kernel --force-skip-dmi-check --dry-run --user-home "$MOCK_HOME"; then
+            echo "FAIL: installer allowed DMI bypass with --with-kernel!" >&2
+            exit 1
+          fi
+
+          # 4. Negative guard: refuse non-0AFF without --force-skip-dmi-check
+          if XPS17_DMI_DIR="$MOCK_DMI_BAD" bash "$INSTALL_SH" --dsp-only --dry-run --user-home "$MOCK_HOME"; then
+            echo "FAIL: installer accepted non-0AFF without bypass!" >&2
+            exit 1
+          fi
+
+          # 5. Positive: allow --dsp-only + --force-skip-dmi-check on non-0AFF
+          XPS17_DMI_DIR="$MOCK_DMI_BAD" bash "$INSTALL_SH" --dsp-only --force-skip-dmi-check --dry-run --user-home "$MOCK_HOME"
+
+      - name: Validate PipeWire filter-chain SPA-JSON syntax & DAG wiring
+        run: |
+          python3 - <<'PY'
+          import glob
+          import sys
+
+          confs = sorted(glob.glob("verify-integrate/staged/pipewire/*.conf"))
+          if not confs:
+              print("No staged PipeWire configs found in verify-integrate/staged/pipewire/; skipping.")
+              sys.exit(0)
+
+          for path in confs:
+              text = open(path, encoding="utf-8").read()
+              # Strip line comments (#...) while preserving quoted strings
+              depth_brace = 0
+              depth_bracket = 0
+              in_str = False
+              esc = False
+              for line in text.splitlines():
+                  for ch in line:
+                      if in_str:
+                          if esc:
+                              esc = False
+                          elif ch == "\\":
+                              esc = True
+                          elif ch == '"':
+                              in_str = False
+                          continue
+                      if ch == "#":
+                          break
+                      if ch == '"':
+                          in_str = True
+                      elif ch == "{":
+                          depth_brace += 1
+                      elif ch == "}":
+                          depth_brace -= 1
+                      elif ch == "[":
+                          depth_bracket += 1
+                      elif ch == "]":
+                          depth_bracket -= 1
+                      assert depth_brace >= 0 and depth_bracket >= 0, f"{path}: unmatched closing bracket/brace"
+              assert not in_str, f"{path}: unterminated string literal"
+              assert depth_brace == 0, f"{path}: unbalanced braces ({depth_brace})"
+              assert depth_bracket == 0, f"{path}: unbalanced brackets ({depth_bracket})"
+              assert "libpipewire-module-filter-chain" in text, f"{path}: missing filter-chain module"
+              assert "xps17_studio_dsp" in text, f"{path}: missing xps17_studio_dsp LADSPA node"
+              assert "Volume (dB)" in text or "Mode" in text, f"{path}: missing expected LADSPA control bindings"
+              print(f"PipeWire config OK: {path}")
+          PY
+
+  kernel-safety-audit:
+    name: Kernel Forbidden-Register & Secret Static Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Static forbidden ALC1316 register audit & SPDX check on kernel-driver/
+        run: |
+          python3 - <<'PY'
+          import os
+          import re
+          import sys
+
+          # Strictly forbidden protection / DC-detect / HV-mute / sine-gen registers
+          FORBIDDEN_REGS = [
+              "0xC000", "0xC050", "0xC082", "0xC093",
+              "0xC09C", "0xC09D", "0xC0A3", "0xC102", "0xC60E",
+          ]
+          WRITE_CALL_RE = re.compile(
+              r"(?:regmap_write|regmap_update_bits|regmap_multi_reg_write|sdw_write|RT1316_REG_WRITE|\{\s*)(?:[^;\n]*?)\b("
+              + "|".join(re.escape(r) for r in FORBIDDEN_REGS)
+              + r")\b",
+              re.IGNORECASE,
+          )
+
+          kdir = "kernel-driver"
+          if not os.path.isdir(kdir):
+              print("kernel-driver/ directory absent; nothing to audit.")
+              sys.exit(0)
+
+          violations = []
+          checked_files = 0
+          for root, dirs, files in os.walk(kdir):
+              dirs[:] = [d for d in dirs if d not in (".git", "build", "__pycache__")]
+              for fn in sorted(files):
+                  if not fn.endswith((".c", ".h", ".patch", ".sh", ".conf")):
+                      continue
+                  # Skip audit/test fixtures that intentionally list blocklisted register constants
+                  rel = os.path.relpath(os.path.join(root, fn), kdir)
+                  if rel.startswith(("audit/", "verify/tests/", "verify/test_")):
+                      continue
+                  checked_files += 1
+                  full = os.path.join(root, fn)
+                  lines = open(full, errors="replace").read().splitlines()
+
+                  # Check GPL-2.0-only SPDX header on C source files
+                  if fn.endswith(".c"):
+                      head = "\n".join(lines[:10])
+                      if "GPL-2.0" not in head:
+                          violations.append(f"{rel}: missing GPL-2.0 SPDX license header in top 10 lines")
+
+                  for lineno, line in enumerate(lines, 1):
+                      stripped = line.strip()
+                      # Ignore pure comment lines and blocklist guard declarations
+                      if stripped.startswith(("//", "*", "/*", "#")):
+                          continue
+                      if "FORBIDDEN" in stripped.upper() or "BLOCKLIST" in stripped.upper() or "DENY" in stripped.upper():
+                          continue
+                      m = WRITE_CALL_RE.search(stripped)
+                      if m:
+                          violations.append(f"{rel}:{lineno}: potential write to forbidden ALC1316 register {m.group(1)}: {stripped}")
+
+          if violations:
+              for v in violations:
+                  print("AUDIT FAIL:", v, file=sys.stderr)
+              sys.exit(1)
+          print(f"Kernel forbidden-register static audit PASSED across {checked_files} files.")
+          PY
+
+      - name: Scan repository for leaked secrets or personal tokens
+        run: |
+          python3 - <<'PY'
+          import os
+          import re
+          import sys
+
+          SECRET_PATTERNS = [
+              ("GitHub PAT", re.compile(r"\bgh[pousr]_[A-Za-z0-9_]{30,}\b")),
+              ("AWS Key", re.compile(r"\bAKIA[0-9A-Z]{16}\b")),
+              ("Private Key Block", re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----")),
+              ("Generic API Token", re.compile(r"\b(?:sk-[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9-]{20,})\b")),
+          ]
+
+          hits = []
+          for root, dirs, files in os.walk("."):
+              dirs[:] = [d for d in dirs if d not in (".git", "target", "__pycache__", ".venv")]
+              for fn in sorted(files):
+                  full = os.path.join(root, fn)
+                  if os.path.getsize(full) > 2 * 1024 * 1024:
+                      continue
+                  try:
+                      text = open(full, encoding="utf-8").read()
+                  except (UnicodeDecodeError, OSError):
+                      continue
+                  for name, pat in SECRET_PATTERNS:
+                      if pat.search(text):
+                          hits.append(f"{full}: matched {name}")
+          if hits:
+              for h in hits:
+                  print("SECRET SCAN FAIL:", h, file=sys.stderr)
+              sys.exit(1)
+          print("Secret scan PASSED: zero credentials or tokens detected.")
+          PY

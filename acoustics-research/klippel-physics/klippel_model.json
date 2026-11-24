@@ -1,0 +1,540 @@
+{
+  "schema_version": "1.0.0",
+  "device": {
+    "model": "Dell XPS 17 9720",
+    "dmi_sku": "0AFF",
+    "subsystem_id": "0AFF1028",
+    "codename": "Stradale",
+    "amplifier": "Dual Realtek ALC1316 / ALC1319D (rt1316-sdca)",
+    "speaker_layout": "Quad: 2x bottom-firing woofers (SPOL, 2W RMS / 2.5W peak) + 2x top-firing tweeters (SPOR, 2W RMS / 2.5W peak)",
+    "flank_span_m": 0.34,
+    "nominal_listening_distance_m": 0.55,
+    "amp_crossover_requirement": "0xC202=0xC0 MUST be active (woofer 6.16 kHz LPF + 18 Hz HPF; tweeter 838 Hz HPF + 18 Hz HPF)"
+  },
+  "calibration_provenance": {
+    "acoustic_data": "/home/akshaybapat/project/omarchy-audio-tune/baseline_curve.npy",
+    "hardware_spec_source": "/home/akshaybapat/project/xps17-speaker-stack/sense/protection-model/parameters.csv",
+    "status": "CALIBRATED_ACOUSTIC_PROVISIONAL",
+    "ipc4_refinement_note": "f0, Q_tc, R_e, Bl, and X_max are calibrated from measured baseline_curve.npy, Dell Waves 344 Hz notch, and 2W/2.8Vrms hardware specs; drop-in update when IPC4 I-sense impedance sweep is measured."
+  },
+  "electro_mechanical_woofer": {
+    "f0_hz": 390.0,
+    "q_tc_cold": 1.48,
+    "q_obs_guard": 1.55,
+    "q_ec": 1.6317,
+    "q_mc": 15.8,
+    "re_ohm": 4.0,
+    "le_henry": 6e-05,
+    "fe_inductance_hz": 10610.3,
+    "alpha_cu_per_k": 0.00393,
+    "mms_kg": 0.00035,
+    "bl0_tm": 1.45,
+    "k0_n_per_m": 2101.63,
+    "cms0_mm_per_n": 0.4758,
+    "kx_mm_per_v": 0.17248,
+    "sd_m2": 0.00025,
+    "vb_m3": 3e-06,
+    "x_max_mm": 0.4,
+    "x_safe_mm": 0.34,
+    "x_safe_ratio": 0.85,
+    "f_peak_displacement_hz": 342.54,
+    "f_peak_pressure_hz": 444.04,
+    "resonance_peak_db": 3.93,
+    "klippel_nonlinear_margin": {
+      "bl_drop_at_xmax_frac": 0.18,
+      "bl_at_xsafe_frac": 0.87,
+      "kms_k1_at_xmax_frac": 0.1,
+      "kms_k2_at_xmax_frac": 0.333,
+      "cms_at_xsafe_frac": 0.7544,
+      "le_slope_h_per_m": -0.015
+    }
+  },
+  "amp_gain_modes": {
+    "linux_live_unguarded": {
+      "reg_c60f": "0x01",
+      "reg_d002_d004": "0xBF",
+      "v_rms_fs_est": 2.0,
+      "v_pk_fs_est": 2.8284,
+      "g_obs_safe": 1.434885,
+      "g_obs_xmax": 1.219652,
+      "max_sine_power_4ohm_w": 1.0
+    },
+    "windows_basic_guarded": {
+      "reg_c60f": "0x05",
+      "reg_d002_d004": "0xA9",
+      "requires_kernel_deadman_ms": 250,
+      "requires_c202_crossover_hex": "0xC0",
+      "v_rms_fs": 2.8,
+      "v_pk_fs": 3.9598,
+      "g_obs_safe": 2.008839,
+      "g_obs_xmax": 1.707513,
+      "max_sine_power_4ohm_w": 1.96
+    }
+  },
+  "discrete_observer_48khz": {
+    "sample_rate_hz": 48000,
+    "design_method": "Bilinear transform pre-warped at f0 = 390.0 Hz",
+    "normalization": "|x_hat[n]| = 1.0 equals X_safe = 0.85 * X_max (0.34 mm) at Windows Basic 0 dBFS",
+    "biquad_2nd_order_windows_basic": {
+      "b": [
+        0.0012873796005229644,
+        0.002574759201045929,
+        0.0012873796005229644
+      ],
+      "a": [
+        1.0,
+        -1.9650479669672154,
+        0.9676113971085929
+      ],
+      "pole_radius": 0.9836724,
+      "dc_gain": 2.008839,
+      "f0_gain": 3.1137
+    },
+    "biquad_2nd_order_unit_dc_prototype": {
+      "b": [
+        0.0006408575353443747,
+        0.0012817150706887495,
+        0.0006408575353443747
+      ],
+      "a": [
+        1.0,
+        -1.9650479669672154,
+        0.9676113971085929
+      ],
+      "note": "Multiply b by G_obs_safe = (K_x * V_pk_fs / X_safe) * 10^(Drive_dB/20) for any hardware gain mode"
+    },
+    "optional_inductance_1st_order_pole": {
+      "fc_hz": 10610.33,
+      "b": [
+        0.454397320527315,
+        0.454397320527315
+      ],
+      "a": [
+        1.0,
+        -0.09120535894536991
+      ],
+      "pole_z": 0.09120536,
+      "max_delta_below_1khz_db": 0.027
+    },
+    "sidechain_sub_lp_notch": {
+      "pole_hz": 170.0,
+      "pole_q": 0.7071067811865476,
+      "zero_hz": 343.0,
+      "b": [
+        0.24187149399912455,
+        -0.4832554850677033,
+        0.24187149399912455
+      ],
+      "a": [
+        1.0,
+        -1.9685321160997837,
+        0.9690196190303295
+      ],
+      "pole_radius": 0.98438794,
+      "rejection_at_343hz_db": -240.0
+    },
+    "bode_verification": [
+      {
+        "freq_hz": 20.0,
+        "mag_2nd_db": 6.08,
+        "phase_2nd_deg": -1.9,
+        "mag_3rd_db": 6.08,
+        "phase_3rd_deg": -2.0,
+        "inductance_delta_db": -0.0
+      },
+      {
+        "freq_hz": 45.0,
+        "mag_2nd_db": 6.15,
+        "phase_2nd_deg": -4.3,
+        "mag_3rd_db": 6.15,
+        "phase_3rd_deg": -4.5,
+        "inductance_delta_db": -0.0
+      },
+      {
+        "freq_hz": 50.0,
+        "mag_2nd_db": 6.17,
+        "phase_2nd_deg": -4.8,
+        "mag_3rd_db": 6.17,
+        "phase_3rd_deg": -5.0,
+        "inductance_delta_db": -0.0
+      },
+      {
+        "freq_hz": 82.0,
+        "mag_2nd_db": 6.36,
+        "phase_2nd_deg": -8.1,
+        "mag_3rd_db": 6.36,
+        "phase_3rd_deg": -8.4,
+        "inductance_delta_db": -0.0
+      },
+      {
+        "freq_hz": 100.0,
+        "mag_2nd_db": 6.52,
+        "phase_2nd_deg": -10.0,
+        "mag_3rd_db": 6.52,
+        "phase_3rd_deg": -10.5,
+        "inductance_delta_db": -0.0
+      },
+      {
+        "freq_hz": 155.0,
+        "mag_2nd_db": 7.17,
+        "phase_2nd_deg": -16.9,
+        "mag_3rd_db": 7.17,
+        "phase_3rd_deg": -17.6,
+        "inductance_delta_db": -0.001
+      },
+      {
+        "freq_hz": 200.0,
+        "mag_2nd_db": 7.91,
+        "phase_2nd_deg": -24.2,
+        "mag_3rd_db": 7.91,
+        "phase_3rd_deg": -25.1,
+        "inductance_delta_db": -0.001
+      },
+      {
+        "freq_hz": 300.0,
+        "mag_2nd_db": 9.9,
+        "phase_2nd_deg": -50.5,
+        "mag_3rd_db": 9.9,
+        "phase_3rd_deg": -51.9,
+        "inductance_delta_db": -0.002
+      },
+      {
+        "freq_hz": 343.0,
+        "mag_2nd_db": 10.34,
+        "phase_2nd_deg": -68.2,
+        "mag_3rd_db": 10.34,
+        "phase_3rd_deg": -69.8,
+        "inductance_delta_db": -0.003
+      },
+      {
+        "freq_hz": 390.0,
+        "mag_2nd_db": 9.87,
+        "phase_2nd_deg": -90.0,
+        "mag_3rd_db": 9.86,
+        "phase_3rd_deg": -91.8,
+        "inductance_delta_db": -0.004
+      },
+      {
+        "freq_hz": 500.0,
+        "mag_2nd_db": 5.65,
+        "phase_2nd_deg": -127.9,
+        "mag_3rd_db": 5.64,
+        "phase_3rd_deg": -130.2,
+        "inductance_delta_db": -0.007
+      },
+      {
+        "freq_hz": 1000.0,
+        "mag_2nd_db": -9.26,
+        "phase_2nd_deg": -163.5,
+        "mag_3rd_db": -9.28,
+        "phase_3rd_deg": -168.0,
+        "inductance_delta_db": -0.027
+      },
+      {
+        "freq_hz": 2000.0,
+        "mag_2nd_db": -22.18,
+        "phase_2nd_deg": -172.6,
+        "mag_3rd_db": -22.28,
+        "phase_3rd_deg": 178.4,
+        "inductance_delta_db": -0.107
+      },
+      {
+        "freq_hz": 5000.0,
+        "mag_2nd_db": -38.85,
+        "phase_2nd_deg": -177.2,
+        "mag_3rd_db": -39.52,
+        "phase_3rd_deg": 160.6,
+        "inductance_delta_db": -0.667
+      }
+    ]
+  },
+  "sliding_hpf_control_law": {
+    "topology": "4th-order Butterworth TPT-SVF (Zero-Delay Feedback, 2 cascaded 2nd-order SVF sections)",
+    "slope_db_per_oct": 24.0,
+    "stage_q": [
+      0.541196100146197,
+      1.3065629648763766
+    ],
+    "control_port_physical_bass_hz_range": [
+      65.0,
+      180.0
+    ],
+    "mode_f_min_hz": {
+      "studio_deep": 82.0,
+      "studio_spatial": 85.0,
+      "studio_reference": 80.0,
+      "studio_voice": 105.0
+    },
+    "f_max_default_hz": 155.0,
+    "f_max_hard_clamp_hz": 160.0,
+    "x_knee_norm_safe": 0.62,
+    "x_limit_norm_safe": 1.48,
+    "x_knee_norm_xmax": 0.527,
+    "x_limit_norm_xmax": 1.258,
+    "envelope_attack_ms": 1.5,
+    "envelope_release_fast_ms": 45.0,
+    "envelope_release_slow_ms": 180.0,
+    "envelope_slow_floor_weight": 0.82,
+    "cutoff_slew_tau_ms": 0.5,
+    "stage_a_lookahead_ms": 1.0,
+    "formula": "f_hp = f_min + ExcursionGuard * (f_max - f_min) * smoothstep((X_env - X_knee) / (X_limit - X_knee))"
+  },
+  "cooperative_subband_excursion_limiter": {
+    "crossover_type": "4th-order Linkwitz-Riley (LR4 TPT-SVF)",
+    "band1_sub_bass": {
+      "range_hz": [
+        0.0,
+        160.0
+      ],
+      "threshold_dbfs": -7.5,
+      "soft_knee_db": 4.0,
+      "ratio": 6.0,
+      "attack_ms": 3.0,
+      "release_ms": 90.0
+    },
+    "band2_warm_bass_resonance_guard": {
+      "range_hz": [
+        160.0,
+        450.0
+      ],
+      "threshold_dbfs": -9.0,
+      "soft_knee_db": 5.0,
+      "ratio": 8.0,
+      "attack_ms": 2.5,
+      "release_ms": 85.0
+    },
+    "stage_c_lookahead_residual_guard": {
+      "thresh_norm_safe": 0.94,
+      "ceil_norm_safe": 1.0,
+      "lookahead_ms": 1.5,
+      "attack_ms": 0.3,
+      "release_ms": 65.0
+    }
+  },
+  "thermal_protection_model": {
+    "topology": "Dual-time-constant 2-node thermal network (voice coil + magnet/chassis)",
+    "t_ambient_c": 40.0,
+    "t_knee_c": 80.0,
+    "t_limit_c": 100.0,
+    "t_window_k": 20.0,
+    "r_th_vc_k_per_w": 13.5,
+    "r_th_mag_k_per_w": 16.5,
+    "r_th_total_k_per_w": 30.0,
+    "tau_vc_s": 1.5,
+    "tau_mag_s": 40.0,
+    "c_th_vc_j_per_k": 0.1111,
+    "c_th_mag_j_per_k": 2.4242,
+    "max_continuous_rms_power_w": 2.0,
+    "max_short_term_peak_power_w": 2.5,
+    "max_thermal_gain_reduction_db": -6.0
+  },
+  "measured_baseline_summary": {
+    "ref_1khz_db": 68.59,
+    "measured_rel_1k_db": {
+      "100_hz": -33.42,
+      "110_hz": -25.2,
+      "150_hz": -24.88,
+      "200_hz": -14.84,
+      "300_hz": -6.6,
+      "350_hz": -2.79,
+      "445_hz": 3.97,
+      "730_hz": -5.18,
+      "1500_hz": 4.18,
+      "10000_hz": -13.13
+    },
+    "measured_peak_hz": 440.9,
+    "measured_peak_rel_1k_db": 3.97,
+    "slopes_1_6_oct": {
+      "110_to_220_hz_db_per_oct": 11.35,
+      "120_to_240_hz_db_per_oct": 11.46,
+      "150_to_300_hz_db_per_oct": 17.63,
+      "200_to_400_hz_db_per_oct": 16.58
+    },
+    "desk_bounce_notches": [
+      {
+        "freq_hz": 181.6,
+        "rel_1k_db": -18.91
+      },
+      {
+        "freq_hz": 221.2,
+        "rel_1k_db": -14.71
+      },
+      {
+        "freq_hz": 729.5,
+        "rel_1k_db": -4.74
+      }
+    ],
+    "sealed_box_fit_110_420hz": {
+      "f0_hz": 390.0,
+      "q_tc": 1.48,
+      "woofer_vs_combined_1k_offset_db": -5.93,
+      "weighted_rmse_db": 1.77
+    }
+  },
+  "verified_simulation_results": {
+    "test1_quiet_minus24dbfs": {
+      "f_hp_min_hz": 82.0,
+      "f_hp_max_hz": 82.0,
+      "gr_residual_db": 0.0,
+      "x_lin_peak_xmax": 0.1191,
+      "x_nl_rk4_peak_xmax": 0.1196,
+      "passed": true
+    },
+    "test2_nominal_minus12dbfs": {
+      "f_hp_min_hz": 82.0,
+      "f_hp_max_hz": 101.38,
+      "gr_residual_db": 0.0,
+      "x_lin_peak_xmax": 0.4619,
+      "x_nl_rk4_peak_xmax": 0.4252,
+      "passed": true
+    },
+    "test3_extreme_0dbfs_45hz": {
+      "f_hp_max_hz": 155.0,
+      "reaction_time_to_150hz_ms": 4.92,
+      "x_lin_peak_xmax": 0.6367,
+      "x_lin_steady_state_xmax": 0.0274,
+      "x_nl_rk4_peak_xmax": 0.5949,
+      "x_bare_unprotected_xmax": 1.8055,
+      "max_sample_delta_during_sweep": 0.01161,
+      "passed": true
+    },
+    "test3b_0dbfs_50hz_kick": {
+      "f_hp_max_hz": 155.0,
+      "x_lin_peak_guarded_xmax": 0.6827,
+      "x_nl_rk4_peak_guarded_xmax": 0.6296,
+      "x_lin_peak_fixed_82hz_xmax": 0.7678,
+      "kick_transient_reduction_db": -1.02,
+      "steady_state_82_to_155_reduction_db": -22.04,
+      "steady_state_x_at_82hz_xmax": 0.2368,
+      "steady_state_x_at_155hz_xmax": 0.0187,
+      "passed": true
+    },
+    "test3c_0dbfs_343hz_resonance": {
+      "f_hp_max_hz": 84.29,
+      "f_hp_ss_hz": 82.0,
+      "band2_gr_min_db": -10.98,
+      "residual_gr_min_db": -13.69,
+      "x_lin_peak_xmax": 0.9554,
+      "x_lin_steady_state_xmax": 0.8161,
+      "x_nl_rk4_peak_xmax": 0.9143,
+      "x_nl_rk4_steady_state_xmax": 0.7518,
+      "passed": true
+    },
+    "test3d_full_spectrum_0dbfs_sweep": [
+      {
+        "freq_hz": 35.0,
+        "f_hp_max_hz": 155.0,
+        "x_lin_peak_xmax": 0.509,
+        "x_lin_ss_xmax": 0.01,
+        "gr_b1_min_db": 0.0,
+        "gr_b2_min_db": 0.0,
+        "gr_res_min_db": 0.0
+      },
+      {
+        "freq_hz": 45.0,
+        "f_hp_max_hz": 155.0,
+        "x_lin_peak_xmax": 0.637,
+        "x_lin_ss_xmax": 0.027,
+        "gr_b1_min_db": 0.0,
+        "gr_b2_min_db": 0.0,
+        "gr_res_min_db": 0.0
+      },
+      {
+        "freq_hz": 65.0,
+        "f_hp_max_hz": 155.0,
+        "x_lin_peak_xmax": 0.845,
+        "x_lin_ss_xmax": 0.12,
+        "gr_b1_min_db": 0.0,
+        "gr_b2_min_db": 0.0,
+        "gr_res_min_db": -0.4
+      },
+      {
+        "freq_hz": 82.0,
+        "f_hp_max_hz": 155.0,
+        "x_lin_peak_xmax": 0.862,
+        "x_lin_ss_xmax": 0.3,
+        "gr_b1_min_db": 0.0,
+        "gr_b2_min_db": 0.0,
+        "gr_res_min_db": -2.1
+      },
+      {
+        "freq_hz": 110.0,
+        "f_hp_max_hz": 155.0,
+        "x_lin_peak_xmax": 0.871,
+        "x_lin_ss_xmax": 0.848,
+        "gr_b1_min_db": -0.4,
+        "gr_b2_min_db": -0.1,
+        "gr_res_min_db": -4.3
+      },
+      {
+        "freq_hz": 155.0,
+        "f_hp_max_hz": 155.0,
+        "x_lin_peak_xmax": 0.942,
+        "x_lin_ss_xmax": 0.847,
+        "gr_b1_min_db": -4.5,
+        "gr_b2_min_db": -5.1,
+        "gr_res_min_db": -7.2
+      },
+      {
+        "freq_hz": 220.0,
+        "f_hp_max_hz": 155.0,
+        "x_lin_peak_xmax": 0.98,
+        "x_lin_ss_xmax": 0.828,
+        "gr_b1_min_db": -0.6,
+        "gr_b2_min_db": -11.0,
+        "gr_res_min_db": -9.2
+      },
+      {
+        "freq_hz": 343.0,
+        "f_hp_max_hz": 84.3,
+        "x_lin_peak_xmax": 0.955,
+        "x_lin_ss_xmax": 0.788,
+        "gr_b1_min_db": 0.0,
+        "gr_b2_min_db": -11.0,
+        "gr_res_min_db": -13.7
+      },
+      {
+        "freq_hz": 445.0,
+        "f_hp_max_hz": 82.0,
+        "x_lin_peak_xmax": 0.903,
+        "x_lin_ss_xmax": 0.793,
+        "gr_b1_min_db": 0.0,
+        "gr_b2_min_db": -8.3,
+        "gr_res_min_db": -14.9
+      },
+      {
+        "freq_hz": 600.0,
+        "f_hp_max_hz": 82.0,
+        "x_lin_peak_xmax": 0.813,
+        "x_lin_ss_xmax": 0.809,
+        "gr_b1_min_db": 0.0,
+        "gr_b2_min_db": -2.6,
+        "gr_res_min_db": -12.1
+      },
+      {
+        "freq_hz": 1000.0,
+        "f_hp_max_hz": 82.0,
+        "x_lin_peak_xmax": 0.439,
+        "x_lin_ss_xmax": 0.316,
+        "gr_b1_min_db": 0.0,
+        "gr_b2_min_db": 0.0,
+        "gr_res_min_db": -3.1
+      }
+    ],
+    "test4_impulse_and_step": {
+      "impulse_tail_db": -358.9,
+      "step_dc_tail": 6.69e-46,
+      "step_x_peak_xmax": 0.3651,
+      "passed": true
+    },
+    "test5_thermal_180s": {
+      "t_final_2w_continuous_c": 99.63,
+      "t_max_2p5w_3s_burst_c": 72.16,
+      "t_final_3p92w_square_unlim_c": 156.9,
+      "t_max_3p92w_square_limited_c": 91.85,
+      "p_ss_3p92w_square_limited_w": 1.729,
+      "gr_ss_3p92w_square_db": -3.55,
+      "passed": true
+    }
+  }
+}

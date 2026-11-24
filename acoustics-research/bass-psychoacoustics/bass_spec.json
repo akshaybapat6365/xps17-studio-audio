@@ -1,0 +1,281 @@
+{
+  "schema_version": "1.0.0",
+  "subsystem": "bass_psychoacoustics_and_iso226",
+  "device": {
+    "model": "Dell XPS 17 9720",
+    "dmi_sku": "0AFF",
+    "subsys_id": "0AFF1028",
+    "codename": "Stradale / StradaleMLK",
+    "sample_rate_hz": 48000,
+    "woofers": "2 x 2.0 W RMS (2.5 W peak) bottom-firing micro-woofers (SPOL)",
+    "tweeters": "2 x 2.0 W RMS (2.5 W peak) top-firing tweeters (SPOR)",
+    "measured_baseline_source": "/home/akshaybapat/project/omarchy-audio-tune/baseline_curve.npy"
+  },
+  "stage_ordering_contract": {
+    "critical_rule": "BassEngine taps raw full-range 32-175 Hz mono input BEFORE (in parallel with) the Klippel dynamic sliding HPF!",
+    "rationale": "When high playback SPL + deep sub-bass glides the 4th-order Cytomic TPT-SVF protection HPF upward from 82 Hz toward 155-158 Hz to prevent micro-woofer over-excursion, tapping raw pre-HPF 32-175 Hz ensures the 3-band missing-fundamental harmonic synthesizer is NEVER starved of sub-bass fundamentals and seamlessly hands off physical bass into upper-harmonic residue pitch (105-420 Hz).",
+    "handoff_gain_law": "g2_handoff = 1.0 + 0.30 * s_eff  (boosts Band 2 harmonic residue up to +2.28 dB as physical HPF slides toward f_max)"
+  },
+  "legacy_forensic_teardown": {
+    "inspected_files": [
+      "~/.config/pipewire/omarchy-speaker-engine.conf.d/91-spatial-fdtr.conf",
+      "/home/akshaybapat/project/omarchy-spatial-audio/src/dsp.rs"
+    ],
+    "defects_proven": {
+      "static_brickwall_hpf": {
+        "topology": "180 Hz 8th-order Butterworth HPF (48 dB/oct) + downstream 110 Hz 4th-order HPF (24 dB/oct)",
+        "attenuation_db": {
+          "40_hz": -139.67,
+          "60_hz": -97.44,
+          "82_hz": -65.24,
+          "100_hz": -45.82,
+          "120_hz": -29.94,
+          "140_hz": -18.13,
+          "160_hz": -9.01,
+          "180_hz": -3.09
+        },
+        "peak_group_delay_ms": 8.23,
+        "peak_group_delay_hz": 173.9
+      },
+      "chebyshev_normalization_and_dc_bug": {
+        "cause": "Mean-rectified envelope env = (2/pi)*A yields peak u_raw = pi/2 = 1.5708 > 1.50 clamp on every pure sine, violating Chebyshev domain |u| <= 1.0 and injecting uncentered T2(u) = 2u^2 - 1 DC + T3 fundamental bleed",
+        "single_tone_50hz_minus6dbfs": {
+          "hard_clip_fraction_pct": 20.7,
+          "pre_hpf_dc_offset": 0.7276,
+          "pre_hpf_dc_dbfs": -2.76,
+          "pre_hpf_50hz_fundamental_leak_dbfs": -4.39,
+          "net_output_scale": 0.231,
+          "output_harmonics_dbfs": {
+            "100_hz": -20.76,
+            "150_hz": -21.02,
+            "200_hz": -23.47,
+            "250_hz": -45.91
+          }
+        }
+      },
+      "speech_gate_double_failure": {
+        "false_open_on_male_speech": "Band B (80-155 Hz) captures male/baritone fundamental F0 (98-118 Hz), holding legacy speech_gate open at 1.000 on dry male podcasts",
+        "vocal_music_choke": "80 ms symmetric envelope chokes bass down to 0.641 (-3.86 dB) during vocal + sparse kick passages"
+      },
+      "frozen_iso226_contour": {
+        "cause": "Disconnected from omarchy-speaker-dsp-controller (ENGINE_NODE = 'omarchy_speaker_engine' != 'omarchy_speaker_spatial') + linear blend 1 + 0.25*(H_warm - 1)",
+        "frozen_boost_db": {
+          "60_hz": 1.49,
+          "100_hz": 1.38,
+          "150_hz": 1.15,
+          "200_hz": 0.88,
+          "1000_hz": 0.03,
+          "8000_hz": 0.25
+        }
+      }
+    }
+  },
+  "windows_stradale_reference": {
+    "source": "/home/akshaybapat/project/xps17-studio-audio/kernel-driver/audit/waves_stradale_summary.json",
+    "n360_bass_cut_hz": 80.0,
+    "n360_bass_gain_db": 3.0,
+    "varislope_subsonic_hpf_hz": 40.0,
+    "mvband_excursion_limiter_hz": [82.0, 93.0],
+    "mvband_excursion_attack_ms": 1.0,
+    "mvband_excursion_release_ms": 202.0,
+    "mfx0_default_maxxbass": {
+      "maxx_bass_frequency_hz": 103.2,
+      "intensity": 21.0,
+      "amount": 0.88,
+      "input_hp_hz": 45.4,
+      "cutoff_hz": 35.1,
+      "output_lp_hz_quiet_to_75pct": [208.5, 313.7],
+      "linklaw_intensity_ratio_0_to_75pct": [1.61, 0.46],
+      "linklaw_64hz_eq_gain_db_75_to_100pct": [-0.2, -4.5]
+    },
+    "mfx163_nx_subtype_maxxbass": {
+      "maxx_bass_frequency_hz": 88.0,
+      "intensity": 15.0,
+      "amount": 0.88,
+      "input_hp_hz": 38.7,
+      "cutoff_hz": 61.6,
+      "output_lp_hz": 154.9
+    },
+    "reconciled_insight": "Dell/Waves tuned physical bass extension down to 80-82 Hz (N360_BASS_CUT=80 Hz, MV2 dynamic excursion clamp at 82-93 Hz with 1 ms attack, 64 Hz physical bass unattenuated up to 75% system volume) paired with MaxxBass centered at 88.0-103.2 Hz and 3.5x volume-adaptive harmonic scaling below 45% volume."
+  },
+  "hybrid_sliding_hpf": {
+    "topology": "4th-order Butterworth Cytomic TPT-SVF (2 cascaded Zero-Delay Feedback SVF sections per channel)",
+    "stage_q": [0.541196100146197, 1.3065629648763766],
+    "slope_db_per_oct": 24.0,
+    "f_min_default_hz": 82.0,
+    "f_min_range_hz": [65.0, 180.0],
+    "f_max_hz": 155.0,
+    "f_max_rust_engine_hz": 158.0,
+    "mode_f_min_defaults_hz": {
+      "deep": 82.0,
+      "spatial": 85.0,
+      "reference": 90.0,
+      "voice": 115.0
+    },
+    "klippel_subband_estimator": {
+      "lowpass_fc_hz": 165.0,
+      "lowpass_q": 0.85,
+      "attack_ms": 1.5,
+      "release_ms": 120.0,
+      "onset_ratio": 0.55,
+      "ceiling_ratio": 0.95,
+      "octave_glide_law": "fc = f_min * (f_max / f_min) ** (excursion_guard * smoothstep((exc_env - exc_onset) / (exc_ceil - exc_onset)))"
+    },
+    "verified_metrics": {
+      "static_82hz_bode_max_err_db": 3.69e-05,
+      "static_155hz_bode_max_err_db": 2.14e-10,
+      "fast_1p5ms_glide_zipper_artifact_dbc": -102.85,
+      "resting_fc_at_minus12db_hz": 82.0,
+      "loud_50hz_burst_peak_fc_hz": 155.0,
+      "excursion_reduction_50hz_db": 39.36
+    }
+  },
+  "three_band_missing_fundamental_synthesizer": {
+    "mono_crossover_hz": 180.0,
+    "subband_edges_hz": [32.0, 68.0, 115.0, 175.0],
+    "interband_crossover_slope": "8th-order Butterworth (48 dB/oct) at 68 Hz and 115 Hz for cross-band IMD isolation and male F0 rejection; 4th-order Butterworth (24 dB/oct) at outer 32 Hz and 175 Hz edges",
+    "bands": [
+      {
+        "index": 0,
+        "name": "deep_sub",
+        "input_range_hz": [32.0, 68.0],
+        "output_shaper_hz": [110.0, 260.0],
+        "orthogonal_chebyshev_weights_w2_w3_w4": [0.68, 0.58, 0.45],
+        "rust_simd_softclip_weights_w2_w3_w4": [0.55, 0.70, 0.45],
+        "rust_simd_drive": 2.8,
+        "rust_simd_gain": 0.55,
+        "python_ref_gain": 1.25,
+        "rms_detector_fc_hz": 7.0,
+        "mean_tracker_fc_hz": 8.0,
+        "psychoacoustic_role": "Synthesizes 2f, 3f, 4f harmonic series (e.g. 50 Hz -> 100, 150, 200 Hz) with f0 spacing locked to true sub-bass fundamental pitch"
+      },
+      {
+        "index": 1,
+        "name": "kick_punch_bass",
+        "input_range_hz": [68.0, 115.0],
+        "output_shaper_hz": [140.0, 310.0],
+        "orthogonal_chebyshev_weights_w2_w3_w4": [0.88, 0.47, 0.0],
+        "rust_simd_softclip_weights_w2_w3_w4": [0.80, 0.45, 0.15],
+        "rust_simd_drive": 2.2,
+        "rust_simd_gain": 0.65,
+        "python_ref_gain": 0.90,
+        "rms_detector_fc_hz": 14.0,
+        "mean_tracker_fc_hz": 14.0,
+        "psychoacoustic_role": "Dominant warm 2nd harmonic + 3rd harmonic pitch lock (matches Waves StradaleMLK 88-103.2 Hz MaxxBass band)"
+      },
+      {
+        "index": 2,
+        "name": "upper_bass_warmth_bridge",
+        "input_range_hz": [115.0, 175.0],
+        "output_shaper_hz": [200.0, 380.0],
+        "orthogonal_chebyshev_weights_w2_w3_w4": [-1.0, 0.0, 0.0],
+        "phase_alignment_note": "Negative T2 weight (-1.0) compensates the 2*phi(135 Hz) ~= 190 deg second-harmonic phase rotation induced by Band 2's 68 Hz BW8 HPF, turning -10.1 dB crossover cancellation into +14.52 dB constructive summation at 270 Hz",
+        "rust_simd_softclip_weights_w2_w3_w4": [0.65, 0.20, 0.0],
+        "rust_simd_drive": 1.6,
+        "rust_simd_gain": 0.42,
+        "python_ref_gain": 0.34,
+        "rms_detector_fc_hz": 22.0,
+        "mean_tracker_fc_hz": 20.0,
+        "psychoacoustic_role": "Pure even-order chest warmth bridge into the XPS 17's 220-360 Hz acoustic radiation sweet spot with 192.9 dB isolated odd-harmonic rejection"
+      }
+    ],
+    "dc_suppression": "Adaptive analytical mean subtraction E[u^2], E[u^4] + 1st-order 22 Hz DC blocker + per-band output HPFs (105-200 Hz)",
+    "chest_warmth_and_transformer_sheen": {
+      "dynamic_bell_freq_hz": 195.0,
+      "dynamic_bell_q": 0.78,
+      "dynamic_bell_max_db": 4.0,
+      "transformer_even_harmonic_band_hz": [120.0, 600.0],
+      "transformer_2nd_harmonic_pct_at_0dbfs": 1.2
+    },
+    "verified_metrics": {
+      "single_tone_dc_dbfs": {
+        "band1_50hz": -225.7,
+        "band2_88hz": -174.8,
+        "band3_140hz": -221.6
+      },
+      "band3_isolated_odd_harmonic_rejection_db": 192.9,
+      "two_tone_harmonic_to_imd_db": {
+        "cross_band_55_95hz": {
+          "new_3band_db": 14.31,
+          "legacy_dsp_rs_db": -4.30,
+          "broadband_fwr_db": -7.51,
+          "improvement_over_legacy_db": 18.60
+        },
+        "cross_band_50_105hz": {
+          "new_3band_db": 19.98,
+          "legacy_dsp_rs_db": -5.02,
+          "broadband_fwr_db": -8.04,
+          "improvement_over_legacy_db": 25.01
+        },
+        "in_band_50_65hz": {
+          "new_3band_db": -1.82,
+          "legacy_dsp_rs_db": -2.00,
+          "broadband_fwr_db": -6.81,
+          "improvement_over_fwr_db": 4.99
+        }
+      },
+      "measured_xps17_acoustic_bass_gain_over_legacy_db": {
+        "deep_sub_50hz": 9.96,
+        "kick_bass_95hz": 7.81,
+        "upper_bass_135hz": 6.00
+      }
+    }
+  },
+  "vocal_safe_music_detector": {
+    "architecture": "BW8-isolated sub-presence (32-68 Hz, strictly below human male/baritone glottal F0 >= 85 Hz) + matched 1.8 s musical hold envelope + 300-3400 Hz syllabic modulation index",
+    "sub_band_hz": [32.0, 68.0],
+    "vocal_band_hz": [300.0, 3400.0],
+    "hold_attack_ms": 20.0,
+    "hold_release_ms": 1800.0,
+    "gate_open_ms": 30.0,
+    "gate_close_ms": 450.0,
+    "speech_floor": 0.05,
+    "rust_hysteresis_speech_floor": 0.08,
+    "verified_gate_responses": {
+      "pure_male_speech_f0_118hz_mean": 0.053,
+      "pure_baritone_speech_f0_98hz_mean": 0.053,
+      "pure_female_speech_f0_205hz_mean": 0.053,
+      "vocal_plus_kick_bass_minus6db_mean": 1.0,
+      "vocal_plus_kick_bass_minus12db_mean": 1.0,
+      "vocal_plus_sparse_kick_minus12db_mean": 1.0,
+      "pure_instrumental_bass_mean": 1.0
+    }
+  },
+  "iso226_2023_equal_loudness": {
+    "standard": "ISO 226:2023 (3rd Edition, Normal equal-loudness-level contours, 29 1/3-octave bands)",
+    "reference_volume_db": -12.0,
+    "reference_phon": 70.0,
+    "volume_port_range_db": [-45.0, 0.0],
+    "low_shelf": {
+      "fc_hz": 240.0,
+      "q": 0.55,
+      "max_boost_db": 9.0,
+      "max_cut_above_ref_db": -3.0,
+      "law_below_ref": "min(0.322 * dv - 0.00045 * dv^2, 0.55 * dv, 9.0) where dv = -12.0 - vol_db"
+    },
+    "high_shelf": {
+      "fc_hz": 10800.0,
+      "q": 0.70,
+      "max_boost_db": 4.2,
+      "max_cut_above_ref_db": -1.5,
+      "law_below_ref": "min(0.145 * dv - 0.00030 * dv^2, 4.2)"
+    },
+    "harmonic_loudness_scale": {
+      "max_boost_db": 4.5,
+      "max_cut_above_ref_db": -2.5,
+      "law_below_ref_db": "min(0.165 * dv - 0.00090 * dv^2, 4.5)"
+    },
+    "mode_weights": {
+      "deep": 1.0,
+      "spatial": 0.90,
+      "reference": 0.65,
+      "voice": 0.35
+    },
+    "verified_fit_rms_error_100_800hz_db": {
+      "minus39_to_minus12_db_max_rms_err": 0.24,
+      "minus45_db_37phon_rms_err": 0.73,
+      "iso226_2023_vs_2003_70phon_delta_db": 0.14,
+      "iso226_2023_vs_2003_50phon_delta_db": 0.181
+    }
+  }
+}

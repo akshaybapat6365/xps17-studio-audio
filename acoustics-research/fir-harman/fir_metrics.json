@@ -1,0 +1,1673 @@
+{
+  "generator": "generate_studio_firs.py",
+  "device": "Dell XPS 17 9720 (Stradale, Quad 2x2W woofers + 2x2W tweeters)",
+  "measurement_source": "/home/akshaybapat/project/omarchy-audio-tune/baseline_curve.npy",
+  "measurement_notes": {
+    "sample_rate_hz": 48000,
+    "n_taps": 4096,
+    "design_nfft": 32768,
+    "tail_taper_samples": 256,
+    "raw_1khz_level_db": 68.592,
+    "robust_1khz_smooth_offset_db": 0.539,
+    "valid_ess_band_hz": [
+      100.0,
+      14200.0
+    ],
+    "smoothing_scheme": "ERB-aligned log-Gaussian variable-octave (1/5 oct <=1.2 kHz -> 1/3 oct @ 2.6 kHz -> 1/2 oct >=4.8 kHz)",
+    "regularization_scheme": "Kirkeby-Nelson (1998) frequency-dependent Tikhonov beta(f) + C^inf softplus gain envelope",
+    "phase_scheme": "Oppenheim-Schafer 32768-pt real-cepstrum Hilbert minimum-phase + 256-sample raised-cosine tail taper",
+    "normalization_scheme": "Pink-weighted broadband passband unity (200 Hz - 12 kHz mean = 0.000 dB)"
+  },
+  "kernels": {
+    "deep": {
+      "mode_id": 0,
+      "key": "deep",
+      "name": "Studio Deep",
+      "description": "Flagship Harman-warm in-room voicing (-0.85 dB/oct natural tilt + smooth +4.5 dB warmth shelf across 85-260 Hz), cleanly filling the 200-350 Hz cavern without woofer overload, eliminating the +4.2 dB @ 1.5 kHz glare, and restoring silky 6-14 kHz studio air.",
+      "wav_path": "/home/akshaybapat/project/xps17-studio-audio/acoustics-research/kernels/xps17-studio-deep.wav",
+      "wav_filename": "xps17-studio-deep.wav",
+      "wav_format": {
+        "wFormatTag": 3,
+        "encoding": "IEEE_FLOAT_32",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "frames": 4096,
+        "file_bytes": 32824,
+        "sha256": "1d19d9683c2f67430dd5b248da74c482d6eb89e54fc6a2fb89ebe3d14a467655"
+      },
+      "headroom_and_gain": {
+        "rms_gain_db": 0.0,
+        "power_rms_gain_db": 2.216,
+        "gain_1khz_db": -3.209,
+        "peak_mag_db": 6.06,
+        "peak_mag_hz": 206.5,
+        "min_mag_passband_db": -7.463,
+        "peak_boost_rel_1khz_db": 9.268,
+        "sub120_max_abs_db": 2.434,
+        "sub120_max_rel_1khz_db": 5.643,
+        "dc_gain_db": -14.242,
+        "nyquist_gain_db": -8.393,
+        "recommended_pipewire_convolver_gain": 1.0,
+        "required_digital_headroom_db": 6.06
+      },
+      "time_domain_min_phase": {
+        "peak_sample_index": 0,
+        "peak_sample_abs": 0.971516,
+        "energy_within_1ms_pct": 98.956,
+        "energy_within_2ms_pct": 99.383,
+        "energy_within_5ms_pct": 99.984,
+        "tail_last256_rms_db": -100.17,
+        "truncation_max_err_50_18k_db": 0.107
+      },
+      "group_delay_200_10k": {
+        "max_abs_ms": 1.8023,
+        "max_at_hz": 297.4,
+        "rms_ms": 0.2233,
+        "at_1khz_ms": 0.0559
+      },
+      "acoustic_prediction_summary": {
+        "pink_rms_error_before_300_10k_db": 5.444,
+        "pink_rms_error_after_raw_300_10k_db": 1.717,
+        "pink_rms_error_after_smooth_300_10k_db": 0.204,
+        "peak_1500hz_raw_err_db": 0.716,
+        "peak_1500hz_smooth_err_db": 0.008,
+        "reference_flatness": null
+      },
+      "critical_bands": {
+        "100-200": {
+          "stock_mean_db": -23.5,
+          "predicted_mean_db": -16.66,
+          "target_mean_db": 4.04,
+          "delta_over_stock_db": 6.84,
+          "raw_err_mean_db": -20.71,
+          "smooth_err_mean_db": -20.71,
+          "smooth_err_rms_db": 21.45
+        },
+        "200-350": {
+          "stock_mean_db": -10.57,
+          "predicted_mean_db": -1.89,
+          "target_mean_db": 2.62,
+          "delta_over_stock_db": 8.68,
+          "raw_err_mean_db": -4.5,
+          "smooth_err_mean_db": -4.58,
+          "smooth_err_rms_db": 5.96
+        },
+        "350-1000": {
+          "stock_mean_db": -0.65,
+          "predicted_mean_db": 0.9,
+          "target_mean_db": 0.88,
+          "delta_over_stock_db": 1.55,
+          "raw_err_mean_db": 0.01,
+          "smooth_err_mean_db": -0.0,
+          "smooth_err_rms_db": 0.01
+        },
+        "1000-2500": {
+          "stock_mean_db": 1.53,
+          "predicted_mean_db": -0.57,
+          "target_mean_db": -0.62,
+          "delta_over_stock_db": -2.1,
+          "raw_err_mean_db": 0.05,
+          "smooth_err_mean_db": 0.0,
+          "smooth_err_rms_db": 0.01
+        },
+        "2500-6000": {
+          "stock_mean_db": -5.4,
+          "predicted_mean_db": -2.38,
+          "target_mean_db": -1.75,
+          "delta_over_stock_db": 3.03,
+          "raw_err_mean_db": -0.63,
+          "smooth_err_mean_db": -0.16,
+          "smooth_err_rms_db": 0.3
+        },
+        "6000-12000": {
+          "stock_mean_db": -11.29,
+          "predicted_mean_db": -2.72,
+          "target_mean_db": -2.72,
+          "delta_over_stock_db": 8.57,
+          "raw_err_mean_db": -0.01,
+          "smooth_err_mean_db": -0.53,
+          "smooth_err_rms_db": 0.63
+        }
+      },
+      "spot_frequencies_hz": {
+        "60": {
+          "stock_db": -54.62,
+          "plant_smooth_db": -39.81,
+          "target_db": 4.86,
+          "fir_abs_db": -11.0,
+          "fir_rel_1khz_db": -7.79,
+          "predicted_raw_db": -62.41,
+          "predicted_smooth_db": -47.6,
+          "phase_deg": 80.0,
+          "group_delay_ms": -2.932
+        },
+        "80": {
+          "stock_db": -42.89,
+          "plant_smooth_db": -34.73,
+          "target_db": 4.79,
+          "fir_abs_db": -5.87,
+          "fir_rel_1khz_db": -2.66,
+          "predicted_raw_db": -45.55,
+          "predicted_smooth_db": -37.39,
+          "phase_deg": 92.5,
+          "group_delay_ms": -1.669
+        },
+        "100": {
+          "stock_db": -33.96,
+          "plant_smooth_db": -31.57,
+          "target_db": 4.71,
+          "fir_abs_db": 0.15,
+          "fir_rel_1khz_db": 3.36,
+          "predicted_raw_db": -30.6,
+          "predicted_smooth_db": -28.21,
+          "phase_deg": 93.4,
+          "group_delay_ms": 3.796
+        },
+        "120": {
+          "stock_db": -26.1,
+          "plant_smooth_db": -25.7,
+          "target_db": 4.39,
+          "fir_abs_db": 2.45,
+          "fir_rel_1khz_db": 5.65,
+          "predicted_raw_db": -20.44,
+          "predicted_smooth_db": -20.04,
+          "phase_deg": 62.9,
+          "group_delay_ms": 2.028
+        },
+        "150": {
+          "stock_db": -25.42,
+          "plant_smooth_db": -23.94,
+          "target_db": 3.96,
+          "fir_abs_db": 3.83,
+          "fir_rel_1khz_db": 7.04,
+          "predicted_raw_db": -18.38,
+          "predicted_smooth_db": -16.9,
+          "phase_deg": 50.8,
+          "group_delay_ms": 1.109
+        },
+        "200": {
+          "stock_db": -15.38,
+          "plant_smooth_db": -16.6,
+          "target_db": 3.29,
+          "fir_abs_db": 6.04,
+          "fir_rel_1khz_db": 9.25,
+          "predicted_raw_db": -6.13,
+          "predicted_smooth_db": -7.35,
+          "phase_deg": 22.9,
+          "group_delay_ms": 1.555
+        },
+        "250": {
+          "stock_db": -13.39,
+          "plant_smooth_db": -13.0,
+          "target_db": 2.75,
+          "fir_abs_db": 6.06,
+          "fir_rel_1khz_db": 9.27,
+          "predicted_raw_db": -4.13,
+          "predicted_smooth_db": -3.74,
+          "phase_deg": 1.3,
+          "group_delay_ms": 1.103
+        },
+        "300": {
+          "stock_db": -7.14,
+          "plant_smooth_db": -7.03,
+          "target_db": 2.3,
+          "fir_abs_db": 5.68,
+          "fir_rel_1khz_db": 8.89,
+          "predicted_raw_db": 1.74,
+          "predicted_smooth_db": 1.85,
+          "phase_deg": -23.6,
+          "group_delay_ms": 1.793
+        },
+        "350": {
+          "stock_db": -3.32,
+          "plant_smooth_db": -3.34,
+          "target_db": 1.93,
+          "fir_abs_db": 2.05,
+          "fir_rel_1khz_db": 5.25,
+          "predicted_raw_db": 1.93,
+          "predicted_smooth_db": 1.91,
+          "phase_deg": -40.1,
+          "group_delay_ms": 0.376
+        },
+        "400": {
+          "stock_db": 0.45,
+          "plant_smooth_db": 0.35,
+          "target_db": 1.63,
+          "fir_abs_db": -1.93,
+          "fir_rel_1khz_db": 1.28,
+          "predicted_raw_db": 1.73,
+          "predicted_smooth_db": 1.63,
+          "phase_deg": -41.7,
+          "group_delay_ms": -0.624
+        },
+        "500": {
+          "stock_db": 0.85,
+          "plant_smooth_db": 1.14,
+          "target_db": 1.16,
+          "fir_abs_db": -3.19,
+          "fir_rel_1khz_db": 0.02,
+          "predicted_raw_db": 0.87,
+          "predicted_smooth_db": 1.16,
+          "phase_deg": -6.2,
+          "group_delay_ms": -0.256
+        },
+        "750": {
+          "stock_db": -6.18,
+          "plant_smooth_db": -4.22,
+          "target_db": 0.44,
+          "fir_abs_db": 1.42,
+          "fir_rel_1khz_db": 4.63,
+          "predicted_raw_db": -1.55,
+          "predicted_smooth_db": 0.41,
+          "phase_deg": -19.3,
+          "group_delay_ms": 0.913
+        },
+        "1000": {
+          "stock_db": -0.54,
+          "plant_smooth_db": 0.0,
+          "target_db": 0.0,
+          "fir_abs_db": -3.21,
+          "fir_rel_1khz_db": 0.0,
+          "predicted_raw_db": -0.54,
+          "predicted_smooth_db": 0.0,
+          "phase_deg": -21.9,
+          "group_delay_ms": 0.056
+        },
+        "1500": {
+          "stock_db": 3.65,
+          "plant_smooth_db": 2.94,
+          "target_db": -0.55,
+          "fir_abs_db": -6.69,
+          "fir_rel_1khz_db": -3.48,
+          "predicted_raw_db": 0.16,
+          "predicted_smooth_db": -0.55,
+          "phase_deg": 2.7,
+          "group_delay_ms": -0.296
+        },
+        "2000": {
+          "stock_db": -0.33,
+          "plant_smooth_db": -0.05,
+          "target_db": -0.92,
+          "fir_abs_db": -4.08,
+          "fir_rel_1khz_db": -0.87,
+          "predicted_raw_db": -1.2,
+          "predicted_smooth_db": -0.92,
+          "phase_deg": 1.9,
+          "group_delay_ms": 0.082
+        },
+        "2500": {
+          "stock_db": 5.13,
+          "plant_smooth_db": 3.04,
+          "target_db": -1.21,
+          "fir_abs_db": -7.45,
+          "fir_rel_1khz_db": -4.24,
+          "predicted_raw_db": 0.89,
+          "predicted_smooth_db": -1.2,
+          "phase_deg": 23.0,
+          "group_delay_ms": -0.227
+        },
+        "3000": {
+          "stock_db": -1.87,
+          "plant_smooth_db": -0.33,
+          "target_db": -1.43,
+          "fir_abs_db": -4.31,
+          "fir_rel_1khz_db": -1.1,
+          "predicted_raw_db": -2.97,
+          "predicted_smooth_db": -1.43,
+          "phase_deg": 45.7,
+          "group_delay_ms": -0.023
+        },
+        "3300": {
+          "stock_db": -2.39,
+          "plant_smooth_db": -1.77,
+          "target_db": -1.55,
+          "fir_abs_db": -3.0,
+          "fir_rel_1khz_db": 0.21,
+          "predicted_raw_db": -2.18,
+          "predicted_smooth_db": -1.56,
+          "phase_deg": 47.3,
+          "group_delay_ms": -0.022
+        },
+        "4000": {
+          "stock_db": -4.09,
+          "plant_smooth_db": -4.89,
+          "target_db": -1.79,
+          "fir_abs_db": -0.14,
+          "fir_rel_1khz_db": 3.07,
+          "predicted_raw_db": -1.03,
+          "predicted_smooth_db": -1.82,
+          "phase_deg": 56.8,
+          "group_delay_ms": -0.025
+        },
+        "5000": {
+          "stock_db": -14.49,
+          "plant_smooth_db": -10.87,
+          "target_db": -2.07,
+          "fir_abs_db": 5.27,
+          "fir_rel_1khz_db": 8.48,
+          "predicted_raw_db": -6.02,
+          "predicted_smooth_db": -2.39,
+          "phase_deg": 41.7,
+          "group_delay_ms": 0.091
+        },
+        "6000": {
+          "stock_db": -8.36,
+          "plant_smooth_db": -11.75,
+          "target_db": -2.29,
+          "fir_abs_db": 5.66,
+          "fir_rel_1khz_db": 8.87,
+          "predicted_raw_db": 0.52,
+          "predicted_smooth_db": -2.87,
+          "phase_deg": 18.2,
+          "group_delay_ms": 0.043
+        },
+        "7000": {
+          "stock_db": -13.79,
+          "plant_smooth_db": -11.06,
+          "target_db": -2.48,
+          "fir_abs_db": 5.08,
+          "fir_rel_1khz_db": 8.29,
+          "predicted_raw_db": -5.5,
+          "predicted_smooth_db": -2.76,
+          "phase_deg": 8.4,
+          "group_delay_ms": 0.016
+        },
+        "8000": {
+          "stock_db": -8.56,
+          "plant_smooth_db": -10.97,
+          "target_db": -2.64,
+          "fir_abs_db": 4.87,
+          "fir_rel_1khz_db": 8.08,
+          "predicted_raw_db": -0.48,
+          "predicted_smooth_db": -2.89,
+          "phase_deg": 4.2,
+          "group_delay_ms": 0.008
+        },
+        "10000": {
+          "stock_db": -13.67,
+          "plant_smooth_db": -12.39,
+          "target_db": -2.92,
+          "fir_abs_db": 5.65,
+          "fir_rel_1khz_db": 8.86,
+          "predicted_raw_db": -4.81,
+          "predicted_smooth_db": -3.53,
+          "phase_deg": -5.1,
+          "group_delay_ms": 0.02
+        },
+        "12000": {
+          "stock_db": -11.47,
+          "plant_smooth_db": -13.9,
+          "target_db": -3.14,
+          "fir_abs_db": 5.99,
+          "fir_rel_1khz_db": 9.2,
+          "predicted_raw_db": -2.27,
+          "predicted_smooth_db": -4.7,
+          "phase_deg": -20.9,
+          "group_delay_ms": 0.024
+        },
+        "14000": {
+          "stock_db": -15.01,
+          "plant_smooth_db": -15.36,
+          "target_db": -3.33,
+          "fir_abs_db": 6.05,
+          "fir_rel_1khz_db": 9.26,
+          "predicted_raw_db": -5.75,
+          "predicted_smooth_db": -6.1,
+          "phase_deg": -43.0,
+          "group_delay_ms": 0.045
+        },
+        "16000": {
+          "stock_db": -49.3,
+          "plant_smooth_db": -16.62,
+          "target_db": -3.33,
+          "fir_abs_db": 1.03,
+          "fir_rel_1khz_db": 4.24,
+          "predicted_raw_db": -45.06,
+          "predicted_smooth_db": -12.38,
+          "phase_deg": -77.8,
+          "group_delay_ms": 0.013
+        }
+      },
+      "all_validation_gates_passed": true
+    },
+    "spatial": {
+      "mode_id": 1,
+      "key": "spatial",
+      "name": "Studio Spatial",
+      "description": "Balanced cinema/XTC voicing (-0.55 dB/oct tilt + +3.0 dB warmth shelf 90-250 Hz), ultra-smooth midrange (300 Hz - 3 kHz) for pinpoint FDTR-XTC localization cues, and crisp 4-12 kHz pinna spatial detail.",
+      "wav_path": "/home/akshaybapat/project/xps17-studio-audio/acoustics-research/kernels/xps17-studio-spatial.wav",
+      "wav_filename": "xps17-studio-spatial.wav",
+      "wav_format": {
+        "wFormatTag": 3,
+        "encoding": "IEEE_FLOAT_32",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "frames": 4096,
+        "file_bytes": 32824,
+        "sha256": "61e09be643cd0cb7b63b9f54eaa6d20efa84cda6405a7acd95a0ae9d2e58582f"
+      },
+      "headroom_and_gain": {
+        "rms_gain_db": -0.0,
+        "power_rms_gain_db": 2.294,
+        "gain_1khz_db": -3.384,
+        "peak_mag_db": 5.885,
+        "peak_mag_hz": 206.5,
+        "min_mag_passband_db": -7.159,
+        "peak_boost_rel_1khz_db": 9.269,
+        "sub120_max_abs_db": 1.84,
+        "sub120_max_rel_1khz_db": 5.224,
+        "dc_gain_db": -14.394,
+        "nyquist_gain_db": -8.568,
+        "recommended_pipewire_convolver_gain": 1.0,
+        "required_digital_headroom_db": 5.89
+      },
+      "time_domain_min_phase": {
+        "peak_sample_index": 0,
+        "peak_sample_abs": 0.979479,
+        "energy_within_1ms_pct": 99.048,
+        "energy_within_2ms_pct": 99.432,
+        "energy_within_5ms_pct": 99.986,
+        "tail_last256_rms_db": -103.98,
+        "truncation_max_err_50_18k_db": 0.1297
+      },
+      "group_delay_200_10k": {
+        "max_abs_ms": 1.9134,
+        "max_at_hz": 287.1,
+        "rms_ms": 0.2281,
+        "at_1khz_ms": 0.0563
+      },
+      "acoustic_prediction_summary": {
+        "pink_rms_error_before_300_10k_db": 5.902,
+        "pink_rms_error_after_raw_300_10k_db": 1.837,
+        "pink_rms_error_after_smooth_300_10k_db": 0.554,
+        "peak_1500hz_raw_err_db": 0.716,
+        "peak_1500hz_smooth_err_db": 0.008,
+        "reference_flatness": null
+      },
+      "critical_bands": {
+        "100-200": {
+          "stock_mean_db": -23.5,
+          "predicted_mean_db": -16.96,
+          "target_mean_db": 2.68,
+          "delta_over_stock_db": 6.54,
+          "raw_err_mean_db": -19.63,
+          "smooth_err_mean_db": -19.64,
+          "smooth_err_rms_db": 20.44
+        },
+        "200-350": {
+          "stock_mean_db": -10.57,
+          "predicted_mean_db": -2.12,
+          "target_mean_db": 1.68,
+          "delta_over_stock_db": 8.45,
+          "raw_err_mean_db": -3.8,
+          "smooth_err_mean_db": -3.87,
+          "smooth_err_rms_db": 5.18
+        },
+        "350-1000": {
+          "stock_mean_db": -0.65,
+          "predicted_mean_db": 0.56,
+          "target_mean_db": 0.55,
+          "delta_over_stock_db": 1.21,
+          "raw_err_mean_db": 0.01,
+          "smooth_err_mean_db": -0.0,
+          "smooth_err_rms_db": 0.01
+        },
+        "1000-2500": {
+          "stock_mean_db": 1.53,
+          "predicted_mean_db": -0.33,
+          "target_mean_db": -0.38,
+          "delta_over_stock_db": -1.86,
+          "raw_err_mean_db": 0.05,
+          "smooth_err_mean_db": 0.0,
+          "smooth_err_rms_db": 0.01
+        },
+        "2500-6000": {
+          "stock_mean_db": -5.4,
+          "predicted_mean_db": -1.72,
+          "target_mean_db": -0.89,
+          "delta_over_stock_db": 3.68,
+          "raw_err_mean_db": -0.84,
+          "smooth_err_mean_db": -0.37,
+          "smooth_err_rms_db": 0.72
+        },
+        "6000-12000": {
+          "stock_mean_db": -11.29,
+          "predicted_mean_db": -2.13,
+          "target_mean_db": -1.23,
+          "delta_over_stock_db": 9.16,
+          "raw_err_mean_db": -0.91,
+          "smooth_err_mean_db": -1.43,
+          "smooth_err_rms_db": 1.57
+        }
+      },
+      "spot_frequencies_hz": {
+        "60": {
+          "stock_db": -54.62,
+          "plant_smooth_db": -39.81,
+          "target_db": 3.24,
+          "fir_abs_db": -12.75,
+          "fir_rel_1khz_db": -9.36,
+          "predicted_raw_db": -63.99,
+          "predicted_smooth_db": -49.17,
+          "phase_deg": 74.0,
+          "group_delay_ms": -4.907
+        },
+        "80": {
+          "stock_db": -42.89,
+          "plant_smooth_db": -34.73,
+          "target_db": 3.19,
+          "fir_abs_db": -7.6,
+          "fir_rel_1khz_db": -4.22,
+          "predicted_raw_db": -47.11,
+          "predicted_smooth_db": -38.95,
+          "phase_deg": 93.0,
+          "group_delay_ms": -2.017
+        },
+        "100": {
+          "stock_db": -33.96,
+          "plant_smooth_db": -31.57,
+          "target_db": 3.14,
+          "fir_abs_db": -1.47,
+          "fir_rel_1khz_db": 1.91,
+          "predicted_raw_db": -32.05,
+          "predicted_smooth_db": -29.66,
+          "phase_deg": 101.9,
+          "group_delay_ms": 1.9
+        },
+        "120": {
+          "stock_db": -26.1,
+          "plant_smooth_db": -25.7,
+          "target_db": 2.91,
+          "fir_abs_db": 1.87,
+          "fir_rel_1khz_db": 5.26,
+          "predicted_raw_db": -20.84,
+          "predicted_smooth_db": -20.44,
+          "phase_deg": 67.8,
+          "group_delay_ms": 2.256
+        },
+        "150": {
+          "stock_db": -25.42,
+          "plant_smooth_db": -23.94,
+          "target_db": 2.62,
+          "fir_abs_db": 3.42,
+          "fir_rel_1khz_db": 6.8,
+          "predicted_raw_db": -18.62,
+          "predicted_smooth_db": -17.14,
+          "phase_deg": 54.6,
+          "group_delay_ms": 1.209
+        },
+        "200": {
+          "stock_db": -15.38,
+          "plant_smooth_db": -16.6,
+          "target_db": 2.15,
+          "fir_abs_db": 5.86,
+          "fir_rel_1khz_db": 9.25,
+          "predicted_raw_db": -6.14,
+          "predicted_smooth_db": -7.35,
+          "phase_deg": 24.8,
+          "group_delay_ms": 1.672
+        },
+        "250": {
+          "stock_db": -13.39,
+          "plant_smooth_db": -13.0,
+          "target_db": 1.77,
+          "fir_abs_db": 5.88,
+          "fir_rel_1khz_db": 9.26,
+          "predicted_raw_db": -4.13,
+          "predicted_smooth_db": -3.74,
+          "phase_deg": 1.3,
+          "group_delay_ms": 1.213
+        },
+        "300": {
+          "stock_db": -7.14,
+          "plant_smooth_db": -7.03,
+          "target_db": 1.46,
+          "fir_abs_db": 4.94,
+          "fir_rel_1khz_db": 8.32,
+          "predicted_raw_db": 1.18,
+          "predicted_smooth_db": 1.29,
+          "phase_deg": -26.8,
+          "group_delay_ms": 1.507
+        },
+        "350": {
+          "stock_db": -3.32,
+          "plant_smooth_db": -3.34,
+          "target_db": 1.21,
+          "fir_abs_db": 1.15,
+          "fir_rel_1khz_db": 4.54,
+          "predicted_raw_db": 1.21,
+          "predicted_smooth_db": 1.19,
+          "phase_deg": -39.1,
+          "group_delay_ms": 0.273
+        },
+        "400": {
+          "stock_db": 0.45,
+          "plant_smooth_db": 0.35,
+          "target_db": 1.01,
+          "fir_abs_db": -2.72,
+          "fir_rel_1khz_db": 0.67,
+          "predicted_raw_db": 1.11,
+          "predicted_smooth_db": 1.01,
+          "phase_deg": -39.4,
+          "group_delay_ms": -0.668
+        },
+        "500": {
+          "stock_db": 0.85,
+          "plant_smooth_db": 1.14,
+          "target_db": 0.72,
+          "fir_abs_db": -3.81,
+          "fir_rel_1khz_db": -0.42,
+          "predicted_raw_db": 0.43,
+          "predicted_smooth_db": 0.72,
+          "phase_deg": -3.0,
+          "group_delay_ms": -0.273
+        },
+        "750": {
+          "stock_db": -6.18,
+          "plant_smooth_db": -4.22,
+          "target_db": 0.27,
+          "fir_abs_db": 1.08,
+          "fir_rel_1khz_db": 4.46,
+          "predicted_raw_db": -1.72,
+          "predicted_smooth_db": 0.24,
+          "phase_deg": -15.5,
+          "group_delay_ms": 0.911
+        },
+        "1000": {
+          "stock_db": -0.54,
+          "plant_smooth_db": 0.0,
+          "target_db": 0.0,
+          "fir_abs_db": -3.38,
+          "fir_rel_1khz_db": 0.0,
+          "predicted_raw_db": -0.54,
+          "predicted_smooth_db": 0.0,
+          "phase_deg": -18.1,
+          "group_delay_ms": 0.056
+        },
+        "1500": {
+          "stock_db": 3.65,
+          "plant_smooth_db": 2.94,
+          "target_db": -0.34,
+          "fir_abs_db": -6.66,
+          "fir_rel_1khz_db": -3.27,
+          "predicted_raw_db": 0.37,
+          "predicted_smooth_db": -0.34,
+          "phase_deg": 6.4,
+          "group_delay_ms": -0.295
+        },
+        "2000": {
+          "stock_db": -0.33,
+          "plant_smooth_db": -0.05,
+          "target_db": -0.57,
+          "fir_abs_db": -3.9,
+          "fir_rel_1khz_db": -0.52,
+          "predicted_raw_db": -0.85,
+          "predicted_smooth_db": -0.57,
+          "phase_deg": 5.3,
+          "group_delay_ms": 0.083
+        },
+        "2500": {
+          "stock_db": 5.13,
+          "plant_smooth_db": 3.04,
+          "target_db": -0.72,
+          "fir_abs_db": -7.14,
+          "fir_rel_1khz_db": -3.75,
+          "predicted_raw_db": 1.38,
+          "predicted_smooth_db": -0.71,
+          "phase_deg": 26.2,
+          "group_delay_ms": -0.226
+        },
+        "3000": {
+          "stock_db": -1.87,
+          "plant_smooth_db": -0.33,
+          "target_db": -0.82,
+          "fir_abs_db": -3.87,
+          "fir_rel_1khz_db": -0.49,
+          "predicted_raw_db": -2.35,
+          "predicted_smooth_db": -0.82,
+          "phase_deg": 48.5,
+          "group_delay_ms": -0.021
+        },
+        "3300": {
+          "stock_db": -2.39,
+          "plant_smooth_db": -1.77,
+          "target_db": -0.86,
+          "fir_abs_db": -2.48,
+          "fir_rel_1khz_db": 0.9,
+          "predicted_raw_db": -1.49,
+          "predicted_smooth_db": -0.87,
+          "phase_deg": 49.9,
+          "group_delay_ms": -0.019
+        },
+        "4000": {
+          "stock_db": -4.09,
+          "plant_smooth_db": -4.89,
+          "target_db": -0.91,
+          "fir_abs_db": 0.56,
+          "fir_rel_1khz_db": 3.94,
+          "predicted_raw_db": -0.15,
+          "predicted_smooth_db": -0.95,
+          "phase_deg": 58.2,
+          "group_delay_ms": -0.018
+        },
+        "5000": {
+          "stock_db": -14.49,
+          "plant_smooth_db": -10.87,
+          "target_db": -0.95,
+          "fir_abs_db": 5.69,
+          "fir_rel_1khz_db": 9.07,
+          "predicted_raw_db": -5.42,
+          "predicted_smooth_db": -1.79,
+          "phase_deg": 38.4,
+          "group_delay_ms": 0.088
+        },
+        "6000": {
+          "stock_db": -8.36,
+          "plant_smooth_db": -11.75,
+          "target_db": -0.99,
+          "fir_abs_db": 5.83,
+          "fir_rel_1khz_db": 9.21,
+          "predicted_raw_db": 0.86,
+          "predicted_smooth_db": -2.53,
+          "phase_deg": 19.2,
+          "group_delay_ms": 0.035
+        },
+        "7000": {
+          "stock_db": -13.79,
+          "plant_smooth_db": -11.06,
+          "target_db": -1.05,
+          "fir_abs_db": 5.71,
+          "fir_rel_1khz_db": 9.09,
+          "predicted_raw_db": -4.7,
+          "predicted_smooth_db": -1.96,
+          "phase_deg": 9.3,
+          "group_delay_ms": 0.022
+        },
+        "8000": {
+          "stock_db": -8.56,
+          "plant_smooth_db": -10.97,
+          "target_db": -1.14,
+          "fir_abs_db": 5.66,
+          "fir_rel_1khz_db": 9.04,
+          "predicted_raw_db": 0.48,
+          "predicted_smooth_db": -1.93,
+          "phase_deg": 2.6,
+          "group_delay_ms": 0.016
+        },
+        "10000": {
+          "stock_db": -13.67,
+          "plant_smooth_db": -12.39,
+          "target_db": -1.37,
+          "fir_abs_db": 5.85,
+          "fir_rel_1khz_db": 9.23,
+          "predicted_raw_db": -4.44,
+          "predicted_smooth_db": -3.15,
+          "phase_deg": -9.8,
+          "group_delay_ms": 0.018
+        },
+        "12000": {
+          "stock_db": -11.47,
+          "plant_smooth_db": -13.9,
+          "target_db": -1.61,
+          "fir_abs_db": 5.88,
+          "fir_rel_1khz_db": 9.26,
+          "predicted_raw_db": -2.2,
+          "predicted_smooth_db": -4.64,
+          "phase_deg": -23.8,
+          "group_delay_ms": 0.022
+        },
+        "14000": {
+          "stock_db": -15.01,
+          "plant_smooth_db": -15.36,
+          "target_db": -1.83,
+          "fir_abs_db": 5.88,
+          "fir_rel_1khz_db": 9.26,
+          "predicted_raw_db": -5.74,
+          "predicted_smooth_db": -6.09,
+          "phase_deg": -44.8,
+          "group_delay_ms": 0.044
+        },
+        "16000": {
+          "stock_db": -49.3,
+          "plant_smooth_db": -16.62,
+          "target_db": -1.91,
+          "fir_abs_db": 0.86,
+          "fir_rel_1khz_db": 4.24,
+          "predicted_raw_db": -45.06,
+          "predicted_smooth_db": -12.38,
+          "phase_deg": -78.8,
+          "group_delay_ms": 0.012
+        }
+      },
+      "all_validation_gates_passed": true
+    },
+    "reference": {
+      "mode_id": 2,
+      "key": "reference",
+      "name": "Studio Reference",
+      "description": "Harman/Olive mastering-neutral in-room target (-0.50 dB/oct natural room tilt + subtle +1.5 dB bass foundation 85-200 Hz), flat within +/-1.5 dB across 280 Hz - 10 kHz (pink-weighted RMS < 0.7 dB across 250 Hz - 10 kHz).",
+      "wav_path": "/home/akshaybapat/project/xps17-studio-audio/acoustics-research/kernels/xps17-studio-reference.wav",
+      "wav_filename": "xps17-studio-reference.wav",
+      "wav_format": {
+        "wFormatTag": 3,
+        "encoding": "IEEE_FLOAT_32",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "frames": 4096,
+        "file_bytes": 32824,
+        "sha256": "09827622d93c4d2be756121b31497c294669ed096360e0b448c216b05986080c"
+      },
+      "headroom_and_gain": {
+        "rms_gain_db": 0.0,
+        "power_rms_gain_db": 2.339,
+        "gain_1khz_db": -3.357,
+        "peak_mag_db": 6.042,
+        "peak_mag_hz": 208.0,
+        "min_mag_passband_db": -7.075,
+        "peak_boost_rel_1khz_db": 9.399,
+        "sub120_max_abs_db": 1.152,
+        "sub120_max_rel_1khz_db": 4.509,
+        "dc_gain_db": -14.346,
+        "nyquist_gain_db": -8.541,
+        "recommended_pipewire_convolver_gain": 1.0,
+        "required_digital_headroom_db": 6.04
+      },
+      "time_domain_min_phase": {
+        "peak_sample_index": 0,
+        "peak_sample_abs": 0.987079,
+        "energy_within_1ms_pct": 99.063,
+        "energy_within_2ms_pct": 99.434,
+        "energy_within_5ms_pct": 99.988,
+        "tail_last256_rms_db": -101.79,
+        "truncation_max_err_50_18k_db": 0.1808
+      },
+      "group_delay_200_10k": {
+        "max_abs_ms": 2.1838,
+        "max_at_hz": 282.7,
+        "rms_ms": 0.234,
+        "at_1khz_ms": 0.0593
+      },
+      "acoustic_prediction_summary": {
+        "pink_rms_error_before_300_10k_db": 5.744,
+        "pink_rms_error_after_raw_300_10k_db": 1.778,
+        "pink_rms_error_after_smooth_300_10k_db": 0.386,
+        "peak_1500hz_raw_err_db": 0.716,
+        "peak_1500hz_smooth_err_db": 0.008,
+        "reference_flatness": {
+          "250_10000_hz_pink_rms_db": 0.655,
+          "250_10000_hz_min_err_db": -4.72,
+          "250_10000_hz_max_err_db": 0.01,
+          "280_10000_hz_pink_rms_db": 0.385,
+          "280_10000_hz_max_abs_err_db": 1.36
+        }
+      },
+      "critical_bands": {
+        "100-200": {
+          "stock_mean_db": -23.5,
+          "predicted_mean_db": -17.37,
+          "target_mean_db": 1.65,
+          "delta_over_stock_db": 6.12,
+          "raw_err_mean_db": -19.02,
+          "smooth_err_mean_db": -19.03,
+          "smooth_err_rms_db": 19.92
+        },
+        "200-350": {
+          "stock_mean_db": -10.57,
+          "predicted_mean_db": -2.19,
+          "target_mean_db": 1.06,
+          "delta_over_stock_db": 8.38,
+          "raw_err_mean_db": -3.25,
+          "smooth_err_mean_db": -3.32,
+          "smooth_err_rms_db": 4.55
+        },
+        "350-1000": {
+          "stock_mean_db": -0.65,
+          "predicted_mean_db": 0.41,
+          "target_mean_db": 0.4,
+          "delta_over_stock_db": 1.06,
+          "raw_err_mean_db": 0.01,
+          "smooth_err_mean_db": -0.0,
+          "smooth_err_rms_db": 0.01
+        },
+        "1000-2500": {
+          "stock_mean_db": 1.53,
+          "predicted_mean_db": -0.29,
+          "target_mean_db": -0.33,
+          "delta_over_stock_db": -1.81,
+          "raw_err_mean_db": 0.05,
+          "smooth_err_mean_db": 0.0,
+          "smooth_err_rms_db": 0.01
+        },
+        "2500-6000": {
+          "stock_mean_db": -5.4,
+          "predicted_mean_db": -1.72,
+          "target_mean_db": -0.98,
+          "delta_over_stock_db": 3.68,
+          "raw_err_mean_db": -0.74,
+          "smooth_err_mean_db": -0.28,
+          "smooth_err_rms_db": 0.54
+        },
+        "6000-12000": {
+          "stock_mean_db": -11.29,
+          "predicted_mean_db": -2.06,
+          "target_mean_db": -1.55,
+          "delta_over_stock_db": 9.23,
+          "raw_err_mean_db": -0.52,
+          "smooth_err_mean_db": -1.04,
+          "smooth_err_rms_db": 1.23
+        }
+      },
+      "spot_frequencies_hz": {
+        "60": {
+          "stock_db": -54.62,
+          "plant_smooth_db": -39.81,
+          "target_db": 1.99,
+          "fir_abs_db": -13.66,
+          "fir_rel_1khz_db": -10.3,
+          "predicted_raw_db": -64.93,
+          "predicted_smooth_db": -50.11,
+          "phase_deg": 67.1,
+          "group_delay_ms": -5.968
+        },
+        "80": {
+          "stock_db": -42.89,
+          "plant_smooth_db": -34.73,
+          "target_db": 1.98,
+          "fir_abs_db": -8.75,
+          "fir_rel_1khz_db": -5.39,
+          "predicted_raw_db": -48.29,
+          "predicted_smooth_db": -40.13,
+          "phase_deg": 92.4,
+          "group_delay_ms": -2.181
+        },
+        "100": {
+          "stock_db": -33.96,
+          "plant_smooth_db": -31.57,
+          "target_db": 1.96,
+          "fir_abs_db": -2.63,
+          "fir_rel_1khz_db": 0.72,
+          "predicted_raw_db": -33.24,
+          "predicted_smooth_db": -30.85,
+          "phase_deg": 105.6,
+          "group_delay_ms": 0.71
+        },
+        "120": {
+          "stock_db": -26.1,
+          "plant_smooth_db": -25.7,
+          "target_db": 1.8,
+          "fir_abs_db": 1.2,
+          "fir_rel_1khz_db": 4.56,
+          "predicted_raw_db": -21.54,
+          "predicted_smooth_db": -21.14,
+          "phase_deg": 71.3,
+          "group_delay_ms": 2.074
+        },
+        "150": {
+          "stock_db": -25.42,
+          "plant_smooth_db": -23.94,
+          "target_db": 1.6,
+          "fir_abs_db": 3.07,
+          "fir_rel_1khz_db": 6.43,
+          "predicted_raw_db": -18.99,
+          "predicted_smooth_db": -17.51,
+          "phase_deg": 59.3,
+          "group_delay_ms": 1.214
+        },
+        "200": {
+          "stock_db": -15.38,
+          "plant_smooth_db": -16.6,
+          "target_db": 1.32,
+          "fir_abs_db": 6.01,
+          "fir_rel_1khz_db": 9.37,
+          "predicted_raw_db": -6.01,
+          "predicted_smooth_db": -7.23,
+          "phase_deg": 27.2,
+          "group_delay_ms": 1.855
+        },
+        "250": {
+          "stock_db": -13.39,
+          "plant_smooth_db": -13.0,
+          "target_db": 1.11,
+          "fir_abs_db": 6.04,
+          "fir_rel_1khz_db": 9.39,
+          "predicted_raw_db": -4.0,
+          "predicted_smooth_db": -3.61,
+          "phase_deg": 1.5,
+          "group_delay_ms": 1.335
+        },
+        "300": {
+          "stock_db": -7.14,
+          "plant_smooth_db": -7.03,
+          "target_db": 0.94,
+          "fir_abs_db": 4.54,
+          "fir_rel_1khz_db": 7.89,
+          "predicted_raw_db": 0.75,
+          "predicted_smooth_db": 0.86,
+          "phase_deg": -28.5,
+          "group_delay_ms": 1.184
+        },
+        "350": {
+          "stock_db": -3.32,
+          "plant_smooth_db": -3.34,
+          "target_db": 0.81,
+          "fir_abs_db": 0.77,
+          "fir_rel_1khz_db": 4.13,
+          "predicted_raw_db": 0.81,
+          "predicted_smooth_db": 0.79,
+          "phase_deg": -38.2,
+          "group_delay_ms": 0.217
+        },
+        "400": {
+          "stock_db": 0.45,
+          "plant_smooth_db": 0.35,
+          "target_db": 0.7,
+          "fir_abs_db": -3.01,
+          "fir_rel_1khz_db": 0.35,
+          "predicted_raw_db": 0.8,
+          "predicted_smooth_db": 0.7,
+          "phase_deg": -38.0,
+          "group_delay_ms": -0.687
+        },
+        "500": {
+          "stock_db": 0.85,
+          "plant_smooth_db": 1.14,
+          "target_db": 0.52,
+          "fir_abs_db": -3.98,
+          "fir_rel_1khz_db": -0.62,
+          "predicted_raw_db": 0.24,
+          "predicted_smooth_db": 0.52,
+          "phase_deg": -1.2,
+          "group_delay_ms": -0.274
+        },
+        "750": {
+          "stock_db": -6.18,
+          "plant_smooth_db": -4.22,
+          "target_db": 0.21,
+          "fir_abs_db": 1.05,
+          "fir_rel_1khz_db": 4.4,
+          "predicted_raw_db": -1.78,
+          "predicted_smooth_db": 0.19,
+          "phase_deg": -14.0,
+          "group_delay_ms": 0.914
+        },
+        "1000": {
+          "stock_db": -0.54,
+          "plant_smooth_db": 0.0,
+          "target_db": 0.0,
+          "fir_abs_db": -3.36,
+          "fir_rel_1khz_db": 0.0,
+          "predicted_raw_db": -0.54,
+          "predicted_smooth_db": 0.0,
+          "phase_deg": -16.9,
+          "group_delay_ms": 0.059
+        },
+        "1500": {
+          "stock_db": 3.65,
+          "plant_smooth_db": 2.94,
+          "target_db": -0.29,
+          "fir_abs_db": -6.58,
+          "fir_rel_1khz_db": -3.22,
+          "predicted_raw_db": 0.42,
+          "predicted_smooth_db": -0.29,
+          "phase_deg": 7.2,
+          "group_delay_ms": -0.292
+        },
+        "2000": {
+          "stock_db": -0.33,
+          "plant_smooth_db": -0.05,
+          "target_db": -0.5,
+          "fir_abs_db": -3.81,
+          "fir_rel_1khz_db": -0.45,
+          "predicted_raw_db": -0.78,
+          "predicted_smooth_db": -0.5,
+          "phase_deg": 5.8,
+          "group_delay_ms": 0.085
+        },
+        "2500": {
+          "stock_db": 5.13,
+          "plant_smooth_db": 3.04,
+          "target_db": -0.66,
+          "fir_abs_db": -7.06,
+          "fir_rel_1khz_db": -3.7,
+          "predicted_raw_db": 1.43,
+          "predicted_smooth_db": -0.66,
+          "phase_deg": 26.3,
+          "group_delay_ms": -0.224
+        },
+        "3000": {
+          "stock_db": -1.87,
+          "plant_smooth_db": -0.33,
+          "target_db": -0.8,
+          "fir_abs_db": -3.82,
+          "fir_rel_1khz_db": -0.46,
+          "predicted_raw_db": -2.33,
+          "predicted_smooth_db": -0.8,
+          "phase_deg": 48.4,
+          "group_delay_ms": -0.02
+        },
+        "3300": {
+          "stock_db": -2.39,
+          "plant_smooth_db": -1.77,
+          "target_db": -0.86,
+          "fir_abs_db": -2.46,
+          "fir_rel_1khz_db": 0.9,
+          "predicted_raw_db": -1.5,
+          "predicted_smooth_db": -0.87,
+          "phase_deg": 49.8,
+          "group_delay_ms": -0.019
+        },
+        "4000": {
+          "stock_db": -4.09,
+          "plant_smooth_db": -4.89,
+          "target_db": -1.0,
+          "fir_abs_db": 0.5,
+          "fir_rel_1khz_db": 3.85,
+          "predicted_raw_db": -0.24,
+          "predicted_smooth_db": -1.04,
+          "phase_deg": 58.3,
+          "group_delay_ms": -0.021
+        },
+        "5000": {
+          "stock_db": -14.49,
+          "plant_smooth_db": -10.87,
+          "target_db": -1.16,
+          "fir_abs_db": 5.79,
+          "fir_rel_1khz_db": 9.15,
+          "predicted_raw_db": -5.35,
+          "predicted_smooth_db": -1.72,
+          "phase_deg": 40.0,
+          "group_delay_ms": 0.095
+        },
+        "6000": {
+          "stock_db": -8.36,
+          "plant_smooth_db": -11.75,
+          "target_db": -1.3,
+          "fir_abs_db": 5.97,
+          "fir_rel_1khz_db": 9.33,
+          "predicted_raw_db": 0.97,
+          "predicted_smooth_db": -2.42,
+          "phase_deg": 19.5,
+          "group_delay_ms": 0.037
+        },
+        "7000": {
+          "stock_db": -13.79,
+          "plant_smooth_db": -11.06,
+          "target_db": -1.41,
+          "fir_abs_db": 5.76,
+          "fir_rel_1khz_db": 9.12,
+          "predicted_raw_db": -4.67,
+          "predicted_smooth_db": -1.94,
+          "phase_deg": 9.3,
+          "group_delay_ms": 0.021
+        },
+        "8000": {
+          "stock_db": -8.56,
+          "plant_smooth_db": -10.97,
+          "target_db": -1.5,
+          "fir_abs_db": 5.67,
+          "fir_rel_1khz_db": 9.03,
+          "predicted_raw_db": 0.47,
+          "predicted_smooth_db": -1.94,
+          "phase_deg": 3.1,
+          "group_delay_ms": 0.014
+        },
+        "10000": {
+          "stock_db": -13.67,
+          "plant_smooth_db": -12.39,
+          "target_db": -1.66,
+          "fir_abs_db": 6.0,
+          "fir_rel_1khz_db": 9.36,
+          "predicted_raw_db": -4.32,
+          "predicted_smooth_db": -3.03,
+          "phase_deg": -9.3,
+          "group_delay_ms": 0.019
+        },
+        "12000": {
+          "stock_db": -11.47,
+          "plant_smooth_db": -13.9,
+          "target_db": -1.8,
+          "fir_abs_db": 6.04,
+          "fir_rel_1khz_db": 9.39,
+          "predicted_raw_db": -2.07,
+          "predicted_smooth_db": -4.51,
+          "phase_deg": -23.7,
+          "group_delay_ms": 0.022
+        },
+        "14000": {
+          "stock_db": -15.01,
+          "plant_smooth_db": -15.36,
+          "target_db": -1.91,
+          "fir_abs_db": 6.04,
+          "fir_rel_1khz_db": 9.4,
+          "predicted_raw_db": -5.61,
+          "predicted_smooth_db": -5.96,
+          "phase_deg": -45.0,
+          "group_delay_ms": 0.045
+        },
+        "16000": {
+          "stock_db": -49.3,
+          "plant_smooth_db": -16.62,
+          "target_db": -1.91,
+          "fir_abs_db": 0.97,
+          "fir_rel_1khz_db": 4.32,
+          "predicted_raw_db": -44.98,
+          "predicted_smooth_db": -12.3,
+          "phase_deg": -79.3,
+          "group_delay_ms": 0.012
+        }
+      },
+      "all_validation_gates_passed": true
+    },
+    "voice": {
+      "mode_id": 3,
+      "key": "voice",
+      "name": "Studio Voice",
+      "description": "Ultra-articulate speech/podcast voicing: clean 100 Hz sub-rumble rolloff, natural 160-280 Hz chest warmth (zero hollowness), subtle +1.5 dB consonant intelligibility lift (2.5-4.5 kHz), strict 6-8 kHz de-essing (zero sibilance), and gentle rolloff above 12 kHz.",
+      "wav_path": "/home/akshaybapat/project/xps17-studio-audio/acoustics-research/kernels/xps17-studio-voice.wav",
+      "wav_filename": "xps17-studio-voice.wav",
+      "wav_format": {
+        "wFormatTag": 3,
+        "encoding": "IEEE_FLOAT_32",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "frames": 4096,
+        "file_bytes": 32824,
+        "sha256": "d9bcf22f7afff51bd2943dec0ce5ecabc9534c2c846f84f2bdc7053935b82e22"
+      },
+      "headroom_and_gain": {
+        "rms_gain_db": 0.0,
+        "power_rms_gain_db": 1.599,
+        "gain_1khz_db": -3.045,
+        "peak_mag_db": 4.773,
+        "peak_mag_hz": 208.0,
+        "min_mag_passband_db": -8.673,
+        "peak_boost_rel_1khz_db": 7.818,
+        "sub120_max_abs_db": -3.55,
+        "sub120_max_rel_1khz_db": -0.505,
+        "dc_gain_db": -16.991,
+        "nyquist_gain_db": -12.029,
+        "recommended_pipewire_convolver_gain": 1.0,
+        "required_digital_headroom_db": 4.77
+      },
+      "time_domain_min_phase": {
+        "peak_sample_index": 0,
+        "peak_sample_abs": 0.844109,
+        "energy_within_1ms_pct": 99.087,
+        "energy_within_2ms_pct": 99.511,
+        "energy_within_5ms_pct": 99.985,
+        "tail_last256_rms_db": -102.97,
+        "truncation_max_err_50_18k_db": 0.1686
+      },
+      "group_delay_200_10k": {
+        "max_abs_ms": 2.3903,
+        "max_at_hz": 200.7,
+        "rms_ms": 0.2416,
+        "at_1khz_ms": 0.0745
+      },
+      "acoustic_prediction_summary": {
+        "pink_rms_error_before_300_10k_db": 5.237,
+        "pink_rms_error_after_raw_300_10k_db": 1.944,
+        "pink_rms_error_after_smooth_300_10k_db": 0.559,
+        "peak_1500hz_raw_err_db": 0.716,
+        "peak_1500hz_smooth_err_db": 0.008,
+        "reference_flatness": null
+      },
+      "critical_bands": {
+        "100-200": {
+          "stock_mean_db": -23.5,
+          "predicted_mean_db": -21.3,
+          "target_mean_db": -2.19,
+          "delta_over_stock_db": 2.2,
+          "raw_err_mean_db": -19.11,
+          "smooth_err_mean_db": -19.11,
+          "smooth_err_rms_db": 19.95
+        },
+        "200-350": {
+          "stock_mean_db": -10.57,
+          "predicted_mean_db": -3.51,
+          "target_mean_db": 0.15,
+          "delta_over_stock_db": 7.06,
+          "raw_err_mean_db": -3.66,
+          "smooth_err_mean_db": -3.74,
+          "smooth_err_rms_db": 4.94
+        },
+        "350-1000": {
+          "stock_mean_db": -0.65,
+          "predicted_mean_db": -0.25,
+          "target_mean_db": -0.27,
+          "delta_over_stock_db": 0.4,
+          "raw_err_mean_db": 0.01,
+          "smooth_err_mean_db": -0.0,
+          "smooth_err_rms_db": 0.01
+        },
+        "1000-2500": {
+          "stock_mean_db": 1.53,
+          "predicted_mean_db": 0.35,
+          "target_mean_db": 0.3,
+          "delta_over_stock_db": -1.18,
+          "raw_err_mean_db": 0.05,
+          "smooth_err_mean_db": 0.0,
+          "smooth_err_rms_db": 0.01
+        },
+        "2500-6000": {
+          "stock_mean_db": -5.4,
+          "predicted_mean_db": -0.75,
+          "target_mean_db": 0.29,
+          "delta_over_stock_db": 4.65,
+          "raw_err_mean_db": -1.04,
+          "smooth_err_mean_db": -0.58,
+          "smooth_err_rms_db": 0.99
+        },
+        "6000-12000": {
+          "stock_mean_db": -11.29,
+          "predicted_mean_db": -3.91,
+          "target_mean_db": -3.32,
+          "delta_over_stock_db": 7.38,
+          "raw_err_mean_db": -0.59,
+          "smooth_err_mean_db": -1.11,
+          "smooth_err_rms_db": 1.48
+        }
+      },
+      "spot_frequencies_hz": {
+        "60": {
+          "stock_db": -54.62,
+          "plant_smooth_db": -39.81,
+          "target_db": -10.02,
+          "fir_abs_db": -14.43,
+          "fir_rel_1khz_db": -11.38,
+          "predicted_raw_db": -66.01,
+          "predicted_smooth_db": -51.19,
+          "phase_deg": 52.5,
+          "group_delay_ms": -1.468
+        },
+        "80": {
+          "stock_db": -42.89,
+          "plant_smooth_db": -34.73,
+          "target_db": -7.66,
+          "fir_abs_db": -13.95,
+          "fir_rel_1khz_db": -10.9,
+          "predicted_raw_db": -53.8,
+          "predicted_smooth_db": -45.64,
+          "phase_deg": 71.1,
+          "group_delay_ms": -3.236
+        },
+        "100": {
+          "stock_db": -33.96,
+          "plant_smooth_db": -31.57,
+          "target_db": -5.37,
+          "fir_abs_db": -9.81,
+          "fir_rel_1khz_db": -6.76,
+          "predicted_raw_db": -40.72,
+          "predicted_smooth_db": -38.34,
+          "phase_deg": 116.0,
+          "group_delay_ms": -4.813
+        },
+        "120": {
+          "stock_db": -26.1,
+          "plant_smooth_db": -25.7,
+          "target_db": -3.37,
+          "fir_abs_db": -3.52,
+          "fir_rel_1khz_db": -0.48,
+          "predicted_raw_db": -26.57,
+          "predicted_smooth_db": -26.17,
+          "phase_deg": 86.6,
+          "group_delay_ms": 1.03
+        },
+        "150": {
+          "stock_db": -25.42,
+          "plant_smooth_db": -23.94,
+          "target_db": -1.53,
+          "fir_abs_db": -0.27,
+          "fir_rel_1khz_db": 2.78,
+          "predicted_raw_db": -22.64,
+          "predicted_smooth_db": -21.16,
+          "phase_deg": 82.0,
+          "group_delay_ms": 0.999
+        },
+        "200": {
+          "stock_db": -15.38,
+          "plant_smooth_db": -16.6,
+          "target_db": -0.09,
+          "fir_abs_db": 4.73,
+          "fir_rel_1khz_db": 7.78,
+          "predicted_raw_db": -7.6,
+          "predicted_smooth_db": -8.82,
+          "phase_deg": 44.3,
+          "group_delay_ms": 2.39
+        },
+        "250": {
+          "stock_db": -13.39,
+          "plant_smooth_db": -13.0,
+          "target_db": 0.26,
+          "fir_abs_db": 4.77,
+          "fir_rel_1khz_db": 7.82,
+          "predicted_raw_db": -5.58,
+          "predicted_smooth_db": -5.19,
+          "phase_deg": 15.4,
+          "group_delay_ms": 1.353
+        },
+        "300": {
+          "stock_db": -7.14,
+          "plant_smooth_db": -7.03,
+          "target_db": 0.18,
+          "fir_abs_db": 3.96,
+          "fir_rel_1khz_db": 7.01,
+          "predicted_raw_db": -0.13,
+          "predicted_smooth_db": -0.03,
+          "phase_deg": -13.8,
+          "group_delay_ms": 1.637
+        },
+        "350": {
+          "stock_db": -3.32,
+          "plant_smooth_db": -3.34,
+          "target_db": -0.04,
+          "fir_abs_db": 0.24,
+          "fir_rel_1khz_db": 3.29,
+          "predicted_raw_db": -0.04,
+          "predicted_smooth_db": -0.06,
+          "phase_deg": -27.8,
+          "group_delay_ms": 0.329
+        },
+        "400": {
+          "stock_db": 0.45,
+          "plant_smooth_db": 0.35,
+          "target_db": -0.25,
+          "fir_abs_db": -3.65,
+          "fir_rel_1khz_db": -0.6,
+          "predicted_raw_db": -0.15,
+          "predicted_smooth_db": -0.25,
+          "phase_deg": -28.7,
+          "group_delay_ms": -0.662
+        },
+        "500": {
+          "stock_db": 0.85,
+          "plant_smooth_db": 1.14,
+          "target_db": -0.47,
+          "fir_abs_db": -4.65,
+          "fir_rel_1khz_db": -1.61,
+          "predicted_raw_db": -0.75,
+          "predicted_smooth_db": -0.46,
+          "phase_deg": 8.4,
+          "group_delay_ms": -0.3
+        },
+        "750": {
+          "stock_db": -6.18,
+          "plant_smooth_db": -4.22,
+          "target_db": -0.19,
+          "fir_abs_db": 0.95,
+          "fir_rel_1khz_db": 4.0,
+          "predicted_raw_db": -2.18,
+          "predicted_smooth_db": -0.22,
+          "phase_deg": -3.7,
+          "group_delay_ms": 0.926
+        },
+        "1000": {
+          "stock_db": -0.54,
+          "plant_smooth_db": 0.0,
+          "target_db": 0.0,
+          "fir_abs_db": -3.04,
+          "fir_rel_1khz_db": 0.0,
+          "predicted_raw_db": -0.54,
+          "predicted_smooth_db": 0.0,
+          "phase_deg": -8.0,
+          "group_delay_ms": 0.075
+        },
+        "1500": {
+          "stock_db": 3.65,
+          "plant_smooth_db": 2.94,
+          "target_db": 0.12,
+          "fir_abs_db": -5.86,
+          "fir_rel_1khz_db": -2.81,
+          "predicted_raw_db": 0.83,
+          "predicted_smooth_db": 0.13,
+          "phase_deg": 14.6,
+          "group_delay_ms": -0.29
+        },
+        "2000": {
+          "stock_db": -0.33,
+          "plant_smooth_db": -0.05,
+          "target_db": 0.5,
+          "fir_abs_db": -2.49,
+          "fir_rel_1khz_db": 0.55,
+          "predicted_raw_db": 0.22,
+          "predicted_smooth_db": 0.5,
+          "phase_deg": 12.5,
+          "group_delay_ms": 0.093
+        },
+        "2500": {
+          "stock_db": 5.13,
+          "plant_smooth_db": 3.04,
+          "target_db": 1.12,
+          "fir_abs_db": -4.96,
+          "fir_rel_1khz_db": -1.91,
+          "predicted_raw_db": 3.22,
+          "predicted_smooth_db": 1.13,
+          "phase_deg": 29.8,
+          "group_delay_ms": -0.196
+        },
+        "3000": {
+          "stock_db": -1.87,
+          "plant_smooth_db": -0.33,
+          "target_db": 1.52,
+          "fir_abs_db": -1.2,
+          "fir_rel_1khz_db": 1.85,
+          "predicted_raw_db": -0.02,
+          "predicted_smooth_db": 1.51,
+          "phase_deg": 45.4,
+          "group_delay_ms": 0.022
+        },
+        "3300": {
+          "stock_db": -2.39,
+          "plant_smooth_db": -1.77,
+          "target_db": 1.53,
+          "fir_abs_db": 0.24,
+          "fir_rel_1khz_db": 3.29,
+          "predicted_raw_db": 0.89,
+          "predicted_smooth_db": 1.52,
+          "phase_deg": 42.0,
+          "group_delay_ms": 0.026
+        },
+        "4000": {
+          "stock_db": -4.09,
+          "plant_smooth_db": -4.89,
+          "target_db": 0.88,
+          "fir_abs_db": 2.68,
+          "fir_rel_1khz_db": 5.72,
+          "predicted_raw_db": 1.63,
+          "predicted_smooth_db": 0.83,
+          "phase_deg": 39.2,
+          "group_delay_ms": 0.025
+        },
+        "5000": {
+          "stock_db": -14.49,
+          "plant_smooth_db": -10.87,
+          "target_db": -1.09,
+          "fir_abs_db": 4.75,
+          "fir_rel_1khz_db": 7.79,
+          "predicted_raw_db": -6.7,
+          "predicted_smooth_db": -3.07,
+          "phase_deg": 17.3,
+          "group_delay_ms": 0.046
+        },
+        "6000": {
+          "stock_db": -8.36,
+          "plant_smooth_db": -11.75,
+          "target_db": -3.02,
+          "fir_abs_db": 4.63,
+          "fir_rel_1khz_db": 7.68,
+          "predicted_raw_db": -0.68,
+          "predicted_smooth_db": -4.07,
+          "phase_deg": 4.0,
+          "group_delay_ms": 0.033
+        },
+        "7000": {
+          "stock_db": -13.79,
+          "plant_smooth_db": -11.06,
+          "target_db": -3.87,
+          "fir_abs_db": 3.84,
+          "fir_rel_1khz_db": 6.89,
+          "predicted_raw_db": -6.9,
+          "predicted_smooth_db": -4.17,
+          "phase_deg": -2.4,
+          "group_delay_ms": 0.004
+        },
+        "8000": {
+          "stock_db": -8.56,
+          "plant_smooth_db": -10.97,
+          "target_db": -3.75,
+          "fir_abs_db": 3.88,
+          "fir_rel_1khz_db": 6.92,
+          "predicted_raw_db": -1.64,
+          "predicted_smooth_db": -4.05,
+          "phase_deg": -3.4,
+          "group_delay_ms": 0.005
+        },
+        "10000": {
+          "stock_db": -13.67,
+          "plant_smooth_db": -12.39,
+          "target_db": -2.87,
+          "fir_abs_db": 4.73,
+          "fir_rel_1khz_db": 7.78,
+          "predicted_raw_db": -5.9,
+          "predicted_smooth_db": -4.61,
+          "phase_deg": -15.4,
+          "group_delay_ms": 0.02
+        },
+        "12000": {
+          "stock_db": -11.47,
+          "plant_smooth_db": -13.9,
+          "target_db": -2.77,
+          "fir_abs_db": 4.77,
+          "fir_rel_1khz_db": 7.81,
+          "predicted_raw_db": -3.65,
+          "predicted_smooth_db": -6.09,
+          "phase_deg": -30.4,
+          "group_delay_ms": 0.023
+        },
+        "14000": {
+          "stock_db": -15.01,
+          "plant_smooth_db": -15.36,
+          "target_db": -3.21,
+          "fir_abs_db": 4.77,
+          "fir_rel_1khz_db": 7.82,
+          "predicted_raw_db": -7.19,
+          "predicted_smooth_db": -7.54,
+          "phase_deg": -52.5,
+          "group_delay_ms": 0.047
+        },
+        "16000": {
+          "stock_db": -49.3,
+          "plant_smooth_db": -16.62,
+          "target_db": -3.72,
+          "fir_abs_db": -0.39,
+          "fir_rel_1khz_db": 2.66,
+          "predicted_raw_db": -46.64,
+          "predicted_smooth_db": -13.97,
+          "phase_deg": -89.5,
+          "group_delay_ms": 0.018
+        }
+      },
+      "all_validation_gates_passed": true
+    }
+  }
+}

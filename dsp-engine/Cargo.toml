@@ -1,0 +1,35 @@
+[package]
+name = "xps17-studio-dsp"
+version = "1.0.0"
+edition = "2021"
+description = "Hard-RT Rust + x86_64 AVX2/FMA Studio Audio DSP Engine for Dell XPS 17 9720"
+license = "MIT"
+build = "build.rs"
+
+[lib]
+name = "xps17_studio_dsp"
+crate-type = ["cdylib", "rlib"]
+path = "src/lib.rs"
+
+[[bin]]
+name = "xps17-studio-cli"
+path = "src/main.rs"
+
+[build-dependencies]
+cc = "1.2"
+
+[dependencies]
+libc = "0.2"
+serde = "1.0"
+serde_json = "1.0"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+strip = false
+
+[profile.bench]
+opt-level = 3
+lto = "thin"
+codegen-units = 1

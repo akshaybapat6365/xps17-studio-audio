@@ -1,0 +1,384 @@
+#!/usr/bin/env bash
+# speaker-profile — switch measured speaker-tuning presets (built 2026-08-12
+# from the overnight Yeti-X measurement session; see ~/project/omarchy-audio-tune).
+#
+# Usage: speaker-profile <studio-deep|studio-spatial|studio-ref|studio-voice|warm|warm-rich|warm-deep|warm-deep-subtle|warm-clear|warm-classic|balanced|voice|flat|off|baseline|revert|status|current|list|engine>
+#
+# Profiles are EasyEffects output presets. "baseline"/"revert" = the canonical
+# XPS17-Adaptive-Premium-v2 chain, untouched. The chosen profile is remembered
+# in $STATE and re-applied on service restart via a systemd drop-in.
+# "off" bypasses the correction on the internal speaker (EasyEffects stays
+# loaded, so any profile comes back instantly); the DSP controller honours it.
+# "warm-clear" is the opt-in Warm refit to both archived measurement sessions.
+# "warm" and "warm-clear" use a true 180 Hz high-pass (the old eight-pole filter
+# also cut 200-400 Hz). "warm-full", the opt-in trial of that fix, is now an
+# alias of warm. "warm-classic" is Warm exactly as it sounded until 2026-11-11.
+# "warm-rich" is Warm refit to both sessions with more body in 200-330 Hz; the DSP
+# controller sets its loudness contour and limiter ceiling from the volume
+# (fuller when quiet, amplifiers kept below their distortion knee when loud).
+# "warm-deep" and "warm-deep-subtle" are Warm · Rich plus perceived bass, on the other
+# speaker engine: a PipeWire filter-chain (omarchy-speaker-engine.service) that hosts
+# the same plugins EasyEffects uses. Like Omarchy's own speaker tunings, its sink is the
+# default output while the speakers are chosen, so every sound starts in it. Exactly one
+# engine runs: switching to them starts the engine and then stops EasyEffects; switching
+# back starts EasyEffects and then stops the engine. "speaker-profile engine" names the
+# engine the saved choice needs.
+set -uo pipefail
+
+CANONICAL="XPS17-Adaptive-Premium-v2"
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/omarchy"
+STATE="$STATE_DIR/speaker-profile"
+# Default tier = FIR convolver (4096-tap measured correction, highest quality).
+# The -eq variants are the 12-band biquad versions from the same measurements,
+# kept as a fallback in case the convolver ever misbehaves.
+declare -A MAP=(
+  [balanced]="XPS17-FIR-Balanced"   [warm]="XPS17-FIR-Warm"
+  [warm-clear]="XPS17-FIR-Warm-Clear" [warm-classic]="XPS17-FIR-Warm-Classic"
+  [warm-rich]="XPS17-FIR-Warm-Rich"
+  [voice]="XPS17-FIR-Voice"         [flat]="XPS17-FIR-Flat"
+  [balanced-eq]="XPS17-Tuned-Balanced" [warm-eq]="XPS17-Tuned-Warm"
+  [voice-eq]="XPS17-Tuned-Voice"       [flat-eq]="XPS17-Tuned-Flat"
+  [baseline]="$CANONICAL"
+)
+# Profiles on the filter-chain engine (unit, sink) rather than an EasyEffects preset.
+ENGINE_UNIT="omarchy-speaker-engine.service"
+EE_UNIT="easyeffects-speaker-dsp.service"
+CONTROLLER_UNIT="omarchy-speaker-dsp-controller.service"
+CONTROLLER="$HOME/.local/bin/omarchy-speaker-dsp-controller"
+ENGINE_SINK="omarchy_speaker_engine"
+EE_SINK="easyeffects_sink"
+declare -A ENGINE_PROFILE=(
+  [warm-deep]=1 [warm-deep-subtle]=1
+  [studio-deep]=1 [studio-spatial]=1 [studio-ref]=1 [studio-voice]=1
+)
+declare -A ENGINE_SINK_FOR=(
+  [warm-deep]="omarchy_speaker_engine"
+  [warm-deep-subtle]="omarchy_speaker_engine"
+  [studio-deep]="omarchy_speaker_studio"
+  [studio-spatial]="omarchy_speaker_studio_spatial"
+  [studio-ref]="omarchy_speaker_studio_ref"
+  [studio-voice]="omarchy_speaker_studio_voice"
+)
+
+# What he hears, never how it was made: shown in the switch notification and
+# kept word-for-word identical to the Setup > Speakers menu descriptions.
+declare -A LABEL=(
+  [studio-deep]="Studio Deep" [studio-spatial]="Studio Spatial"
+  [studio-ref]="Studio Reference" [studio-voice]="Studio Voice"
+  [warm]="Warm" [warm-clear]="Warm · Clear" [warm-classic]="Warm · Classic"
+  [warm-rich]="Warm · Rich"
+  [warm-deep]="Warm · Deep" [warm-deep-subtle]="Warm · Deep · Subtle"
+  [balanced]="Balanced"
+  [voice]="Voice" [flat]="Flat" [off]="Off" [baseline]="Previous tuning"
+)
+declare -A DESC=(
+  [studio-deep]="Deep, warm flagship studio sound with full physical bass"
+  [studio-spatial]="Wide 3D cinema soundstage with deep, anchored bass"
+  [studio-ref]="Balanced studio reference tuning with tight, accurate bass"
+  [studio-voice]="Clear, intimate voices for calls, podcasts and videos"
+  [warm]="Fuller and bassier, your everyday sound"
+  [warm-rich]="Fuller body, full even when quiet, clean when loud"
+  [warm-deep]="Warm · Rich plus deep bass notes you can follow"
+  [warm-deep-subtle]="Warm · Deep with a lighter touch of bass"
+  [warm-clear]="Warm with clearer voices and smoother treble"
+  [warm-classic]="Warm as it sounded before, with thinner bass"
+  [balanced]="A little brighter than Warm"
+  [voice]="Clearest for calls, podcasts and speech"
+  [flat]="Neutral, nothing added"
+  [off]="Your speakers with no correction"
+  [baseline]="The tuning from before the measurements"
+)
+
+say() { command -v notify-send >/dev/null && notify-send -t 2500 -a speaker-profile "$1" "${2:-}" 2>/dev/null || true; }
+say_status() {
+  [[ ${OMARCHY_NOTIFY:-0} == 1 ]] || return 0
+  say "$@"
+}
+
+# Re-enable processing only when the internal speaker is the output; on TV,
+# Bluetooth or headphones the controller keeps EasyEffects bypassed.
+# The saved choice, with the retired "warm-full" read as the Warm it became.
+saved_profile() {
+  local p
+  p="$(cat "$STATE" 2>/dev/null || echo warm)"
+  [[ $p == warm-full ]] && p=warm
+  printf '%s' "$p"
+}
+
+speaker_is_default() { [[ "$(pactl get-default-sink 2>/dev/null)" == *HiFi__Speaker__sink ]]; }
+
+engine_of() { [[ -n ${ENGINE_PROFILE[$1]:-} ]] && echo filter-chain || echo easyeffects; }
+engine_running() { systemctl --user is-active --quiet "$ENGINE_UNIT" 2>/dev/null; }
+# The engine owns the speaker while its unit is up, restarting or failed, or while the
+# saved choice names it (EasyEffects was stopped for it, or kept from starting at
+# login). Leaving it must then bring EasyEffects back even if the engine has died.
+engine_engaged() {
+  local state
+  state="$(systemctl --user is-active "$ENGINE_UNIT" 2>/dev/null)"
+  [[ $state == active || $state == activating || $state == reloading || $state == failed ]] \
+    || [[ $(engine_of "$(saved_profile)") == filter-chain ]]
+}
+# "activating" counts as up: EasyEffects' own start-up hook calls this script, and
+# starting the unit from inside its start job would wait on itself.
+ee_up() {
+  local state
+  state="$(systemctl --user is-active "$EE_UNIT" 2>/dev/null)"
+  [[ $state == active || $state == activating || $state == reloading ]]
+}
+sink_present() { pactl list short sinks 2>/dev/null | awk '{print $2}' | grep -qx "$1"; }
+engine_sink_for() { printf '%s' "${ENGINE_SINK_FOR[$1]:-$ENGINE_SINK}"; }
+engine_sink_present() { sink_present "${1:-$ENGINE_SINK}"; }
+is_engine_sink() {
+  case "$1" in
+    omarchy_speaker_engine|omarchy_speaker_studio|omarchy_speaker_studio_spatial|omarchy_speaker_studio_ref|omarchy_speaker_studio_voice|omarchy_speaker_spatial|omarchy_speaker_spatial_71)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+is_speaker_or_engine_sink() {
+  [[ "$1" == *HiFi__Speaker__sink ]] || is_engine_sink "$1"
+}
+remember() { mkdir -p "$STATE_DIR"; printf '%s' "$1" > "$STATE"; }
+controller_apply() { "$CONTROLLER" apply >/dev/null 2>&1; }
+speaker_sink() { pactl list short sinks 2>/dev/null | awk '$2 ~ /^alsa_output\..*HiFi__Speaker__sink$/ {print $2; exit}'; }
+
+# One switch at a time: a switch is several unit starts and stops around the same saved
+# choice, and two at once can leave neither engine running. EasyEffects' own start-up hook
+# (SPEAKER_PROFILE_HOOK=1) can run inside a switch that holds the lock while it waits for
+# EasyEffects to start, so the hook never waits: that switch finishes the job itself.
+take_switch_lock() {
+  exec 9>"${XDG_RUNTIME_DIR:-/run/user/$UID}/speaker-profile.lock"
+  if [[ ${SPEAKER_PROFILE_HOOK:-0} == 1 ]]; then
+    flock -n 9 || exit 0
+  elif ! flock -w 30 9; then
+    echo "another speaker switch is still running" >&2
+    say "Couldn't switch the speakers to ${LABEL[$1]:-$1}" "Another switch is still running. Try again in a moment."
+    exit 1
+  fi
+}
+# EasyEffects fully started before a switch uses it. It can be starting on its own (login,
+# or a restart after a crash): a switch joins that start, so its preset lands after the
+# unit's interim Warm one. The start-up hook runs inside that start, so it only checks.
+ee_ready() {
+  if [[ ${SPEAKER_PROFILE_HOOK:-0} == 1 ]]; then ee_up; return; fi
+  [[ $(systemctl --user is-active "$EE_UNIT" 2>/dev/null) == active ]] || systemctl --user start "$EE_UNIT" 2>/dev/null
+}
+# EasyEffects' command line may start EasyEffects itself, which must never inherit the lock.
+easyeffects_cli() { easyeffects "$@" 9>&-; }
+
+# WirePlumber pauses the players whose output disappears (linking.pause-playback). A
+# switch removes one engine's sink on purpose while his music may still play through it,
+# so the rule is held off around that stop only: at runtime (never saved), only if it was
+# on, and put back on exit even if the switch is interrupted.
+pause_rule_held=0
+hold_pause_rule() {
+  sink_present "$1" || return 0
+  [[ $(wpctl settings linking.pause-playback 2>/dev/null | awk '$1 == "Value:" {print $2}') == true ]] || return 0
+  pause_rule_held=1
+  trap release_pause_rule EXIT
+  wpctl settings linking.pause-playback false >/dev/null 2>&1
+}
+release_pause_rule() {
+  (( pause_rule_held )) || return 0
+  pause_rule_held=0
+  wpctl settings linking.pause-playback true >/dev/null 2>&1
+}
+
+# Move to the filter-chain engine. The engine comes up first and gets its volume law
+# before any sound reaches it; only then does EasyEffects stop. The controller keeps
+# running through that stop (it is PartOf EasyEffects, so this one stop ignores
+# dependencies), and its routing rule makes the engine sink the default output the
+# instant EasyEffects' sink is gone: streams follow it within milliseconds and every new
+# stream starts in it, and his players are not paused for it. The saved choice is written
+# first because both units read it (ExecCondition).
+enter_engine() {
+  local profile="$1" previous target_sink cur_default
+  previous="$(saved_profile)"
+  target_sink="$(engine_sink_for "$profile")"
+  remember "$profile"
+  # A unit that gave up after repeated crashes (start limit, fallback to Warm · Rich)
+  # must be allowed to start again when he picks it again.
+  systemctl --user reset-failed "$ENGINE_UNIT" 2>/dev/null
+  if ! systemctl --user start "$ENGINE_UNIT" 2>/dev/null; then
+    remember "$previous"
+    return 1
+  fi
+  local _
+  for _ in {1..40}; do engine_sink_present "$target_sink" && break; sleep 0.1; done
+  if ! engine_sink_present "$target_sink"; then
+    # Only stop the engine if we were not already on another working filter-chain profile.
+    [[ $(engine_of "$previous") == filter-chain ]] || systemctl --user stop "$ENGINE_UNIT" 2>/dev/null
+    remember "$previous"
+    return 1
+  fi
+  controller_apply
+  if ee_up; then
+    hold_pause_rule "$EE_SINK"
+    systemctl --user stop --job-mode=ignore-dependencies "$EE_UNIT" 2>/dev/null
+  fi
+  # When internal speakers (or another filter-chain sink) are currently default, switch
+  # directly to the chosen profile's sink at unity 100% unmuted; never steal Bluetooth/HDMI.
+  cur_default="$(pactl get-default-sink 2>/dev/null || true)"
+  if [[ -n $cur_default && $cur_default != "$target_sink" ]] && is_speaker_or_engine_sink "$cur_default"; then
+    pactl set-sink-mute "$target_sink" 0 2>/dev/null || true
+    pactl set-sink-volume "$target_sink" 100% 2>/dev/null || true
+    pactl set-default-sink "$target_sink" 2>/dev/null || true
+  fi
+  # From here the controller runs on its own (its Wants= on EasyEffects is skipped by
+  # EasyEffects' condition). If it was not running, this apply takes the speakers and
+  # pushes live volume tracking (`studio:Volume (dB)` or Warm · Deep contour/ceiling).
+  systemctl --user start "$CONTROLLER_UNIT" 2>/dev/null
+  controller_apply
+  release_pause_rule
+  return 0
+}
+
+# Back to EasyEffects from the engine. The controller first holds the engine's streams
+# in it, saves the choice and makes the physical speaker the default (EasyEffects must
+# never start with the engine as the default); then EasyEffects starts and captures every
+# stream straight out of the engine (processAllOutputs), and only then does the engine
+# stop (without pausing his players), so no stream is left on the bare speaker. $1 is the
+# EasyEffects profile being chosen; EasyEffects' unit only starts while the saved choice
+# names it, so it is saved here too, even if the controller could not run. On failure the
+# old choice returns.
+leave_engine() {
+  local profile="$1" previous prev_sink cur_default speaker
+  engine_engaged || return 0
+  previous="$(saved_profile)"
+  prev_sink="$(engine_sink_for "$previous")"
+  if ! "$CONTROLLER" hand-back "$profile" >/dev/null 2>&1; then
+    speaker="$(speaker_sink)"
+    cur_default="$(pactl get-default-sink 2>/dev/null || true)"
+    [[ -n $speaker ]] && is_engine_sink "$cur_default" \
+      && pactl set-default-sink "$speaker" 2>/dev/null
+  fi
+  remember "$profile"
+  if ! ee_ready; then
+    remember "$previous"
+    # The engine is still up: its routing rule gives it the speakers back.
+    controller_apply
+    return 1
+  fi
+  if sink_present "$prev_sink"; then
+    hold_pause_rule "$prev_sink"
+  else
+    hold_pause_rule "$ENGINE_SINK"
+  fi
+  systemctl --user stop "$ENGINE_UNIT" 2>/dev/null
+  systemctl --user reset-failed "$ENGINE_UNIT" 2>/dev/null
+  release_pause_rule
+  return 0
+}
+
+cmd="${1:-status}"
+case "$cmd" in
+  status)
+    cur="$(saved_profile)"
+    if [[ $cur == off ]]; then
+      echo "active profile: off (correction bypassed)"
+    elif [[ -n ${ENGINE_PROFILE[$cur]:-} ]]; then
+      if [[ $cur == studio-* ]]; then
+        echo "active profile: $cur (speaker engine ${ENGINE_UNIT%.service}, sink $(engine_sink_for "$cur"))"
+      else
+        echo "active profile: $cur (speaker engine ${ENGINE_UNIT%.service})"
+      fi
+    else
+      echo "active profile: $cur (preset ${MAP[$cur]:-$CANONICAL})"
+    fi
+    ;;
+  current)
+    saved_profile
+    ;;
+  list)
+    printf '%s\n' "${!MAP[@]}" "${!ENGINE_PROFILE[@]}" | sort
+    ;;
+  engine)
+    engine_of "$(saved_profile)"
+    ;;
+  studio-deep|studio-spatial|studio-ref|studio-voice|warm-deep|warm-deep-subtle)
+    take_switch_lock "$cmd"
+    if ! enter_engine "$cmd"; then
+      echo "failed to start the speaker engine ($ENGINE_UNIT); sound unchanged" >&2
+      say "Couldn't switch the speakers to ${LABEL[$cmd]}" "The sound is unchanged."
+      exit 1
+    fi
+    if [[ $cmd == studio-* ]]; then
+      echo "loaded: $cmd (speaker engine ${ENGINE_UNIT%.service}, sink $(engine_sink_for "$cmd"))"
+    else
+      echo "loaded: $cmd (speaker engine ${ENGINE_UNIT%.service})"
+    fi
+    say_status "Speakers: ${LABEL[$cmd]}" "${DESC[$cmd]}"
+    ;;
+  revert)
+    exec "$0" baseline
+    ;;
+  warm-full)
+    exec "$0" warm
+    ;;
+  off)
+    take_switch_lock off
+    if ! leave_engine off; then
+      echo "failed to start EasyEffects ($EE_UNIT)" >&2
+      say "Couldn't switch the speakers to Off" "The sound is unchanged."
+      exit 1
+    fi
+    ee_ready
+    if ! easyeffects_cli --bypass 1 >/dev/null 2>&1; then
+      echo "failed to bypass EasyEffects (is it running?)" >&2
+      say "Couldn't switch the speakers to Off" "The sound is unchanged."
+      exit 1
+    fi
+    mkdir -p "$STATE_DIR"
+    printf '%s' off > "$STATE"
+    echo "loaded: off (correction bypassed)"
+    say_status "Speakers: ${LABEL[off]}" "${DESC[off]}"
+    ;;
+  balanced|warm|warm-rich|warm-clear|warm-classic|voice|flat|baseline|balanced-eq|warm-eq|voice-eq|flat-eq)
+    take_switch_lock "$cmd"
+    preset="${MAP[$cmd]}"
+    if engine_engaged; then
+      # Coming from Warm · Deep, even a Deep whose engine has died (or from EasyEffects'
+      # own start-up hook while the engine is still up): EasyEffects first, then the
+      # engine stops.
+      if ! leave_engine "$cmd"; then
+        echo "failed to start EasyEffects ($EE_UNIT)" >&2
+        say "Couldn't switch the speakers to ${LABEL[$cmd]:-$cmd}" "The sound is unchanged."
+        exit 1
+      fi
+    fi
+    ee_ready
+    T0="$(date '+%Y-%m-%d %H:%M:%S')"
+    if ! easyeffects_cli --load-preset "$preset" 2>/dev/null; then
+      echo "failed to load preset $preset (is EasyEffects running?)" >&2
+      say "Couldn't switch the speakers to ${LABEL[$cmd]:-$cmd}" "The sound is unchanged."
+      exit 1
+    fi
+    sleep 1
+    # verify, don't trust: a convolver whose kernel is missing silently enters
+    # passthrough mode — the preset "loads" but the correction does nothing.
+    if journalctl --user -u easyeffects-speaker-dsp.service --since "$T0" --no-pager 2>/dev/null \
+         | grep -qiE 'passthrough|kernel .* not found|irs filename is invalid'; then
+      echo "PRESET LOADED BUT BROKEN: convolver fell back to passthrough — not saving choice" >&2
+      say "Speakers: ${LABEL[$cmd]:-$cmd} didn't load properly" "Pick it again, or choose Warm."
+      exit 1
+    fi
+    mkdir -p "$STATE_DIR"
+    printf '%s' "$cmd" > "$STATE"
+    # Leaving "off": switch processing back on now rather than at the
+    # controller's next audit (up to 30 s later).
+    speaker_is_default && easyeffects_cli --bypass 2 >/dev/null 2>&1
+    # Warm · Rich takes its loudness contour and limiter ceiling from the volume:
+    # set them now instead of at the controller's next audit (up to 30 s later).
+    [[ $cmd == warm-rich ]] && "$HOME/.local/bin/omarchy-speaker-dsp-controller" apply >/dev/null 2>&1
+    echo "loaded: $cmd ($preset)"
+    say_status "Speakers: ${LABEL[$cmd]:-$cmd}" "${DESC[$cmd]:-}"
+    ;;
+  *)
+    echo "usage: speaker-profile <studio-deep|studio-spatial|studio-ref|studio-voice|warm|warm-rich|warm-deep|warm-deep-subtle|warm-clear|warm-classic|balanced|voice|flat|off|baseline|revert|status|current|list|engine>" >&2
+    echo "       (append -eq for the biquad fallback versions, e.g. balanced-eq)" >&2
+    exit 1
+    ;;
+esac

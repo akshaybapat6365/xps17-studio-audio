@@ -1,0 +1,400 @@
+--- a/model.py
++++ b/model.py
+@@ -180,6 +180,33 @@
+     )
+ 
+ 
++# Studio DSP (libxps17_studio_dsp.so, 92-xps17-studio.conf) accepts the live listening
++# level directly in dB (`studio:Volume (dB)` in [-45.0, 0.0]) and computes its own
++# ISO 226:2023 equal-loudness contour and Klippel excursion-tracking sliding HPF inside
++# the plugin. Updating only `studio:Volume (dB)` keeps loudness compensation locked to
++# the PipeWire volume continuously across 0..100 % (fixing the frozen-contour bug of
++# 91-spatial-fdtr.conf) while leaving `studio:Drive (dB)` (LOUDNESS_DRIVE_DB mastering
++# loudness authority) untouched.
++STUDIO_VOLUME_CONTROL: Final = ("studio", "Volume (dB)")
++STUDIO_VOLUME_MIN_DB: Final = -45.0
++STUDIO_VOLUME_MAX_DB: Final = 0.0
++STUDIO_HIGH_PASS_PARAM: Final = "studio:Physical Bass Hz"
++
++
++def studio_volume_db(volume: int) -> float:
++    """Convert PipeWire cubic sink volume percentage (0..100+ %) to `studio:Volume (dB)`,
++    clamped strictly to [STUDIO_VOLUME_MIN_DB, STUDIO_VOLUME_MAX_DB] (-45.0..0.0 dB)."""
++    if volume <= 0:
++        return STUDIO_VOLUME_MIN_DB
++    clamped = max(STUDIO_VOLUME_MIN_DB, min(STUDIO_VOLUME_MAX_DB, volume_db(volume)))
++    return round(clamped, 3) + 0.0
++
++
++def studio_tracking_changes(volume: int) -> tuple[PropertyChange, ...]:
++    """Live PipeWire volume update for xps17_studio_dsp filter-chain nodes."""
++    return (PropertyChange(*STUDIO_VOLUME_CONTROL, studio_volume_db(volume)),)
++
++
+ def engine_param_key(change: PropertyChange) -> str:
+     return f"{change.plugin}:{change.name}"
+ 
+--- a/runtime.py
++++ b/runtime.py
+@@ -15,6 +15,7 @@
+ 
+ from omarchy_audio.model import (
+     PropertyChange,
++    STUDIO_HIGH_PASS_PARAM,
+     Zone,
+     changes_for_zone,
+     engine_props,
+@@ -26,6 +27,7 @@
+     parse_volume,
+     property_response_matches,
+     set_command,
++    studio_tracking_changes,
+     volume_tracking_changes,
+     zone_for_volume,
+ )
+@@ -64,6 +66,24 @@
+ ENGINE_NODE: Final = "omarchy_speaker_engine"
+ ENGINE_OUTPUT_NODE: Final = f"{ENGINE_NODE}_output"  # its playback stream, after the limiter
+ ENGINE_HIGH_PASS_PARAM: Final = "hp:f"
++# Studio DSP profiles hosted by 92-xps17-studio.conf inside omarchy-speaker-engine.service.
++# Each profile owns a distinct passive PipeWire filter-chain sink whose `studio` LADSPA
++# node (`xps17_studio_dsp`) tracks live PipeWire volume via `studio:Volume (dB)` across
++# 0..100 %, while keeping its mastering loudness drive (`Drive (dB)`) authoritative.
++STUDIO_PROFILES: Final = {
++    "studio-deep": "omarchy_speaker_studio",
++    "studio-spatial": "omarchy_speaker_studio_spatial",
++    "studio-ref": "omarchy_speaker_studio_ref",
++    "studio-voice": "omarchy_speaker_studio_voice",
++}
++STUDIO_NODE_TO_PROFILE: Final = {node: name for name, node in STUDIO_PROFILES.items()}
++STUDIO_NODES: Final = frozenset(STUDIO_PROFILES.values())
++STUDIO_OUTPUT_NODES: Final = frozenset(f"{node}_output" for node in STUDIO_NODES)
++LEGACY_SPATIAL_NODES: Final = frozenset(("omarchy_speaker_spatial", "omarchy_speaker_spatial_71"))
++LEGACY_SPATIAL_OUTPUT_NODES: Final = frozenset(f"{node}_output" for node in LEGACY_SPATIAL_NODES)
++ALL_FILTER_CHAIN_PROFILES: Final = frozenset((*ENGINE_PROFILES, *STUDIO_PROFILES))
++ALL_ENGINE_NODES: Final = frozenset((ENGINE_NODE, *STUDIO_NODES))
++ALL_ENGINE_OUTPUT_NODES: Final = frozenset((ENGINE_OUTPUT_NODE, *STUDIO_OUTPUT_NODES))
+ # pactl's name for "whatever the default output is". Moving a stream there clears its
+ # target (pipewire-pulse writes target.object -1), so the stream keeps following the
+ # default instead of being pinned, and WirePlumber forgets any target it remembered for
+@@ -260,7 +280,26 @@
+ 
+ 
+ def selected_engine() -> str:
+-    return FILTER_CHAIN_ENGINE if saved_profile() in ENGINE_PROFILES else EASY_EFFECTS_ENGINE
++    return FILTER_CHAIN_ENGINE if saved_profile() in ALL_FILTER_CHAIN_PROFILES else EASY_EFFECTS_ENGINE
++
++
++def profile_engine_node(profile: str | None) -> str:
++    """Configured PipeWire filter-chain sink node for a saved speaker profile."""
++    if profile in STUDIO_PROFILES:
++        return STUDIO_PROFILES[profile]
++    return ENGINE_NODE
++
++
++def resolve_active_engine_node(active_sink: str, profile: str | None) -> str:
++    """Return whichever managed filter-chain node is currently active.
++
++    When the live default sink is one of the 4 Studio DSP sinks or the Warm · Deep
++    sink, track that live node directly so switching sinks in PipeWire/pavucontrol
++    keeps ISO 226 loudness contour live; otherwise use the saved profile's sink.
++    """
++    if active_sink in ALL_ENGINE_NODES:
++        return active_sink
++    return profile_engine_node(profile)
+ 
+ 
+ def selected_preset() -> str:
+@@ -482,7 +521,7 @@
+     into it (L12). A real external default is intentional and must never be
+     changed here.
+     """
+-    if active_sink not in (EASY_EFFECTS_SINK, ENGINE_NODE) or dry_run:
++    if active_sink not in (EASY_EFFECTS_SINK, *ALL_ENGINE_NODES) or dry_run:
+         return active_sink
+ 
+     run_text(("/usr/bin/pactl", "set-default-sink", speaker_sink))
+@@ -646,16 +685,16 @@
+     raise AudioRuntimeError(detail="default audio output changed repeatedly during DSP apply")
+ 
+ 
+-def engine_node() -> tuple[int, str, dict[str, float]] | None:
+-    """(global id, object serial, current controls) of the speaker engine, or None."""
+-    response = run_text(("/usr/bin/pw-dump", ENGINE_NODE))
++def engine_node(node_name: str = ENGINE_NODE) -> tuple[int, str, dict[str, float]] | None:
++    """(global id, object serial, current controls) of a filter-chain engine node, or None."""
++    response = run_text(("/usr/bin/pw-dump", node_name))
+     try:
+         objects = json.loads(response or "[]")
+     except json.JSONDecodeError as error:
+         raise AudioRuntimeError(detail="pw-dump returned invalid JSON") from error
+     for item in objects if isinstance(objects, list) else ():
+         info = item.get("info") if isinstance(item, dict) else None
+-        if not isinstance(info, dict) or info.get("props", {}).get("node.name") != ENGINE_NODE:
++        if not isinstance(info, dict) or info.get("props", {}).get("node.name") != node_name:
+             continue
+         controls: dict[str, float] = {}
+         for props in info.get("params", {}).get("Props", ()):
+@@ -685,12 +724,17 @@
+     output (those carry a link-group, the engine's is also pinned with node.dont-move)."""
+     properties = _sink_properties(item)
+     application = properties.get("application.name")
++    node_name = str(properties.get("node.name", ""))
+     return (
+         isinstance(application, str)
+         and application != "EasyEffects"
+         and "node.link-group" not in properties
+         and str(properties.get("node.dont-move", "false")).lower() != "true"
+-        and not str(properties.get("node.name", "")).startswith(ENGINE_NODE)
++        and node_name not in ALL_ENGINE_NODES
++        and node_name not in ALL_ENGINE_OUTPUT_NODES
++        and node_name not in LEGACY_SPATIAL_NODES
++        and node_name not in LEGACY_SPATIAL_OUTPUT_NODES
++        and not node_name.startswith(ENGINE_NODE)
+     )
+ 
+ 
+@@ -726,15 +770,16 @@
+ 
+ def _speaker_chain(inventory: tuple[dict[str, object], ...], active_sink: str) -> dict[object, str]:
+     """pactl index -> name of every sink whose sound ends in the internal speakers right now:
+-    the speaker itself (and its UCM stereo fallback); the Warm · Deep engine, whose output is
+-    pinned to the speaker by name; EasyEffects' sink only while its output follows a default
+-    that is the speaker (with another output chosen it plays there, globally bypassed)."""
++    the speaker itself (and its UCM stereo fallback); the Warm · Deep and Studio filter-chain
++    engines, whose outputs are pinned to the speaker by name; EasyEffects' sink only while its
++    output follows a default that is the speaker (with another output chosen it plays there,
++    globally bypassed)."""
+     names = {
+         *_speaker_sinks(inventory),
+         *(_sink_name(item) for item in inventory
+           if _sink_properties(item).get("alsa.card_name") == INTERNAL_AUDIO_CARD
+           and _sink_name(item).endswith(FALLBACK_SINK_SUFFIX)),
+-        ENGINE_NODE,
++        *ALL_ENGINE_NODES,
+     }
+     if active_sink in names | {EASY_EFFECTS_SINK}:
+         names.add(EASY_EFFECTS_SINK)
+@@ -760,7 +805,7 @@
+         targets = [("sink", _sink_name(item), item, _sink_name(item)) for item in inventory if item.get("index") in chain]
+         for item in sink_inputs():
+             properties = _sink_properties(item)
+-            if item.get("sink") not in chain or properties.get("node.name") == ENGINE_OUTPUT_NODE:
++            if item.get("sink") not in chain or properties.get("node.name") in ALL_ENGINE_OUTPUT_NODES:
+                 continue
+             # Never media.name: for most players that is the song or page title, not for the journal.
+             label = properties.get("application.name") or properties.get("node.name") or "a stream"
+@@ -790,7 +835,7 @@
+     that output the moment it is back, exactly as it does without the engine."""
+     chosen = configured_default_sink()
+     run_text(("/usr/bin/pactl", "set-default-sink", target))
+-    if chosen and chosen not in {ENGINE_NODE, EASY_EFFECTS_SINK, *_speaker_sinks(inventory)}:
++    if chosen and chosen not in {*ALL_ENGINE_NODES, EASY_EFFECTS_SINK, *_speaker_sinks(inventory)}:
+         run_text(("/usr/bin/pw-metadata", "-n", "default", "0", "default.configured.audio.sink",
+                   json.dumps({"name": chosen}), "Spa:String:JSON"))
+ 
+@@ -818,25 +863,35 @@
+     by_name = {_sink_name(item): item for item in inventory}
+     speakers = _speaker_sinks(inventory)
+     active_sink = default_sink()
+-    engine = by_name.get(ENGINE_NODE)
++    node_name = resolve_active_engine_node(active_sink, saved_profile())
++    engine = by_name.get(node_name)
+     if EASY_EFFECTS_SINK in by_name or engine is None or len(speakers) != 1:
+         return active_sink
+     speaker_sink = speakers[0]
+     if active_sink == speaker_sink and not dry_run:
+-        _take_default(ENGINE_NODE, inventory)
++        _take_default(node_name, inventory)
+         active_sink = default_sink()
+     if dry_run:
+         return active_sink
+-    _hold_engine_level("sink", ENGINE_NODE, engine)
+-    # Streams that do not follow the default on their own: on the bare speaker while the
+-    # engine is the default (an application WirePlumber remembers pinned to the speaker),
+-    # or still in the engine after another output was chosen. Moving them to the default
+-    # makes them follow it from now on.
+-    stray_index = by_name[speaker_sink].get("index") if active_sink == ENGINE_NODE else engine.get("index")
++    _hold_engine_level("sink", node_name, engine)
++    # Streams that do not follow the default on their own: on the bare speaker or another
++    # filter-chain sink while the active engine is the default (e.g. an app WirePlumber
++    # remembered pinned to the speaker, or left behind after switching between Warm · Deep
++    # and Studio profiles), or still in any engine sink after another output was chosen.
++    # Moving them to the default makes them follow it from now on.
++    engine_indices = {
++        item.get("index")
++        for name, item in by_name.items()
++        if name in (ALL_ENGINE_NODES | LEGACY_SPATIAL_NODES)
++    }
++    if active_sink == node_name:
++        stray_indices = {by_name[speaker_sink].get("index")} | (engine_indices - {engine.get("index")})
++    else:
++        stray_indices = engine_indices
+     for item in sink_inputs():
+-        if _sink_properties(item).get("node.name") == ENGINE_OUTPUT_NODE:
++        if _sink_properties(item).get("node.name") in ALL_ENGINE_OUTPUT_NODES:
+             _hold_engine_level("sink-input", str(item.get("index")), item)
+-        elif _is_application_stream(item) and item.get("sink") == stray_index:
++        elif _is_application_stream(item) and item.get("sink") in stray_indices:
+             run_text(("/usr/bin/pactl", "move-sink-input", str(item.get("index")), FOLLOW_DEFAULT_SINK))
+     return active_sink
+ 
+@@ -877,28 +932,50 @@
+         raise AudioRuntimeError(detail=f"not an EasyEffects speaker profile: {profile!r}")
+     with audio_lock():
+         inventory = sink_inventory()
+-        engine = next((item for item in inventory if _sink_name(item) == ENGINE_NODE), None)
++        engine_sinks = {
++            item.get("index"): item
++            for item in inventory
++            if _sink_name(item) in ALL_ENGINE_NODES
++        }
+         pinned = 0
+-        if engine is not None:
+-            serial = _sink_properties(engine).get("object.serial")
++        if engine_sinks:
+             for item in sink_inputs():
++                engine_item = engine_sinks.get(item.get("sink"))
++                if engine_item is None:
++                    continue
++                serial = _sink_properties(engine_item).get("object.serial")
+                 node_id = _sink_properties(item).get("object.id")
+-                if _is_application_stream(item) and item.get("sink") == engine.get("index") and node_id and serial:
++                if _is_application_stream(item) and node_id and serial:
+                     run_text(("/usr/bin/pw-metadata", "-n", "default", str(node_id), "target.object", str(serial), "Spa:Id"))
+                     pinned += 1
+         save_profile(profile)
+         speakers = _speaker_sinks(inventory)
+-        if len(speakers) == 1 and ENGINE_NODE in (default_sink(), configured_default_sink()):
++        if len(speakers) == 1 and (
++            default_sink() in ALL_ENGINE_NODES
++            or configured_default_sink() in ALL_ENGINE_NODES
++        ):
+             _take_default(speakers[0], inventory)
+         return pinned
+ 
+ 
++def active_engine_node_name() -> str:
++    """Resolve the active filter-chain sink node from live default sink or saved profile."""
++    profile = saved_profile()
++    try:
++        active = default_sink()
++    except AudioRuntimeError:
++        active = ""
++    return resolve_active_engine_node(active, profile)
++
++
+ def engine_identity() -> str | None:
+-    """Changes whenever the speaker engine is (re)created, so its controls are re-sent."""
++    """Changes whenever the active speaker engine node is (re)created or switched,
++    so its controls are re-sent."""
+     if selected_engine() != FILTER_CHAIN_ENGINE:
+         return None
+-    node = engine_node()
+-    return None if node is None else node[1]
++    node_name = active_engine_node_name()
++    node = engine_node(node_name)
++    return None if node is None else f"{node_name}:{node[1]}"
+ 
+ 
+ def apply_engine_changes(node_id: int, changes: tuple[PropertyChange, ...], dry_run: bool) -> None:
+@@ -908,41 +985,57 @@
+ 
+ 
+ def apply_engine_profile(current: Zone | None, dry_run: bool) -> ApplyResult:
+-    """Warm · Deep: hold the routing rule, then send the volume law and the Deep-bass
+-    amount to the engine node.
++    """Filter-chain engine profiles (Warm · Deep and Studio Deep/Spatial/Reference/Voice):
++    hold the routing rule, then push live volume tracking to the active filter-chain node.
+ 
+-    The gain-safe rule holds as two batches: one set-param with every lowering change,
+-    then one with the rest, each applied whole between audio cycles.
++    - Warm · Deep (`omarchy_speaker_engine`): sends contour, limiter ceiling, and Deep-bass
++      amount in two gain-safe batches (every lowering change, then the rest).
++    - Studio DSP (`omarchy_speaker_studio*`): tracks live PipeWire volume continuously into
++      `studio:Volume (dB)` across 0..100 % (clamped to [-45.0, 0.0] dB) so ISO 226:2023
++      loudness and Klippel excursion scaling track every step while keeping mastering
++      loudness drive (`studio:Drive (dB)`) untouched.
+     """
+     profile = saved_profile() or ""
+-    # Routing first: the engine always holds a law (after a restart, its file default is
+-    # the cautious 100 % ceiling), so taking the default never waits on the law below.
++    # Routing first: the engine always holds safe defaults (after a restart, Warm · Deep's
++    # cautious 100 % ceiling or Studio's -12.0 dB volume), so taking the default never waits
++    # on the law below.
+     active_sink = hold_engine_route(dry_run)
++    node_name = resolve_active_engine_node(active_sink, profile)
++    is_studio = node_name in STUDIO_NODES
+     speaker_sink = physical_sink_or_none()
+-    node = engine_node()
++    node = engine_node(node_name)
++    preset_label = (
++        f"studio:{STUDIO_NODE_TO_PROFILE[node_name]}"
++        if is_studio
++        else f"engine:{profile}"
++    )
+     if speaker_sink is None or node is None:
+         # Speaker missing (UCM fallback) or engine not up yet: nothing to tune.
+         return ApplyResult(volume=0, zone=zone_for_volume(0, current), default_sink=active_sink,
+-                           preset=f"engine:{profile}", cutoff_hz=selected_cutoff(), changes=(),
++                           preset=preset_label, cutoff_hz=selected_cutoff(), changes=(),
+                            ready=False, speaker_active=False)
+     volume = physical_volume()
+     zone = zone_for_volume(volume, current)
+     node_id, _, controls = node
+-    law = engine_tracking_changes(volume, ENGINE_PROFILES[profile])
++    if is_studio:
++        law = studio_tracking_changes(volume)
++    else:
++        deep_bass = ENGINE_PROFILES.get(profile, ENGINE_PROFILES["warm-deep"])
++        law = engine_tracking_changes(volume, deep_bass)
+     observed = {(change.plugin, change.name): controls.get(f"{change.plugin}:{change.name}") for change in law}
+     lowering, raising = gain_safe_batches(law, observed)
+     apply_engine_changes(node_id, lowering, dry_run)
+     apply_engine_changes(node_id, raising, dry_run)
+     if not dry_run:
+-        after = engine_node()
++        after = engine_node(node_name)
+         live = {} if after is None else after[2]
+         for change in law:
+             value = live.get(f"{change.plugin}:{change.name}")
+             if value is None or not math.isclose(value, float(change.value), rel_tol=1e-5, abs_tol=1e-6):
+                 raise AudioRuntimeError(detail=f"speaker engine rejected {change.plugin}:{change.name}: {value}")
+-    return ApplyResult(volume=volume, zone=zone, default_sink=active_sink, preset=f"engine:{profile}",
++    return ApplyResult(volume=volume, zone=zone, default_sink=active_sink, preset=preset_label,
+                        cutoff_hz=selected_cutoff(), changes=(*lowering, *raising), ready=True,
+-                       speaker_active=active_sink in (speaker_sink, ENGINE_NODE))
++                       speaker_active=active_sink in (speaker_sink, *ALL_ENGINE_NODES))
+ 
+ 
+ def apply_profile(
+@@ -1031,16 +1124,25 @@
+     speaker_sink = physical_sink()
+     volume = physical_volume()
+     active_sink = default_sink()
+-    node = engine_node()
++    profile = saved_profile()
++    node_name = resolve_active_engine_node(active_sink, profile)
++    is_studio = node_name in STUDIO_NODES
++    node = engine_node(node_name)
++    hp_param = STUDIO_HIGH_PASS_PARAM if is_studio else ENGINE_HIGH_PASS_PARAM
++    preset_label = (
++        f"studio:{STUDIO_NODE_TO_PROFILE[node_name]}"
++        if is_studio
++        else f"engine:{profile}"
++    )
+     return RuntimeStatus(
+         volume=volume,
+         zone=zone_for_volume(volume, None),
+         default_sink=active_sink,
+-        preset=f"engine:{saved_profile()}",
++        preset=preset_label,
+         selected_cutoff_hz=selected_cutoff(),
+-        live_cutoff_hz=float("nan") if node is None else node[2].get(ENGINE_HIGH_PASS_PARAM, float("nan")),
++        live_cutoff_hz=float("nan") if node is None else node[2].get(hp_param, float("nan")),
+         socket_ready=node is not None,
+-        speaker_active=active_sink in (speaker_sink, ENGINE_NODE),
++        speaker_active=active_sink in (speaker_sink, *ALL_ENGINE_NODES),
+     )
+ 
+ 

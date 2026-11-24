@@ -1,0 +1,41 @@
+MIT License (Userspace DSP, Acoustics, PipeWire Configs, Verification & Tooling)
+================================================================================
+
+Copyright (c) 2026 Akshay Bapat and contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+================================================================================
+Kernel Driver & DKMS Licensing Notice (GPL-2.0-only)
+================================================================================
+
+All Linux kernel module sources, DKMS patches, header definitions, and kernel
+modifications located under `kernel-driver/` (including patches derived from
+upstream `sound/soc/codecs/rt1316-sdw.c` and `sound/soc/codecs/rt1316-sdw-coeff-tables.h`)
+are licensed under the GNU General Public License, version 2 ONLY
+(`SPDX-License-Identifier: GPL-2.0-only`), in strict compliance with upstream
+Linux kernel licensing requirements.
+
+A copy of the GNU General Public License version 2 is available at:
+https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+
+Users installing the default userspace audio stack (`./install.sh --dsp-only`)
+use exclusively MIT-licensed userspace components. Enabling the optional kernel
+driver layer (`sudo ./install.sh --with-kernel`) builds and installs the
+`GPL-2.0-only` DKMS module alongside the MIT userspace stack.
