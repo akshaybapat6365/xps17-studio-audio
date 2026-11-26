@@ -36,6 +36,7 @@ fi
 
 # CLI defaults
 WITH_KERNEL=0
+PORTABLE_MODE=0
 DRY_RUN=0
 NO_RESTART=0
 FORCE_SKIP_DMI=0
@@ -73,7 +74,9 @@ Usage: $(basename "$0") [OPTIONS]
 Install the Dell XPS 17 9720 Studio Audio Engineering Stack.
 
 Modes:
-  --dsp-only                 Install userspace DSP stack only (default; safe non-root)
+  --dsp-only                 Install Dell XPS 17 9720 calibrated userspace DSP stack (default on 0AFF)
+  --portable, --any-omarchy  Universal mode for ANY x86_64 Omarchy / PipeWire machine (uses neutral
+                             Harman-tilt FIRs, auto-detects host speaker sink & installs standalone controller)
   --with-kernel              Also install GPL-2.0-only rt1316-sdca DKMS + SOF IPC4 DRC fence
                              (requires sudo/root AND strict DMI product_sku == 0AFF)
 
@@ -100,6 +103,11 @@ parse_args() {
         case "$1" in
             --dsp-only)
                 WITH_KERNEL=0
+                PORTABLE_MODE=0
+                ;;
+            --portable|--any-omarchy)
+                WITH_KERNEL=0
+                PORTABLE_MODE=1
                 ;;
             --with-kernel)
                 WITH_KERNEL=1
@@ -146,9 +154,9 @@ parse_args() {
         shift
     done
 
-    # Hard policy: NEVER allow DMI bypass when touching kernel driver / hardware layer.
-    if ((WITH_KERNEL && FORCE_SKIP_DMI)); then
-        refuse "--force-skip-dmi-check is STRICTLY PROHIBITED with --with-kernel! Hardware register patches are calibrated exclusively for Dell XPS 17 9720 (DMI 0AFF)."
+    # Hard policy: NEVER allow DMI bypass or portable mode when touching kernel driver / hardware layer.
+    if ((WITH_KERNEL && (FORCE_SKIP_DMI || PORTABLE_MODE))); then
+        refuse "--force-skip-dmi-check / --portable is STRICTLY PROHIBITED with --with-kernel! Hardware register patches are calibrated exclusively for Dell XPS 17 9720 (DMI 0AFF)."
     fi
 }
 
@@ -248,12 +256,17 @@ check_dmi_hardware_guard() {
         refuse "Hardware DMI mismatch! Expected product_sku='$EXPECTED_DMI_SKU' (Dell XPS 17 9720), found '${sku:-<missing>}' ('${pname:-<missing>}'). Aborting --with-kernel to protect non-XPS17 speaker amplifiers."
     fi
 
+    if ((PORTABLE_MODE)); then
+        log "Universal Omarchy Portable Mode enabled (--portable): using neutral Harman-tilt FIRs & host-detected speaker sink."
+        return 0
+    fi
+
     if ((FORCE_SKIP_DMI)); then
         warn "Bypassing DMI '$EXPECTED_DMI_SKU' hardware check (--force-skip-dmi-check in --dsp-only mode). Acoustic FIR & Klippel parameters are calibrated specifically for Dell XPS 17 9720."
         return 0
     fi
 
-    refuse "Hardware DMI mismatch! Expected product_sku='$EXPECTED_DMI_SKU' (Dell XPS 17 9720), found '${sku:-<missing>}'. If you want to test userspace DSP offline on another machine, re-run with: --dsp-only --force-skip-dmi-check"
+    refuse "Hardware DMI mismatch! Expected product_sku='$EXPECTED_DMI_SKU' (Dell XPS 17 9720), found '${sku:-<missing>}'. On any other Omarchy machine, run: ./install.sh --portable"
 }
 
 file_sha256_or_absent() {
@@ -450,13 +463,24 @@ install_userspace_dsp() {
         "DSP CLI"
 
     # 2. 4096-tap minimum-phase FIR kernels + mathematical dsp_params.json
-    local kname
+    #    In --portable mode on non-0AFF machines, install portable neutral/Harman-tilt FIRs under
+    #    the canonical xps17-studio-*.wav runtime names expected by libxps17_studio_dsp.so Stage 3.
+    local kname src_kname
+    local host_sku=""
+    [[ -r "$DMI_DIR/product_sku" ]] && host_sku="$(tr -d '[:space:]' < "$DMI_DIR/product_sku" || true)"
     for kname in xps17-studio-deep.wav xps17-studio-spatial.wav xps17-studio-reference.wav xps17-studio-voice.wav; do
+        src_kname="$kname"
+        if ((PORTABLE_MODE)) && [[ "$host_sku" != "$EXPECTED_DMI_SKU" ]]; then
+            local cand_port="${kname/#xps17-/portable-}"
+            if [[ -f "$REPO_ROOT/acoustics-research/kernels/$cand_port" ]]; then
+                src_kname="$cand_port"
+            fi
+        fi
         atomic_install_file \
-            "$REPO_ROOT/acoustics-research/kernels/$kname" \
+            "$REPO_ROOT/acoustics-research/kernels/$src_kname" \
             "$kernel_share_dir/$kname" \
             0644 \
-            "FIR kernel"
+            "FIR kernel ($src_kname)"
     done
     if [[ -f "$REPO_ROOT/acoustics-research/dsp_params.json" ]]; then
         atomic_install_file \
@@ -493,6 +517,24 @@ install_userspace_dsp() {
                     -e "s|/home/akshaybapat/project/xps17-studio-audio/dsp-engine/lib|$share_lib_dir|g" \
                     -e "s|/home/akshaybapat/project/xps17-studio-audio/acoustics-research/kernels|$kernel_share_dir|g" \
                     "$f" > "$rendered_pw"
+                if ((PORTABLE_MODE)) && [[ "$host_sku" != "$EXPECTED_DMI_SKU" ]]; then
+                    # Detect host built-in speaker sink on generic Omarchy PCs, or omit hardcoded Dell PCI sink
+                    local detected_sink=""
+                    if command -v pactl >/dev/null 2>&1; then
+                        detected_sink="$(pactl list short sinks 2>/dev/null | awk '
+                            $2 ~ /^alsa_output\./ && tolower($2) !~ /hdmi|displayport|headphone|usb/ {
+                                if (tolower($2) ~ /speaker/) { print $2; found=1; exit }
+                                if (!first) first=$2
+                            }
+                            END { if (!found && first) print first }
+                        ' || true)"
+                    fi
+                    if [[ -n "$detected_sink" ]]; then
+                        sed -i -e "s|alsa_output.pci-0000_00_1f.3-platform-sof_sdw.HiFi__Speaker__sink|$detected_sink|g" "$rendered_pw"
+                    else
+                        sed -i -e '/target\.object[[:space:]]*=[[:space:]]*"alsa_output\.pci-0000_00_1f\.3-platform-sof_sdw\.HiFi__Speaker__sink"/d' "$rendered_pw"
+                    fi
+                fi
                 atomic_install_file "$rendered_pw" "$dst_pw" 0644 "PipeWire config"
                 rm -f "$rendered_pw"
             fi
@@ -506,22 +548,60 @@ install_userspace_dsp() {
         fi
     fi
 
-    # 4. Live ISO 226 controller Python modules (exclude unit tests)
+    # 4. Live ISO 226 controller & switcher:
+    #    - If the full omarchy_audio controller package is already present on this host (XPS 17),
+    #      upgrade model.py, runtime.py, and speaker-profile in place.
+    #    - Always install universal studio-audio-profile & studio-audio-volume-sync, and bootstrap
+    #      omarchy-speaker-engine.{conf,service} if absent so fresh Omarchy machines work out-of-the-box!
+    local has_full_omarchy_audio=0
+    if [[ -f "$ctrl_lib_dir/controller.py" && -f "$ctrl_lib_dir/server.py" ]]; then
+        has_full_omarchy_audio=1
+    fi
+
     local ctrl_staged="$REPO_ROOT/verify-integrate/staged/controller"
-    if [[ -d "$ctrl_staged" ]]; then
+    if ((has_full_omarchy_audio)) && [[ -d "$ctrl_staged" ]]; then
         local f
         while IFS= read -r -d '' f; do
             atomic_install_file "$f" "$ctrl_lib_dir/$(basename "$f")" 0644 "ISO 226 controller"
         done < <(find "$ctrl_staged" -maxdepth 1 -type f -name '*.py' ! -name 'test_*.py' -print0 | sort -z)
     fi
 
-    # 5. Profile switcher & helper executables (exclude .diff patch files)
     local bin_staged="$REPO_ROOT/verify-integrate/staged/bin"
-    if [[ -d "$bin_staged" ]]; then
+    if ((has_full_omarchy_audio)) && [[ -d "$bin_staged" ]]; then
         local f
         while IFS= read -r -d '' f; do
             atomic_install_file "$f" "$bin_dir/$(basename "$f")" 0755 "CLI helper"
         done < <(find "$bin_staged" -maxdepth 1 -type f ! -name '*.diff' ! -name '*.patch' -print0 | sort -z)
+    fi
+
+    local portable_staged="$REPO_ROOT/verify-integrate/staged/portable"
+    if [[ -d "$portable_staged" ]]; then
+        atomic_install_file "$portable_staged/studio-audio-profile" "$bin_dir/studio-audio-profile" 0755 "Universal profile switcher"
+        atomic_install_file "$portable_staged/studio-audio-volume-sync" "$bin_dir/studio-audio-volume-sync" 0755 "Universal ISO 226 volume sync"
+        if ((!has_full_omarchy_audio)); then
+            if [[ ! -f "$bin_dir/speaker-profile" ]]; then
+                atomic_install_file "$portable_staged/studio-audio-profile" "$bin_dir/speaker-profile" 0755 "Portable speaker-profile CLI"
+            fi
+            if [[ ! -f "$LIVE_USER_HOME/.config/pipewire/omarchy-speaker-engine.conf" ]]; then
+                atomic_install_file \
+                    "$portable_staged/omarchy-speaker-engine.conf" \
+                    "$LIVE_USER_HOME/.config/pipewire/omarchy-speaker-engine.conf" \
+                    0644 \
+                    "PipeWire filter-chain host config"
+            fi
+            if [[ ! -f "$LIVE_USER_HOME/.config/systemd/user/omarchy-speaker-engine.service" ]]; then
+                atomic_install_file \
+                    "$portable_staged/omarchy-speaker-engine.service" \
+                    "$LIVE_USER_HOME/.config/systemd/user/omarchy-speaker-engine.service" \
+                    0644 \
+                    "PipeWire filter-chain host service"
+            fi
+            atomic_install_file \
+                "$portable_staged/studio-audio-volume-sync.service" \
+                "$LIVE_USER_HOME/.config/systemd/user/studio-audio-volume-sync.service" \
+                0644 \
+                "Universal ISO 226 volume sync service"
+        fi
     fi
 
     # 6. Optional Omarchy menu assets & omarchy-speaker-engine acoustics-dir drop-in

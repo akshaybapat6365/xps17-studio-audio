@@ -1,0 +1,17 @@
+[Unit]
+Description=Studio Speaker Audio Engine (PipeWire filter-chain)
+After=pipewire.service wireplumber.service
+Requires=pipewire.service
+Wants=wireplumber.service
+PartOf=pipewire.service
+StartLimitIntervalSec=60
+StartLimitBurst=4
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/pipewire -c omarchy-speaker-engine.conf
+Restart=always
+RestartSec=200ms
+
+[Install]
+WantedBy=graphical-session.target

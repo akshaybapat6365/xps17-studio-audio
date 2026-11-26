@@ -1,0 +1,14 @@
+[Unit]
+Description=Studio Speaker Audio Live ISO 226 Volume Tracker
+After=pipewire.service wireplumber.service omarchy-speaker-engine.service
+Wants=omarchy-speaker-engine.service
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/studio-audio-volume-sync --watch
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=graphical-session.target

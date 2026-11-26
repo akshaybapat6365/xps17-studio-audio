@@ -30,6 +30,8 @@ EXPECTED_PACKAGING_FILES = [
     "README.md",
     "ARCHITECTURE.md",
     "LICENSE",
+    "bootstrap.sh",
+    "PKGBUILD",
     "install.sh",
     "uninstall.sh",
     "sync_repo_bundle.py",
@@ -166,7 +168,7 @@ def run_check(repo_root: Path, pkg_dir: Path) -> int:
             errors.append(f".github/workflows/ci.yml: {msg}")
 
     # 4. Validate shell syntax
-    for sh_name in ("install.sh", "uninstall.sh"):
+    for sh_name in ("bootstrap.sh", "install.sh", "uninstall.sh"):
         sh_path = pkg_dir / sh_name
         if sh_path.is_file():
             ok, msg = check_bash_syntax(sh_path)
@@ -420,7 +422,7 @@ def stage_release_bundle(repo_root: Path, pkg_dir: Path, stage_dir: Path, overwr
             dst.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(src, dst)
 
-    for exe in ("install.sh", "uninstall.sh", "sync_repo_bundle.py"):
+    for exe in ("bootstrap.sh", "install.sh", "uninstall.sh", "sync_repo_bundle.py"):
         p = stage_dir / exe
         if p.is_file():
             p.chmod(p.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)

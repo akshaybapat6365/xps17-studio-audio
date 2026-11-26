@@ -355,6 +355,8 @@ cleanup_known_artifacts() {
         "$PREFIX/share/xps17-studio-audio/lib/libxps17_studio_dsp.so"
         "$PREFIX/lib/ladspa/libxps17_studio_dsp.so"
         "$PREFIX/bin/xps17-studio-cli"
+        "$PREFIX/bin/studio-audio-profile"
+        "$PREFIX/bin/studio-audio-volume-sync"
         "$PREFIX/share/xps17-studio-audio/kernels/xps17-studio-deep.wav"
         "$PREFIX/share/xps17-studio-audio/kernels/xps17-studio-spatial.wav"
         "$PREFIX/share/xps17-studio-audio/kernels/xps17-studio-reference.wav"

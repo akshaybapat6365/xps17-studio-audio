@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+# studio-audio-profile — Universal Studio Speaker Audio profile switcher for any Omarchy PC.
+#
+# Delegates automatically to ~/.local/bin/speaker-profile when Akshay's full XPS 17
+# controller stack is installed, or switches PipeWire Studio sinks directly on any
+# standalone Omarchy / Arch Linux machine.
+#
+# Usage:
+#   studio-audio-profile <studio-deep|studio-spatial|studio-ref|studio-voice|off|status|list>
+set -euo pipefail
+
+if [[ -x "$HOME/.local/bin/speaker-profile" ]] && [[ -f "$HOME/.local/lib/omarchy_audio/runtime.py" ]]; then
+  exec "$HOME/.local/bin/speaker-profile" "$@"
+fi
+
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/xps17-studio-audio"
+STATE_FILE="$STATE_DIR/active-profile"
+ENGINE_UNIT="omarchy-speaker-engine.service"
+SYNC_UNIT="studio-audio-volume-sync.service"
+
+declare -A SINK_FOR=(
+  [studio-deep]="omarchy_speaker_studio"
+  [studio-spatial]="omarchy_speaker_studio_spatial"
+  [studio-ref]="omarchy_speaker_studio_ref"
+  [studio-voice]="omarchy_speaker_studio_voice"
+)
+
+detect_hw_speaker() {
+  pactl list short sinks 2>/dev/null | awk '
+    $2 ~ /^alsa_output\./ && tolower($2) !~ /hdmi|displayport|headphone|usb/ {
+      if (tolower($2) ~ /speaker/) { print $2; found=1; exit }
+      if (!first) first=$2
+    }
+    END { if (!found && first) print first }
+  '
+}
+
+move_streams_to() {
+  local dst="$1"
+  while read -r idx _ _ _ _; do
+    [[ -n "${idx:-}" ]] || continue
+    pactl move-sink-input "$idx" "$dst" 2>/dev/null || true
+  done < <(pactl list short sink-inputs 2>/dev/null || true)
+}
+
+cmd="${1:-status}"
+case "$cmd" in
+  status)
+    cur="$(cat "$STATE_FILE" 2>/dev/null || echo studio-deep)"
+    def_sink="$(pactl get-default-sink 2>/dev/null || echo unknown)"
+    echo "active profile: $cur (default sink: $def_sink)"
+    ;;
+  list)
+    printf '%s\n' studio-deep studio-spatial studio-ref studio-voice off
+    ;;
+  studio-deep|studio-spatial|studio-ref|studio-voice)
+    target="${SINK_FOR[$cmd]}"
+    mkdir -p "$STATE_DIR"
+    printf '%s\n' "$cmd" > "$STATE_FILE"
+    systemctl --user start "$ENGINE_UNIT" 2>/dev/null || true
+    for _ in {1..40}; do
+      pactl list short sinks 2>/dev/null | awk '{print $2}' | grep -qx "$target" && break
+      sleep 0.1
+    done
+    pactl set-sink-mute "$target" 0 2>/dev/null || true
+    pactl set-sink-volume "$target" 100% 2>/dev/null || true
+    pactl set-default-sink "$target"
+    move_streams_to "$target"
+    systemctl --user start "$SYNC_UNIT" 2>/dev/null || true
+    "$HOME/.local/bin/studio-audio-volume-sync" 2>/dev/null || true
+    echo "loaded: $cmd (sink $target)"
+    ;;
+  off)
+    hw="$(detect_hw_speaker || true)"
+    mkdir -p "$STATE_DIR"
+    printf 'off\n' > "$STATE_FILE"
+    if [[ -n "$hw" ]]; then
+      pactl set-default-sink "$hw"
+      move_streams_to "$hw"
+    fi
+    echo "loaded: off (direct hardware sink ${hw:-default})"
+    ;;
+  *)
+    echo "usage: studio-audio-profile <studio-deep|studio-spatial|studio-ref|studio-voice|off|status|list>" >&2
+    exit 2
+    ;;
+esac

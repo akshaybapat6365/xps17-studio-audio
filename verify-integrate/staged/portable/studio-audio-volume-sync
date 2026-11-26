@@ -1,0 +1,129 @@
+#!/usr/bin/env python3
+"""Universal live ISO 226:2023 volume tracker for Studio Speaker Audio on any Omarchy PC.
+
+Tracks the built-in hardware speaker sink volume via `pactl subscribe` and updates
+`studio:Volume (dB)` in [-45.0, 0.0] dB on whichever `omarchy_speaker_studio*` node
+is active, with zero non-stdlib dependencies.
+"""
+from __future__ import annotations
+
+import json
+import math
+import subprocess
+import sys
+import time
+
+STUDIO_NODES = frozenset(
+    (
+        "omarchy_speaker_studio",
+        "omarchy_speaker_studio_spatial",
+        "omarchy_speaker_studio_ref",
+        "omarchy_speaker_studio_voice",
+    )
+)
+
+
+def run_out(cmd: list[str]) -> str:
+    res = subprocess.run(cmd, capture_output=True, text=True, timeout=5, check=False)
+    return res.stdout.strip() if res.returncode == 0 else ""
+
+
+def detect_hardware_speaker_sink() -> str | None:
+    raw = run_out(["pactl", "list", "short", "sinks"])
+    candidates: list[str] = []
+    for line in raw.splitlines():
+        parts = line.split("\t")
+        if len(parts) < 2:
+            continue
+        name = parts[1].strip()
+        if not name.startswith("alsa_output."):
+            continue
+        low = name.lower()
+        if "hdmi" in low or "displayport" in low or "headphone" in low or "usb" in low:
+            continue
+        if "speaker" in low:
+            return name
+        candidates.append(name)
+    return candidates[0] if candidates else None
+
+
+def sink_volume_pct(sink_name: str) -> int:
+    raw = run_out(["pactl", "get-sink-volume", sink_name])
+    for tok in raw.split():
+        if tok.endswith("%") and tok[:-1].isdigit():
+            return int(tok[:-1])
+    return 75
+
+
+def studio_volume_db(pct: int) -> float:
+    if pct <= 0:
+        return -45.0
+    val = 60.0 * math.log10(max(pct, 1) / 100.0)
+    clamped = max(-45.0, min(0.0, round(val, 3)))
+    return 0.0 if clamped == 0.0 else clamped
+
+
+def find_node_id(node_name: str) -> int | None:
+    raw = run_out(["pw-dump", node_name])
+    if not raw:
+        return None
+    try:
+        items = json.loads(raw)
+    except ValueError:
+        return None
+    for item in items if isinstance(items, list) else ():
+        info = item.get("info") if isinstance(item, dict) else None
+        if isinstance(info, dict) and info.get("props", {}).get("node.name") == node_name:
+            return int(item["id"])
+    return None
+
+
+def sync_once() -> int:
+    default_sink = run_out(["pactl", "get-default-sink"])
+    target_node = default_sink if default_sink in STUDIO_NODES else "omarchy_speaker_studio"
+    hw_sink = detect_hardware_speaker_sink()
+    if not hw_sink:
+        return 0
+    node_id = find_node_id(target_node)
+    if node_id is None:
+        return 0
+    vol_db = studio_volume_db(sink_volume_pct(hw_sink))
+    subprocess.run(
+        ["pw-cli", "set-param", str(node_id), "Props", f'{{ params = [ "studio:Volume (dB)" {vol_db:.3f} ] }}'],
+        capture_output=True,
+        timeout=5,
+        check=False,
+    )
+    return 0
+
+
+def watch() -> int:
+    sync_once()
+    proc = subprocess.Popen(
+        ["pactl", "subscribe"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        text=True,
+        bufsize=1,
+    )
+    last = 0.0
+    try:
+        assert proc.stdout is not None
+        for line in proc.stdout:
+            low = line.lower()
+            if " on sink " in low or " on server " in low:
+                now = time.monotonic()
+                if now - last >= 0.05:
+                    sync_once()
+                    last = now
+    except KeyboardInterrupt:
+        return 0
+    finally:
+        proc.terminate()
+    return 0
+
+
+if __name__ == "__main__":
+    if "--watch" in sys.argv[1:]:
+        raise SystemExit(watch())
+    raise SystemExit(sync_once())

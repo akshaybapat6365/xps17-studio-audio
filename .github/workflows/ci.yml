@@ -308,10 +308,13 @@ jobs:
           set -euo pipefail
           SCRIPTS=()
           for candidate in \
+            bootstrap.sh \
             install.sh \
             uninstall.sh \
+            verify-integrate/packaging/bootstrap.sh \
             verify-integrate/packaging/install.sh \
             verify-integrate/packaging/uninstall.sh \
+            verify-integrate/staged/portable/studio-audio-profile \
             verify-integrate/staged/bin/speaker-profile \
             verify-integrate/staged/bin/deploy-studio-dsp.sh \
             verify-integrate/staged/bin/rollback-studio-dsp.sh \
@@ -380,6 +383,14 @@ jobs:
 
           # 5. Positive: allow --dsp-only + --force-skip-dmi-check on non-0AFF
           XPS17_DMI_DIR="$MOCK_DMI_BAD" bash "$INSTALL_SH" --dsp-only --force-skip-dmi-check --dry-run --user-home "$MOCK_HOME"
+
+          # 6. Positive: Universal Any-Omarchy --portable full sandbox install + uninstall roundtrip on non-0AFF
+          XPS17_DMI_DIR="$MOCK_DMI_BAD" bash "$INSTALL_SH" --portable --no-restart --user-home "$MOCK_HOME"
+          test -x "$MOCK_HOME/.local/bin/studio-audio-profile"
+          test -f "$MOCK_HOME/.config/pipewire/omarchy-speaker-engine.conf"
+          test -f "$MOCK_HOME/.config/pipewire/omarchy-speaker-engine.conf.d/92-xps17-studio.conf"
+          XPS17_DMI_DIR="$MOCK_DMI_BAD" bash "$UNINSTALL_SH" --no-restart --user-home "$MOCK_HOME"
+          test ! -e "$MOCK_HOME/.config/pipewire/omarchy-speaker-engine.conf.d/92-xps17-studio.conf"
 
       - name: Validate PipeWire filter-chain SPA-JSON syntax & DAG wiring
         run: |
