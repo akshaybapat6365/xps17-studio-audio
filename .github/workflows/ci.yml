@@ -52,13 +52,13 @@ jobs:
           set -euo pipefail
           SO_PATH="dsp-engine/lib/libxps17_studio_dsp.so"
           CLI_PATH="dsp-engine/bin/xps17-studio-cli"
-          if [[ ! -f "$SO_PATH" && -f "dsp-engine/target/release/libxps17_studio_dsp.so" ]]; then
+          if [[ -f "dsp-engine/target/release/libxps17_studio_dsp.so" ]]; then
             mkdir -p dsp-engine/lib
-            cp dsp-engine/target/release/libxps17_studio_dsp.so "$SO_PATH"
+            cp -f dsp-engine/target/release/libxps17_studio_dsp.so "$SO_PATH"
           fi
-          if [[ ! -f "$CLI_PATH" && -f "dsp-engine/target/release/xps17-studio-cli" ]]; then
+          if [[ -f "dsp-engine/target/release/xps17-studio-cli" ]]; then
             mkdir -p dsp-engine/bin
-            cp dsp-engine/target/release/xps17-studio-cli "$CLI_PATH"
+            cp -f dsp-engine/target/release/xps17-studio-cli "$CLI_PATH"
           fi
           test -f "$SO_PATH"
           test -x "$CLI_PATH"
