@@ -17,26 +17,26 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 # ---------------------------------------------------------------------------
-# Dark-Studio Theme Tokens
+# Smoked Aether Optical Studio Glass Theme Tokens (4K 3840x2160 UHD)
 # ---------------------------------------------------------------------------
-BG = "#0D1117"
-PANEL = "#141A23"
-PANEL_BORDER = "#263040"
-GRID_MAJOR = "#243041"
-GRID_MINOR = "#1B2432"
-TEXT_PRI = "#F0F6FC"
-TEXT_SEC = "#9BA7B8"
-TEXT_MUTED = "#6E7B8D"
-FONT_SANS = "Inter, DejaVu Sans, Liberation Sans, sans-serif"
-FONT_MONO = "DejaVu Sans Mono, Liberation Mono, monospace"
+BG = "#070A15"
+PANEL = "#0E1326"
+PANEL_BORDER = "#2B365E"
+GRID_MAJOR = "#212B4A"
+GRID_MINOR = "#161E36"
+TEXT_PRI = "#F2F6FF"
+TEXT_SEC = "#B0BDD6"
+TEXT_MUTED = "#7E8CA8"
+FONT_SANS = "Inter Display, Inter, DejaVu Sans, sans-serif"
+FONT_MONO = "JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace"
 
 CHAIN_STYLES: Dict[str, Dict[str, Any]] = {
-    "stock_raw": {"color": "#8B949E", "dash": "6,4", "width": 2.0, "short": "Stock XPS 17"},
-    "old_spatial_fdtr": {"color": "#F85149", "dash": "", "width": 2.5, "short": "OLD Spatial FDTR"},
-    "new_studio_deep": {"color": "#38BDF8", "dash": "", "width": 2.8, "short": "NEW Studio Deep"},
-    "new_studio_spatial": {"color": "#A78BFA", "dash": "", "width": 2.2, "short": "NEW Spatial"},
-    "new_studio_reference": {"color": "#34D399", "dash": "8,3", "width": 2.0, "short": "NEW Reference"},
-    "new_studio_voice": {"color": "#FBBF24", "dash": "3,3", "width": 1.9, "short": "NEW Voice"},
+    "stock_raw": {"color": "#94A3B8", "dash": "7,4", "width": 2.4, "short": "Stock XPS 17"},
+    "old_spatial_fdtr": {"color": "#FB7185", "dash": "", "width": 2.8, "short": "OLD Spatial FDTR"},
+    "new_studio_deep": {"color": "#5CE1E6", "dash": "", "width": 3.6, "short": "NEW Studio Deep"},
+    "new_studio_spatial": {"color": "#B39DFF", "dash": "", "width": 2.7, "short": "NEW Spatial"},
+    "new_studio_reference": {"color": "#4ADE80", "dash": "8,3", "width": 2.4, "short": "NEW Reference"},
+    "new_studio_voice": {"color": "#FBBF24", "dash": "3,3", "width": 2.2, "short": "NEW Voice"},
 }
 
 
@@ -65,40 +65,53 @@ def polyline_pts(xs: Sequence[float], ys: Sequence[float]) -> str:
 
 def svg_header(w: int, h: int, title: str, subtitle: str, all_verified: bool) -> List[str]:
     badge_txt = "BINARY VERIFIED · libxps17_studio_dsp.so" if all_verified else "OLD: BINARY VERIFIED  |  NEW: DESIGN REF (PENDING BINARY)"
-    badge_fill = "#0D2D23" if all_verified else "#2B2110"
-    badge_stroke = "#10B981" if all_verified else "#F59E0B"
-    badge_text_col = "#34D399" if all_verified else "#FBBF24"
-    badge_w = 270 if all_verified else 366
-    bx = w - 24 - badge_w
+    badge_fill = "#0D2E28" if all_verified else "#2B2110"
+    badge_stroke = "#34D399" if all_verified else "#F59E0B"
+    badge_text_col = "#5CE1A6" if all_verified else "#FBBF24"
+    badge_w = 296 if all_verified else 380
+    bx = w - 22 - badge_w
     return [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}">',
-        f'<rect width="{w}" height="{h}" fill="{BG}"/>',
-        f'<text x="24" y="30" fill="{TEXT_PRI}" font-family="{FONT_SANS}" font-size="18" font-weight="700">{esc(title)}</text>',
-        f'<text x="24" y="49" fill="{TEXT_SEC}" font-family="{FONT_SANS}" font-size="11.2">{esc(subtitle)}</text>',
-        f'<rect x="{bx}" y="14" width="{badge_w}" height="24" rx="12" fill="{badge_fill}" stroke="{badge_stroke}" stroke-width="1.1"/>',
-        f'<text x="{bx + badge_w / 2:.1f}" y="30" text-anchor="middle" fill="{badge_text_col}" font-family="{FONT_MONO}" font-size="9.6" font-weight="700">{esc(badge_txt)}</text>',
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="3840" height="2160" viewBox="0 0 {w} {h}">',
+        '<defs>',
+        '  <radialGradient id="aetherBg" cx="50%" cy="18%" r="78%">',
+        '    <stop offset="0%" stop-color="#171E3F"/>',
+        '    <stop offset="52%" stop-color="#0B0F20"/>',
+        f'    <stop offset="100%" stop-color="{BG}"/>',
+        '  </radialGradient>',
+        '  <radialGradient id="aetherFloor" cx="50%" cy="102%" r="60%">',
+        '    <stop offset="0%" stop-color="#3B2B6E" stop-opacity="0.34"/>',
+        '    <stop offset="100%" stop-color="#070A15" stop-opacity="0"/>',
+        '  </radialGradient>',
+        '</defs>',
+        f'<rect width="{w}" height="{h}" fill="url(#aetherBg)"/>',
+        f'<rect width="{w}" height="{h}" fill="url(#aetherFloor)"/>',
+        f'<text x="24" y="31" fill="{TEXT_PRI}" font-family="{FONT_SANS}" font-size="20" font-weight="800">{esc(title)}</text>',
+        f'<text x="24" y="51" fill="{TEXT_SEC}" font-family="{FONT_SANS}" font-size="12.2" font-weight="500">{esc(subtitle)}</text>',
+        f'<rect x="{bx}" y="13" width="{badge_w}" height="26" rx="13" fill="{badge_fill}" stroke="{badge_stroke}" stroke-width="1.3"/>',
+        f'<text x="{bx + badge_w / 2:.1f}" y="30" text-anchor="middle" fill="{badge_text_col}" font-family="{FONT_MONO}" font-size="10.2" font-weight="700">{esc(badge_txt)}</text>',
     ]
 
 
 def svg_panel(x: float, y: float, w: float, h: float, title: str = "", subtitle: str = "") -> List[str]:
     out = [
-        f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="8" fill="{PANEL}" stroke="{PANEL_BORDER}" stroke-width="1"/>',
+        f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="12" fill="{PANEL}" fill-opacity="0.88" stroke="{PANEL_BORDER}" stroke-width="1.2"/>',
+        f'<line x1="{x + 12}" y1="{y + 0.8}" x2="{x + w - 12}" y2="{y + 0.8}" stroke="#8E9CF5" stroke-opacity="0.32" stroke-width="1"/>',
     ]
     if title:
         out.append(
-            f'<text x="{x + 14}" y="{y + 21}" fill="{TEXT_PRI}" font-family="{FONT_SANS}" font-size="12.5" font-weight="700">{esc(title)}</text>'
+            f'<text x="{x + 15}" y="{y + 22}" fill="{TEXT_PRI}" font-family="{FONT_SANS}" font-size="13.8" font-weight="700">{esc(title)}</text>'
         )
     if subtitle:
         out.append(
-            f'<text x="{x + 14}" y="{y + 36}" fill="{TEXT_MUTED}" font-family="{FONT_SANS}" font-size="10">{esc(subtitle)}</text>'
+            f'<text x="{x + 15}" y="{y + 38}" fill="{TEXT_SEC}" font-family="{FONT_SANS}" font-size="10.8">{esc(subtitle)}</text>'
         )
     return out
 
 
-def render_svg_to_png(svg_str: str, svg_path: Path, png_path: Path, width_px: int = 2200) -> Path:
+def render_svg_to_png(svg_str: str, svg_path: Path, png_path: Path, width_px: int = 3840) -> Path:
     svg_path.write_text(svg_str, encoding="utf-8")
     subprocess.run(
-        ["rsvg-convert", "-w", str(width_px), "-o", str(png_path), str(svg_path)],
+        ["rsvg-convert", "-w", str(width_px), "-h", "2160", "-b", BG, "-o", str(png_path), str(svg_path)],
         check=True,
         capture_output=True,
     )

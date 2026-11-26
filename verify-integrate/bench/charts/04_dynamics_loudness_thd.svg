@@ -1,181 +1,197 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="620" viewBox="0 0 1100 620">
-<rect width="1100" height="620" fill="#0D1117"/>
-<text x="24" y="30" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="18" font-weight="700">Mastering Loudness, Dynamic Range, Distortion &amp; E-Core CPU Telemetry</text>
-<text x="24" y="49" fill="#9BA7B8" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="11.2">ITU-R BS.1770-4 LUFS · 4× True Peak (dBTP) · PLR Dynamic Range · THD+N / SMPTE IMD · Alder Lake E-Core Real-Time Budget</text>
-<rect x="806" y="14" width="270" height="24" rx="12" fill="#0D2D23" stroke="#10B981" stroke-width="1.1"/>
-<text x="941.0" y="30" text-anchor="middle" fill="#34D399" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="9.6" font-weight="700">BINARY VERIFIED · libxps17_studio_dsp.so</text>
-<rect x="20" y="64" width="520" height="264" rx="8" fill="#141A23" stroke="#263040" stroke-width="1"/>
-<text x="34" y="85" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="12.5" font-weight="700">A. Loudness (BS.1770-4 LUFS) &amp; 4× True Peak (dBTP)</text>
-<text x="34" y="100" fill="#6E7B8D" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="10">Deep Bass Kick mastering drive vs -1.0 dBTP brickwall ceiling</text>
-<line x1="68.0" y1="286.0" x2="522.0" y2="286.0" stroke="#243041" stroke-width="0.7"/>
-<text x="62.0" y="289.5" text-anchor="end" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="9">-20</text>
-<line x1="68.0" y1="250.2" x2="522.0" y2="250.2" stroke="#243041" stroke-width="0.7"/>
-<text x="62.0" y="253.7" text-anchor="end" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="9">-15</text>
-<line x1="68.0" y1="214.3" x2="522.0" y2="214.3" stroke="#243041" stroke-width="0.7"/>
-<text x="62.0" y="217.8" text-anchor="end" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="9">-10</text>
-<line x1="68.0" y1="178.5" x2="522.0" y2="178.5" stroke="#243041" stroke-width="0.7"/>
-<text x="62.0" y="182.0" text-anchor="end" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="9">-5</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="3840" height="2160" viewBox="0 0 1100 620">
+<defs>
+  <radialGradient id="aetherBg" cx="50%" cy="18%" r="78%">
+    <stop offset="0%" stop-color="#171E3F"/>
+    <stop offset="52%" stop-color="#0B0F20"/>
+    <stop offset="100%" stop-color="#070A15"/>
+  </radialGradient>
+  <radialGradient id="aetherFloor" cx="50%" cy="102%" r="60%">
+    <stop offset="0%" stop-color="#3B2B6E" stop-opacity="0.34"/>
+    <stop offset="100%" stop-color="#070A15" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+<rect width="1100" height="620" fill="url(#aetherBg)"/>
+<rect width="1100" height="620" fill="url(#aetherFloor)"/>
+<text x="24" y="31" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="20" font-weight="800">Mastering Loudness, Dynamic Range, Distortion &amp; E-Core CPU Telemetry</text>
+<text x="24" y="51" fill="#B0BDD6" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="12.2" font-weight="500">ITU-R BS.1770-4 LUFS · 4× True Peak (dBTP) · PLR Dynamic Range · THD+N / SMPTE IMD · Alder Lake E-Core Real-Time Budget</text>
+<rect x="782" y="13" width="296" height="26" rx="13" fill="#0D2E28" stroke="#34D399" stroke-width="1.3"/>
+<text x="930.0" y="30" text-anchor="middle" fill="#5CE1A6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700">BINARY VERIFIED · libxps17_studio_dsp.so</text>
+<rect x="20" y="64" width="520" height="264" rx="12" fill="#0E1326" fill-opacity="0.88" stroke="#2B365E" stroke-width="1.2"/>
+<line x1="32" y1="64.8" x2="528" y2="64.8" stroke="#8E9CF5" stroke-opacity="0.32" stroke-width="1"/>
+<text x="35" y="86" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="13.8" font-weight="700">A. Loudness (BS.1770-4 LUFS) &amp; 4× True Peak (dBTP)</text>
+<text x="35" y="102" fill="#B0BDD6" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="10.8">Deep Bass Kick mastering drive vs -1.0 dBTP brickwall ceiling</text>
+<line x1="68.0" y1="286.0" x2="522.0" y2="286.0" stroke="#212B4A" stroke-width="0.7"/>
+<text x="62.0" y="289.5" text-anchor="end" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="9">-20</text>
+<line x1="68.0" y1="250.2" x2="522.0" y2="250.2" stroke="#212B4A" stroke-width="0.7"/>
+<text x="62.0" y="253.7" text-anchor="end" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="9">-15</text>
+<line x1="68.0" y1="214.3" x2="522.0" y2="214.3" stroke="#212B4A" stroke-width="0.7"/>
+<text x="62.0" y="217.8" text-anchor="end" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="9">-10</text>
+<line x1="68.0" y1="178.5" x2="522.0" y2="178.5" stroke="#212B4A" stroke-width="0.7"/>
+<text x="62.0" y="182.0" text-anchor="end" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="9">-5</text>
 <line x1="68.0" y1="149.8" x2="522.0" y2="149.8" stroke="#F85149" stroke-width="1.4" stroke-dasharray="5,3"/>
-<line x1="68.0" y1="142.7" x2="522.0" y2="142.7" stroke="#243041" stroke-width="0.7"/>
-<text x="62.0" y="146.2" text-anchor="end" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="9">0</text>
-<text x="74.0" y="126.0" fill="#F85149" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.6" font-weight="700">---  -1.0 dBTP BRICKWALL CEILING</text>
+<line x1="68.0" y1="142.7" x2="522.0" y2="142.7" stroke="#212B4A" stroke-width="0.7"/>
+<text x="62.0" y="146.2" text-anchor="end" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="9">0</text>
+<text x="74.0" y="126.0" fill="#F85149" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.6" font-weight="700">---  -1.0 dBTP BRICKWALL CEILING</text>
 <rect x="87.4" y="243.0" width="24.0" height="43.0" rx="2" fill="#38BDF8" fill-opacity="0.88"/>
-<text x="99.4" y="239.0" text-anchor="middle" fill="#38BDF8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.2">-14.0</text>
+<text x="99.4" y="239.0" text-anchor="middle" fill="#38BDF8" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.2">-14.0</text>
 <rect x="115.4" y="157.4" width="24.0" height="128.6" rx="2" fill="#34D399" fill-opacity="0.88"/>
-<text x="127.4" y="153.4" text-anchor="middle" fill="#34D399" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.2">-2.1</text>
-<text x="113.4" y="300.0" text-anchor="middle" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9" font-weight="600">Stock XPS 17</text>
+<text x="127.4" y="153.4" text-anchor="middle" fill="#34D399" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.2">-2.1</text>
+<text x="113.4" y="300.0" text-anchor="middle" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9" font-weight="600">Stock XPS 17</text>
 <rect x="178.2" y="187.2" width="24.0" height="98.8" rx="2" fill="#38BDF8" fill-opacity="0.88"/>
-<text x="190.2" y="183.2" text-anchor="middle" fill="#38BDF8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.2">-6.2</text>
+<text x="190.2" y="183.2" text-anchor="middle" fill="#38BDF8" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.2">-6.2</text>
 <rect x="206.2" y="149.8" width="24.0" height="136.2" rx="2" fill="#34D399" fill-opacity="0.88"/>
-<text x="218.2" y="145.8" text-anchor="middle" fill="#34D399" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.2">-1.0</text>
-<text x="204.2" y="300.0" text-anchor="middle" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9" font-weight="600">OLD Spatial FDTR</text>
+<text x="218.2" y="145.8" text-anchor="middle" fill="#34D399" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.2">-1.0</text>
+<text x="204.2" y="300.0" text-anchor="middle" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9" font-weight="600">OLD Spatial FDTR</text>
 <rect x="269.0" y="208.6" width="24.0" height="77.4" rx="2" fill="#38BDF8" fill-opacity="0.88"/>
-<text x="281.0" y="204.6" text-anchor="middle" fill="#38BDF8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.2">-9.2</text>
+<text x="281.0" y="204.6" text-anchor="middle" fill="#38BDF8" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.2">-9.2</text>
 <rect x="297.0" y="151.2" width="24.0" height="134.8" rx="2" fill="#34D399" fill-opacity="0.88"/>
-<text x="309.0" y="147.2" text-anchor="middle" fill="#34D399" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.2">-1.2</text>
-<text x="295.0" y="300.0" text-anchor="middle" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9" font-weight="600">Studio Deep</text>
+<text x="309.0" y="147.2" text-anchor="middle" fill="#34D399" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.2">-1.2</text>
+<text x="295.0" y="300.0" text-anchor="middle" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9" font-weight="600">Studio Deep</text>
 <rect x="359.8" y="209.8" width="24.0" height="76.2" rx="2" fill="#38BDF8" fill-opacity="0.88"/>
-<text x="371.8" y="205.8" text-anchor="middle" fill="#38BDF8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.2">-9.4</text>
+<text x="371.8" y="205.8" text-anchor="middle" fill="#38BDF8" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.2">-9.4</text>
 <rect x="387.8" y="151.2" width="24.0" height="134.8" rx="2" fill="#34D399" fill-opacity="0.88"/>
-<text x="399.8" y="147.2" text-anchor="middle" fill="#34D399" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.2">-1.2</text>
-<text x="385.8" y="300.0" text-anchor="middle" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9" font-weight="600">Spatial</text>
+<text x="399.8" y="147.2" text-anchor="middle" fill="#34D399" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.2">-1.2</text>
+<text x="385.8" y="300.0" text-anchor="middle" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9" font-weight="600">Spatial</text>
 <rect x="450.6" y="207.7" width="24.0" height="78.3" rx="2" fill="#38BDF8" fill-opacity="0.88"/>
-<text x="462.6" y="203.7" text-anchor="middle" fill="#38BDF8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.2">-9.1</text>
+<text x="462.6" y="203.7" text-anchor="middle" fill="#38BDF8" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.2">-9.1</text>
 <rect x="478.6" y="151.2" width="24.0" height="134.8" rx="2" fill="#34D399" fill-opacity="0.88"/>
-<text x="490.6" y="147.2" text-anchor="middle" fill="#34D399" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.2">-1.2</text>
-<text x="476.6" y="300.0" text-anchor="middle" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9" font-weight="600">Reference</text>
+<text x="490.6" y="147.2" text-anchor="middle" fill="#34D399" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.2">-1.2</text>
+<text x="476.6" y="300.0" text-anchor="middle" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9" font-weight="600">Reference</text>
 <rect x="68.0" y="114.0" width="454.0" height="172.0" fill="none" stroke="#334155" stroke-width="0.9"/>
-<rect x="68.0" y="308.0" width="10" height="8" rx="2" fill="#38BDF8"/><text x="82.0" y="315.0" fill="#9BA7B8" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9">Integrated LUFS</text>
-<rect x="183.0" y="308.0" width="10" height="8" rx="2" fill="#34D399"/><text x="197.0" y="315.0" fill="#9BA7B8" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9">4× True Peak dBTP (&lt;= -1.0 PASS)</text>
-<rect x="556" y="64" width="524" height="264" rx="8" fill="#141A23" stroke="#263040" stroke-width="1"/>
-<text x="570" y="85" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="12.5" font-weight="700">B. Dynamic Range (PLR) &amp; Crest Factor (dB)</text>
-<text x="570" y="100" fill="#6E7B8D" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="10">Higher PLR preserves musical punch instead of limiter pumping</text>
-<line x1="604.0" y1="286.0" x2="1062.0" y2="286.0" stroke="#243041" stroke-width="0.7"/>
-<text x="598.0" y="289.5" text-anchor="end" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="9">0</text>
-<line x1="604.0" y1="243.0" x2="1062.0" y2="243.0" stroke="#243041" stroke-width="0.7"/>
-<text x="598.0" y="246.5" text-anchor="end" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="9">4</text>
-<line x1="604.0" y1="200.0" x2="1062.0" y2="200.0" stroke="#243041" stroke-width="0.7"/>
-<text x="598.0" y="203.5" text-anchor="end" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="9">8</text>
-<line x1="604.0" y1="157.0" x2="1062.0" y2="157.0" stroke="#243041" stroke-width="0.7"/>
-<text x="598.0" y="160.5" text-anchor="end" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="9">12</text>
-<line x1="604.0" y1="114.0" x2="1062.0" y2="114.0" stroke="#243041" stroke-width="0.7"/>
-<text x="598.0" y="117.5" text-anchor="end" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="9">16</text>
+<rect x="68.0" y="308.0" width="10" height="8" rx="2" fill="#38BDF8"/><text x="82.0" y="315.0" fill="#B0BDD6" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9">Integrated LUFS</text>
+<rect x="183.0" y="308.0" width="10" height="8" rx="2" fill="#34D399"/><text x="197.0" y="315.0" fill="#B0BDD6" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9">4× True Peak dBTP (&lt;= -1.0 PASS)</text>
+<rect x="556" y="64" width="524" height="264" rx="12" fill="#0E1326" fill-opacity="0.88" stroke="#2B365E" stroke-width="1.2"/>
+<line x1="568" y1="64.8" x2="1068" y2="64.8" stroke="#8E9CF5" stroke-opacity="0.32" stroke-width="1"/>
+<text x="571" y="86" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="13.8" font-weight="700">B. Dynamic Range (PLR) &amp; Crest Factor (dB)</text>
+<text x="571" y="102" fill="#B0BDD6" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="10.8">Higher PLR preserves musical punch instead of limiter pumping</text>
+<line x1="604.0" y1="286.0" x2="1062.0" y2="286.0" stroke="#212B4A" stroke-width="0.7"/>
+<text x="598.0" y="289.5" text-anchor="end" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="9">0</text>
+<line x1="604.0" y1="243.0" x2="1062.0" y2="243.0" stroke="#212B4A" stroke-width="0.7"/>
+<text x="598.0" y="246.5" text-anchor="end" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="9">4</text>
+<line x1="604.0" y1="200.0" x2="1062.0" y2="200.0" stroke="#212B4A" stroke-width="0.7"/>
+<text x="598.0" y="203.5" text-anchor="end" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="9">8</text>
+<line x1="604.0" y1="157.0" x2="1062.0" y2="157.0" stroke="#212B4A" stroke-width="0.7"/>
+<text x="598.0" y="160.5" text-anchor="end" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="9">12</text>
+<line x1="604.0" y1="114.0" x2="1062.0" y2="114.0" stroke="#212B4A" stroke-width="0.7"/>
+<text x="598.0" y="117.5" text-anchor="end" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="9">16</text>
 <rect x="623.8" y="157.6" width="24.0" height="128.4" rx="2" fill="#A78BFA" fill-opacity="0.88"/>
-<text x="635.8" y="153.6" text-anchor="middle" fill="#A78BFA" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.2">11.9</text>
+<text x="635.8" y="153.6" text-anchor="middle" fill="#A78BFA" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.2">11.9</text>
 <rect x="651.8" y="154.4" width="24.0" height="131.6" rx="2" fill="#FBBF24" fill-opacity="0.88"/>
-<text x="663.8" y="150.4" text-anchor="middle" fill="#FBBF24" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.2">12.2</text>
-<text x="649.8" y="300.0" text-anchor="middle" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9" font-weight="600">Stock XPS 17</text>
+<text x="663.8" y="150.4" text-anchor="middle" fill="#FBBF24" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.2">12.2</text>
+<text x="649.8" y="300.0" text-anchor="middle" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9" font-weight="600">Stock XPS 17</text>
 <rect x="715.4" y="230.0" width="24.0" height="56.0" rx="2" fill="#A78BFA" fill-opacity="0.88"/>
-<text x="727.4" y="226.0" text-anchor="middle" fill="#A78BFA" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.2">5.2</text>
+<text x="727.4" y="226.0" text-anchor="middle" fill="#A78BFA" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.2">5.2</text>
 <rect x="743.4" y="206.7" width="24.0" height="79.3" rx="2" fill="#FBBF24" fill-opacity="0.88"/>
-<text x="755.4" y="202.7" text-anchor="middle" fill="#FBBF24" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.2">7.4</text>
-<text x="741.4" y="300.0" text-anchor="middle" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9" font-weight="600">OLD Spatial FDTR</text>
+<text x="755.4" y="202.7" text-anchor="middle" fill="#FBBF24" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.2">7.4</text>
+<text x="741.4" y="300.0" text-anchor="middle" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9" font-weight="600">OLD Spatial FDTR</text>
 <rect x="807.0" y="200.0" width="24.0" height="86.0" rx="2" fill="#A78BFA" fill-opacity="0.88"/>
-<text x="819.0" y="196.0" text-anchor="middle" fill="#A78BFA" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.2">8.0</text>
+<text x="819.0" y="196.0" text-anchor="middle" fill="#A78BFA" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.2">8.0</text>
 <rect x="835.0" y="178.2" width="24.0" height="107.8" rx="2" fill="#FBBF24" fill-opacity="0.88"/>
-<text x="847.0" y="174.2" text-anchor="middle" fill="#FBBF24" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.2">10.0</text>
-<text x="833.0" y="300.0" text-anchor="middle" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9" font-weight="600">Studio Deep</text>
+<text x="847.0" y="174.2" text-anchor="middle" fill="#FBBF24" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.2">10.0</text>
+<text x="833.0" y="300.0" text-anchor="middle" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9" font-weight="600">Studio Deep</text>
 <rect x="898.6" y="198.1" width="24.0" height="87.9" rx="2" fill="#A78BFA" fill-opacity="0.88"/>
-<text x="910.6" y="194.1" text-anchor="middle" fill="#A78BFA" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.2">8.2</text>
+<text x="910.6" y="194.1" text-anchor="middle" fill="#A78BFA" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.2">8.2</text>
 <rect x="926.6" y="176.4" width="24.0" height="109.6" rx="2" fill="#FBBF24" fill-opacity="0.88"/>
-<text x="938.6" y="172.4" text-anchor="middle" fill="#FBBF24" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.2">10.2</text>
-<text x="924.6" y="300.0" text-anchor="middle" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9" font-weight="600">Spatial</text>
+<text x="938.6" y="172.4" text-anchor="middle" fill="#FBBF24" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.2">10.2</text>
+<text x="924.6" y="300.0" text-anchor="middle" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9" font-weight="600">Spatial</text>
 <rect x="990.2" y="201.2" width="24.0" height="84.8" rx="2" fill="#A78BFA" fill-opacity="0.88"/>
-<text x="1002.2" y="197.2" text-anchor="middle" fill="#A78BFA" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.2">7.9</text>
+<text x="1002.2" y="197.2" text-anchor="middle" fill="#A78BFA" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.2">7.9</text>
 <rect x="1018.2" y="180.2" width="24.0" height="105.8" rx="2" fill="#FBBF24" fill-opacity="0.88"/>
-<text x="1030.2" y="176.2" text-anchor="middle" fill="#FBBF24" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.2">9.8</text>
-<text x="1016.2" y="300.0" text-anchor="middle" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9" font-weight="600">Reference</text>
+<text x="1030.2" y="176.2" text-anchor="middle" fill="#FBBF24" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.2">9.8</text>
+<text x="1016.2" y="300.0" text-anchor="middle" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9" font-weight="600">Reference</text>
 <rect x="604.0" y="114.0" width="458.0" height="172.0" fill="none" stroke="#334155" stroke-width="0.9"/>
-<rect x="604.0" y="308.0" width="10" height="8" rx="2" fill="#A78BFA"/><text x="618.0" y="315.0" fill="#9BA7B8" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9">PLR (TruePeak - LUFS, dB)</text>
-<rect x="769.0" y="308.0" width="10" height="8" rx="2" fill="#FBBF24"/><text x="783.0" y="315.0" fill="#9BA7B8" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9">Crest Factor (Peak/RMS, dB)</text>
-<rect x="20" y="342" width="520" height="262" rx="8" fill="#141A23" stroke="#263040" stroke-width="1"/>
-<text x="34" y="363" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="12.5" font-weight="700">C. Nonlinear Distortion: THD+N &amp; SMPTE IMD (%)</text>
-<text x="34" y="378" fill="#6E7B8D" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="10">Lower is cleaner; log scale 0.001% – 20% (60 Hz + 7 kHz 4:1 IMD)</text>
-<line x1="72.0" y1="562.0" x2="522.0" y2="562.0" stroke="#243041" stroke-width="0.7"/>
-<text x="66.0" y="565.5" text-anchor="end" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.5">0.001%</text>
-<line x1="72.0" y1="522.5" x2="522.0" y2="522.5" stroke="#243041" stroke-width="0.7"/>
-<text x="66.0" y="526.0" text-anchor="end" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.5">0.01%</text>
-<line x1="72.0" y1="482.9" x2="522.0" y2="482.9" stroke="#243041" stroke-width="0.7"/>
-<text x="66.0" y="486.4" text-anchor="end" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.5">0.1%</text>
-<line x1="72.0" y1="443.4" x2="522.0" y2="443.4" stroke="#243041" stroke-width="0.7"/>
-<text x="66.0" y="446.9" text-anchor="end" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.5">1.0%</text>
-<line x1="72.0" y1="403.9" x2="522.0" y2="403.9" stroke="#243041" stroke-width="0.7"/>
-<text x="66.0" y="407.4" text-anchor="end" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.5">10%</text>
+<rect x="604.0" y="308.0" width="10" height="8" rx="2" fill="#A78BFA"/><text x="618.0" y="315.0" fill="#B0BDD6" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9">PLR (TruePeak - LUFS, dB)</text>
+<rect x="769.0" y="308.0" width="10" height="8" rx="2" fill="#FBBF24"/><text x="783.0" y="315.0" fill="#B0BDD6" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9">Crest Factor (Peak/RMS, dB)</text>
+<rect x="20" y="342" width="520" height="262" rx="12" fill="#0E1326" fill-opacity="0.88" stroke="#2B365E" stroke-width="1.2"/>
+<line x1="32" y1="342.8" x2="528" y2="342.8" stroke="#8E9CF5" stroke-opacity="0.32" stroke-width="1"/>
+<text x="35" y="364" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="13.8" font-weight="700">C. Nonlinear Distortion: THD+N &amp; SMPTE IMD (%)</text>
+<text x="35" y="380" fill="#B0BDD6" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="10.8">Lower is cleaner; log scale 0.001% – 20% (60 Hz + 7 kHz 4:1 IMD)</text>
+<line x1="72.0" y1="562.0" x2="522.0" y2="562.0" stroke="#212B4A" stroke-width="0.7"/>
+<text x="66.0" y="565.5" text-anchor="end" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.5">0.001%</text>
+<line x1="72.0" y1="522.5" x2="522.0" y2="522.5" stroke="#212B4A" stroke-width="0.7"/>
+<text x="66.0" y="526.0" text-anchor="end" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.5">0.01%</text>
+<line x1="72.0" y1="482.9" x2="522.0" y2="482.9" stroke="#212B4A" stroke-width="0.7"/>
+<text x="66.0" y="486.4" text-anchor="end" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.5">0.1%</text>
+<line x1="72.0" y1="443.4" x2="522.0" y2="443.4" stroke="#212B4A" stroke-width="0.7"/>
+<text x="66.0" y="446.9" text-anchor="end" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.5">1.0%</text>
+<line x1="72.0" y1="403.9" x2="522.0" y2="403.9" stroke="#212B4A" stroke-width="0.7"/>
+<text x="66.0" y="407.4" text-anchor="end" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.5">10%</text>
 <rect x="89.5" y="562.0" width="17.0" height="2.0" rx="2" fill="#38BDF8" fill-opacity="0.88"/>
-<text x="98.0" y="559.0" text-anchor="middle" fill="#38BDF8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="7.4">~0</text>
+<text x="98.0" y="559.0" text-anchor="middle" fill="#38BDF8" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="7.4">~0</text>
 <rect x="108.5" y="562.0" width="17.0" height="2.0" rx="2" fill="#34D399" fill-opacity="0.88"/>
-<text x="117.0" y="559.0" text-anchor="middle" fill="#34D399" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="7.4">~0</text>
+<text x="117.0" y="559.0" text-anchor="middle" fill="#34D399" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="7.4">~0</text>
 <rect x="127.5" y="562.0" width="17.0" height="2.0" rx="2" fill="#F85149" fill-opacity="0.88"/>
-<text x="136.0" y="559.0" text-anchor="middle" fill="#F85149" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="7.4">~0</text>
-<text x="117.0" y="576.0" text-anchor="middle" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9" font-weight="600">Stock XPS 17</text>
+<text x="136.0" y="559.0" text-anchor="middle" fill="#F85149" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="7.4">~0</text>
+<text x="117.0" y="576.0" text-anchor="middle" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9" font-weight="600">Stock XPS 17</text>
 <rect x="179.5" y="424.6" width="17.0" height="137.4" rx="2" fill="#38BDF8" fill-opacity="0.88"/>
-<text x="188.0" y="421.6" text-anchor="middle" fill="#38BDF8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="7.4">3.00</text>
+<text x="188.0" y="421.6" text-anchor="middle" fill="#38BDF8" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="7.4">3.00</text>
 <rect x="198.5" y="483.5" width="17.0" height="78.5" rx="2" fill="#34D399" fill-opacity="0.88"/>
-<text x="207.0" y="480.5" text-anchor="middle" fill="#34D399" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="7.4">0.10</text>
+<text x="207.0" y="480.5" text-anchor="middle" fill="#34D399" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="7.4">0.10</text>
 <rect x="217.5" y="441.8" width="17.0" height="120.2" rx="2" fill="#F85149" fill-opacity="0.88"/>
-<text x="226.0" y="438.8" text-anchor="middle" fill="#F85149" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="7.4">1.10</text>
-<text x="207.0" y="576.0" text-anchor="middle" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9" font-weight="600">OLD Spatial FDTR</text>
+<text x="226.0" y="438.8" text-anchor="middle" fill="#F85149" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="7.4">1.10</text>
+<text x="207.0" y="576.0" text-anchor="middle" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9" font-weight="600">OLD Spatial FDTR</text>
 <rect x="269.5" y="457.8" width="17.0" height="104.2" rx="2" fill="#38BDF8" fill-opacity="0.88"/>
-<text x="278.0" y="454.8" text-anchor="middle" fill="#38BDF8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="7.4">0.43</text>
+<text x="278.0" y="454.8" text-anchor="middle" fill="#38BDF8" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="7.4">0.43</text>
 <rect x="288.5" y="537.8" width="17.0" height="24.2" rx="2" fill="#34D399" fill-opacity="0.88"/>
-<text x="297.0" y="534.8" text-anchor="middle" fill="#34D399" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="7.4">0.004</text>
+<text x="297.0" y="534.8" text-anchor="middle" fill="#34D399" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="7.4">0.004</text>
 <rect x="307.5" y="461.3" width="17.0" height="100.7" rx="2" fill="#F85149" fill-opacity="0.88"/>
-<text x="316.0" y="458.3" text-anchor="middle" fill="#F85149" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="7.4">0.35</text>
-<text x="297.0" y="576.0" text-anchor="middle" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9" font-weight="600">Studio Deep</text>
+<text x="316.0" y="458.3" text-anchor="middle" fill="#F85149" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="7.4">0.35</text>
+<text x="297.0" y="576.0" text-anchor="middle" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9" font-weight="600">Studio Deep</text>
 <rect x="359.5" y="459.3" width="17.0" height="102.7" rx="2" fill="#38BDF8" fill-opacity="0.88"/>
-<text x="368.0" y="456.3" text-anchor="middle" fill="#38BDF8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="7.4">0.40</text>
+<text x="368.0" y="456.3" text-anchor="middle" fill="#38BDF8" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="7.4">0.40</text>
 <rect x="378.5" y="537.0" width="17.0" height="25.0" rx="2" fill="#34D399" fill-opacity="0.88"/>
-<text x="387.0" y="534.0" text-anchor="middle" fill="#34D399" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="7.4">0.004</text>
+<text x="387.0" y="534.0" text-anchor="middle" fill="#34D399" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="7.4">0.004</text>
 <rect x="397.5" y="454.8" width="17.0" height="107.2" rx="2" fill="#F85149" fill-opacity="0.88"/>
-<text x="406.0" y="451.8" text-anchor="middle" fill="#F85149" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="7.4">0.51</text>
-<text x="387.0" y="576.0" text-anchor="middle" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9" font-weight="600">Spatial</text>
+<text x="406.0" y="451.8" text-anchor="middle" fill="#F85149" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="7.4">0.51</text>
+<text x="387.0" y="576.0" text-anchor="middle" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9" font-weight="600">Spatial</text>
 <rect x="449.5" y="472.8" width="17.0" height="89.2" rx="2" fill="#38BDF8" fill-opacity="0.88"/>
-<text x="458.0" y="469.8" text-anchor="middle" fill="#38BDF8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="7.4">0.18</text>
+<text x="458.0" y="469.8" text-anchor="middle" fill="#38BDF8" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="7.4">0.18</text>
 <rect x="468.5" y="562.0" width="17.0" height="2.0" rx="2" fill="#34D399" fill-opacity="0.88"/>
-<text x="477.0" y="559.0" text-anchor="middle" fill="#34D399" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="7.4">~0</text>
+<text x="477.0" y="559.0" text-anchor="middle" fill="#34D399" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="7.4">~0</text>
 <rect x="487.5" y="562.0" width="17.0" height="2.0" rx="2" fill="#F85149" fill-opacity="0.88"/>
-<text x="496.0" y="559.0" text-anchor="middle" fill="#F85149" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="7.4">~0</text>
-<text x="477.0" y="576.0" text-anchor="middle" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9" font-weight="600">Reference</text>
+<text x="496.0" y="559.0" text-anchor="middle" fill="#F85149" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="7.4">~0</text>
+<text x="477.0" y="576.0" text-anchor="middle" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9" font-weight="600">Reference</text>
 <rect x="72.0" y="392.0" width="450.0" height="170.0" fill="none" stroke="#334155" stroke-width="0.9"/>
-<rect x="72.0" y="584.0" width="9" height="8" rx="2" fill="#38BDF8"/><text x="85.0" y="591.0" fill="#9BA7B8" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="8.8">THD+N 200Hz</text>
-<rect x="168.0" y="584.0" width="9" height="8" rx="2" fill="#34D399"/><text x="181.0" y="591.0" fill="#9BA7B8" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="8.8">THD+N 1kHz</text>
-<rect x="258.0" y="584.0" width="9" height="8" rx="2" fill="#F85149"/><text x="271.0" y="591.0" fill="#9BA7B8" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="8.8">SMPTE IMD (60Hz+7kHz)</text>
-<rect x="556" y="342" width="524" height="262" rx="8" fill="#141A23" stroke="#263040" stroke-width="1"/>
-<text x="570" y="363" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="12.5" font-weight="700">D. Real-Time E-Core CPU % (CPUs 12–19, 48 kHz / 256q)</text>
-<text x="570" y="378" fill="#6E7B8D" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="10">10-second native LADSPA run() benchmark vs 1.50% budget ceiling</text>
-<line x1="716.0" y1="392.0" x2="716.0" y2="562.0" stroke="#243041" stroke-width="0.7"/>
-<text x="716.0" y="576.0" text-anchor="middle" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.8">0.0%</text>
-<line x1="764.3" y1="392.0" x2="764.3" y2="562.0" stroke="#243041" stroke-width="0.7"/>
-<text x="764.3" y="576.0" text-anchor="middle" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.8">0.5%</text>
-<line x1="812.6" y1="392.0" x2="812.6" y2="562.0" stroke="#243041" stroke-width="0.7"/>
-<text x="812.6" y="576.0" text-anchor="middle" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.8">1.0%</text>
-<line x1="860.9" y1="392.0" x2="860.9" y2="562.0" stroke="#243041" stroke-width="0.7"/>
-<text x="860.9" y="576.0" text-anchor="middle" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.8">1.5%</text>
-<line x1="909.1" y1="392.0" x2="909.1" y2="562.0" stroke="#243041" stroke-width="0.7"/>
-<text x="909.1" y="576.0" text-anchor="middle" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.8">2.0%</text>
-<line x1="957.4" y1="392.0" x2="957.4" y2="562.0" stroke="#243041" stroke-width="0.7"/>
-<text x="957.4" y="576.0" text-anchor="middle" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.8">2.5%</text>
-<line x1="1005.7" y1="392.0" x2="1005.7" y2="562.0" stroke="#243041" stroke-width="0.7"/>
-<text x="1005.7" y="576.0" text-anchor="middle" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.8">3.0%</text>
-<line x1="1054.0" y1="392.0" x2="1054.0" y2="562.0" stroke="#243041" stroke-width="0.7"/>
-<text x="1054.0" y="576.0" text-anchor="middle" fill="#9BA7B8" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.8">3.5%</text>
+<rect x="72.0" y="584.0" width="9" height="8" rx="2" fill="#38BDF8"/><text x="85.0" y="591.0" fill="#B0BDD6" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="8.8">THD+N 200Hz</text>
+<rect x="168.0" y="584.0" width="9" height="8" rx="2" fill="#34D399"/><text x="181.0" y="591.0" fill="#B0BDD6" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="8.8">THD+N 1kHz</text>
+<rect x="258.0" y="584.0" width="9" height="8" rx="2" fill="#F85149"/><text x="271.0" y="591.0" fill="#B0BDD6" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="8.8">SMPTE IMD (60Hz+7kHz)</text>
+<rect x="556" y="342" width="524" height="262" rx="12" fill="#0E1326" fill-opacity="0.88" stroke="#2B365E" stroke-width="1.2"/>
+<line x1="568" y1="342.8" x2="1068" y2="342.8" stroke="#8E9CF5" stroke-opacity="0.32" stroke-width="1"/>
+<text x="571" y="364" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="13.8" font-weight="700">D. Real-Time E-Core CPU % (CPUs 12–19, 48 kHz / 256q)</text>
+<text x="571" y="380" fill="#B0BDD6" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="10.8">10-second native LADSPA run() benchmark vs 1.50% budget ceiling</text>
+<line x1="716.0" y1="392.0" x2="716.0" y2="562.0" stroke="#212B4A" stroke-width="0.7"/>
+<text x="716.0" y="576.0" text-anchor="middle" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.8">0.0%</text>
+<line x1="764.3" y1="392.0" x2="764.3" y2="562.0" stroke="#212B4A" stroke-width="0.7"/>
+<text x="764.3" y="576.0" text-anchor="middle" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.8">0.5%</text>
+<line x1="812.6" y1="392.0" x2="812.6" y2="562.0" stroke="#212B4A" stroke-width="0.7"/>
+<text x="812.6" y="576.0" text-anchor="middle" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.8">1.0%</text>
+<line x1="860.9" y1="392.0" x2="860.9" y2="562.0" stroke="#212B4A" stroke-width="0.7"/>
+<text x="860.9" y="576.0" text-anchor="middle" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.8">1.5%</text>
+<line x1="909.1" y1="392.0" x2="909.1" y2="562.0" stroke="#212B4A" stroke-width="0.7"/>
+<text x="909.1" y="576.0" text-anchor="middle" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.8">2.0%</text>
+<line x1="957.4" y1="392.0" x2="957.4" y2="562.0" stroke="#212B4A" stroke-width="0.7"/>
+<text x="957.4" y="576.0" text-anchor="middle" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.8">2.5%</text>
+<line x1="1005.7" y1="392.0" x2="1005.7" y2="562.0" stroke="#212B4A" stroke-width="0.7"/>
+<text x="1005.7" y="576.0" text-anchor="middle" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.8">3.0%</text>
+<line x1="1054.0" y1="392.0" x2="1054.0" y2="562.0" stroke="#212B4A" stroke-width="0.7"/>
+<text x="1054.0" y="576.0" text-anchor="middle" fill="#B0BDD6" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.8">3.5%</text>
 <line x1="860.9" y1="392.0" x2="860.9" y2="562.0" stroke="#10B981" stroke-width="1.6" stroke-dasharray="5,3"/>
-<text x="864.9" y="403.0" fill="#34D399" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8.6" font-weight="700">1.50% BUDGET</text>
-<text x="708.0" y="418.4" text-anchor="end" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9.6" font-weight="600">OLD LADSPA (bass+warm)</text>
+<text x="864.9" y="403.0" fill="#34D399" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="8.6" font-weight="700">1.50% BUDGET</text>
+<text x="708.0" y="418.4" text-anchor="end" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9.6" font-weight="600">OLD LADSPA (bass+warm)</text>
 <rect x="716.0" y="404.0" width="45.0" height="20.0" rx="3" fill="#FB7185" fill-opacity="0.90"/>
-<text x="767.0" y="418.4" fill="#F0F6FC" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="9" font-weight="700">0.466%</text>
-<text x="708.0" y="449.6" text-anchor="end" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9.6" font-weight="600">OLD Fused 2×2 FDTR</text>
+<text x="767.0" y="418.4" fill="#F2F6FF" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="9" font-weight="700">0.466%</text>
+<text x="708.0" y="449.6" text-anchor="end" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9.6" font-weight="600">OLD Fused 2×2 FDTR</text>
 <rect x="716.0" y="435.2" width="305.2" height="20.0" rx="3" fill="#F85149" fill-opacity="0.90"/>
-<text x="1027.2" y="449.6" fill="#F0F6FC" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="9" font-weight="700">3.161%</text>
-<text x="708.0" y="480.8" text-anchor="end" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9.6" font-weight="600">NEW Studio Deep</text>
+<text x="1027.2" y="449.6" fill="#F2F6FF" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="9" font-weight="700">3.161%</text>
+<text x="708.0" y="480.8" text-anchor="end" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9.6" font-weight="600">NEW Studio Deep</text>
 <rect x="716.0" y="466.4" width="85.5" height="20.0" rx="3" fill="#38BDF8" fill-opacity="0.90"/>
-<text x="807.5" y="480.8" fill="#F0F6FC" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="9" font-weight="700">0.885%</text>
-<text x="708.0" y="512.0" text-anchor="end" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9.6" font-weight="600">NEW Studio Spatial</text>
+<text x="807.5" y="480.8" fill="#F2F6FF" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="9" font-weight="700">0.885%</text>
+<text x="708.0" y="512.0" text-anchor="end" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9.6" font-weight="600">NEW Studio Spatial</text>
 <rect x="716.0" y="497.6" width="91.0" height="20.0" rx="3" fill="#A78BFA" fill-opacity="0.90"/>
-<text x="813.0" y="512.0" fill="#F0F6FC" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="9" font-weight="700">0.943%</text>
-<text x="708.0" y="543.2" text-anchor="end" fill="#F0F6FC" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="9.6" font-weight="600">NEW Studio Reference</text>
+<text x="813.0" y="512.0" fill="#F2F6FF" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="9" font-weight="700">0.943%</text>
+<text x="708.0" y="543.2" text-anchor="end" fill="#F2F6FF" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="9.6" font-weight="600">NEW Studio Reference</text>
 <rect x="716.0" y="528.8" width="85.5" height="20.0" rx="3" fill="#34D399" fill-opacity="0.90"/>
-<text x="807.5" y="543.2" fill="#F0F6FC" font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="9" font-weight="700">0.885%</text>
+<text x="807.5" y="543.2" fill="#F2F6FF" font-family="JetBrainsMono Nerd Font, DejaVu Sans Mono, monospace" font-size="9" font-weight="700">0.885%</text>
 <rect x="716.0" y="392.0" width="338.0" height="170.0" fill="none" stroke="#334155" stroke-width="0.9"/>
-<text x="716.0" y="591.0" fill="#6E7B8D" font-family="Inter, DejaVu Sans, Liberation Sans, sans-serif" font-size="8.8">Measured via ctypes LadspaHost pinned to E-cores (taskset -c 12-19 nice -n 19).</text>
+<text x="716.0" y="591.0" fill="#7E8CA8" font-family="Inter Display, Inter, DejaVu Sans, sans-serif" font-size="8.8">Measured via ctypes LadspaHost pinned to E-cores (taskset -c 12-19 nice -n 19).</text>
 </svg>

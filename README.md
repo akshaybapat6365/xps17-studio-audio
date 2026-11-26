@@ -11,25 +11,36 @@
 curl -fsSL https://raw.githubusercontent.com/akshaybapat6365/xps17-studio-audio/main/bootstrap.sh | bash
 ```
 
-![7-Stage AVX2/FMA Studio DSP & Hardware Smart-Amp Crossover Visual Overview](docs/charts/00_studio_audio_hero.png)
+<p align="center">
+  <a href="docs/charts/00_studio_audio_hero.png"><img src="docs/charts/00_studio_audio_hero.png" alt="7-Stage AVX2/FMA Studio DSP & Hardware Smart-Amp Crossover Visual Overview (4K)" width="100%"></a>
+</p>
 
 ---
 
-## Visual Showcase — Acoustic Benchmarks, UI Controls & Live Verification
+## 4K Visual Showcase — Acoustic Benchmarks, UI Controls & Live Verification
+*(Every engineering plot and UI capture below is rendered at native **4K UHD `3840×2160` / `3840×2400`** — click any image for full 1:1 resolution.)*
 
-| Omarchy Menu `Setup → Speakers` Integration | `Super + K` Live Studio Speaker Audio & Health Controls |
-| :---: | :---: |
-| ![Omarchy Menu Studio Speaker Presets](docs/charts/06_omarchy_menu_speakers.png) | ![Shortcuts & Help Custom Tools Studio Audio](docs/charts/07_help_studio_tools.png) |
-
-| Projected In-Room Frequency Response & Target Tracking | Hybrid Physical + Harmonic Bass, Vocal Isolation & Klippel Excursion |
-| :---: | :---: |
-| ![Frequency Response & Target Tracking](docs/charts/01_frequency_response.png) | ![Bass Extension, Body & Klippel Excursion](docs/charts/02_bass_and_body_comparison.png) |
-
-| Stereo Correlation, Sub-180 Hz Mono Anchor & 3D Stage Depth | Mastering Dynamics, Live ISO 226 Loudness & Ultra-Low THD |
-| :---: | :---: |
-| ![Stereo Correlation, FDTR-XTC & Stage Depth](docs/charts/03_stereo_correlation_and_depth.png) | ![Dynamics, ISO 226 Loudness & THD](docs/charts/04_dynamics_loudness_thd.png) |
-
-![Live System Health Doctor (8/8 OK), Binary DSP Verification & Dual-Amp Crossover Readback](docs/charts/05_live_doctor_and_cli.png)
+<p align="center">
+  <a href="docs/charts/06_omarchy_menu_speakers.png"><img src="docs/charts/06_omarchy_menu_speakers.png" alt="Omarchy Menu Studio Speaker Presets (4K)" width="100%"></a>
+</p>
+<p align="center">
+  <a href="docs/charts/07_help_studio_tools.png"><img src="docs/charts/07_help_studio_tools.png" alt="Shortcuts & Help Custom Tools Studio Audio (4K)" width="100%"></a>
+</p>
+<p align="center">
+  <a href="docs/charts/01_frequency_response.png"><img src="docs/charts/01_frequency_response.png" alt="Frequency Response & Target Tracking (4K)" width="100%"></a>
+</p>
+<p align="center">
+  <a href="docs/charts/02_bass_and_body_comparison.png"><img src="docs/charts/02_bass_and_body_comparison.png" alt="Bass Extension, Body & Klippel Excursion (4K)" width="100%"></a>
+</p>
+<p align="center">
+  <a href="docs/charts/03_stereo_correlation_and_depth.png"><img src="docs/charts/03_stereo_correlation_and_depth.png" alt="Stereo Correlation, FDTR-XTC & Stage Depth (4K)" width="100%"></a>
+</p>
+<p align="center">
+  <a href="docs/charts/04_dynamics_loudness_thd.png"><img src="docs/charts/04_dynamics_loudness_thd.png" alt="Dynamics, ISO 226 Loudness & THD (4K)" width="100%"></a>
+</p>
+<p align="center">
+  <a href="docs/charts/05_live_doctor_and_cli.png"><img src="docs/charts/05_live_doctor_and_cli.png" alt="Live System Health Doctor (8/8 OK), Binary DSP Verification & Dual-Amp Crossover Readback (4K)" width="100%"></a>
+</p>
 
 ---
 
